@@ -65,6 +65,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\BaseWave.cs" />
+    <Compile Include="ViewModel\SavingModel.cs" />
+    <Compile Include="Model\Sawtooth.cs" />
+    <Compile Include="ViewModel\DataGenerate.cs" />
+    <Compile Include="Model\Sine.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -107,6 +112,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icons8-gears-80.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
