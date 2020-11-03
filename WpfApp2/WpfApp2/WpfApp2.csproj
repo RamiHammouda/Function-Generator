@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="ScottPlot, Version=4.0.42.0, Culture=neutral, PublicKeyToken=86698dc10387c39e, processorArchitecture=MSIL">
       <HintPath>..\packages\ScottPlot.4.0.42\lib\netstandard2.0\ScottPlot.dll</HintPath>
     </Reference>
@@ -65,11 +68,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\BaseWave.cs" />
-    <Compile Include="ViewModel\SavingModel.cs" />
-    <Compile Include="Model\Sawtooth.cs" />
-    <Compile Include="ViewModel\DataGenerate.cs" />
-    <Compile Include="Model\Sine.cs" />
+    <Compile Include="Model\SignalProfile.cs" />
+    <Compile Include="Model\SimulationProfile.cs" />
+    <Compile Include="ViewModel\GenerateSignalData.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

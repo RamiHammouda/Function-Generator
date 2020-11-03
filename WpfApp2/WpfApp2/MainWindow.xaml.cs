@@ -29,18 +29,20 @@ namespace WpfApp2
         {
             InitializeComponent();
 
-            //Temporary
+            //SignalProfile testProfile;
+            //testProfile = new SignalProfile(Model.WaveForm.Sine);
+            //testProfile.PrintInfo();
+            //testProfile = new SignalProfile((Model.WaveForm)1);
+            //testProfile.PrintInfo();
+            //SimulationProfile myProfile = new SimulationProfile((WaveForm)2, 1000, 2, 3, 12400);
+            //myProfile.PrintInfo();
+            //GenerateSignalData test = new GenerateSignalData(myProfile);
+            //test.ExportToJson();
+            GenerateSignalData newProfile = new GenerateSignalData(0,1,5,20,1);
+            newProfile.ExportToJson();
+            //newProfile.PrintData();
 
-            Freq = 1;
-            Ampl = 5;
-            Duration = 1m;
-            Rate = 9600;
             TestFunc();
-            Console.WriteLine(637397472332016471 + 9995906);
-            Console.WriteLine($"Freq:{Freq} Ampl:{Ampl} Duration: {Duration} Rate: {Rate}");
-
-            Console.WriteLine($"GetAmplSine {GetAmplSine(2500000)}");
-            
         }
 
         public void TestFunc()
@@ -57,13 +59,10 @@ namespace WpfApp2
             myWpfPlot.Render();
 
             //plt.SaveFig("PlotTypes_Scatter_CustomizeLines.png");
-
         }
         public long OffsetFreq, Freq,TickRate,Rate;
         public double OffsetAmpl, Ampl;
         public decimal Tick,Duration;
-
-
 
         public void initiateWithGUI()
         {
@@ -86,16 +85,11 @@ namespace WpfApp2
 
         private void btnReset_Click(object sender, RoutedEventArgs e)
         {
-           
-            
             TickRate = (long)Math.Round(1e7m / Rate,0);
             Console.WriteLine("Tick " + TickRate);
             //if (rdoSine.IsChecked == true)
             if (true)
             {
-                //Should combine Wavefrom in Datagenerate?
-                //Sine mySine = new Sine(Freq, Ampl, 9600);
-                //DataGenerate aData = new DataGenerate(mySine,10);
                 LinkedList<long> TimeStampList = new LinkedList<long>();
                 LinkedList<double> AmplList = new LinkedList<double>();
                 DateTime start = DateTime.Now;
@@ -105,33 +99,22 @@ namespace WpfApp2
                 StringBuilder sb = new StringBuilder();
                 for (long i = 0; i < Rate * Duration; i++)
                 {
-                    //TimeStampList.AddFirst(i*Tick);
-                    //AmplList.AddFirst(GetAmplSine(i));
-                    //Console.WriteLine(start.Ticks);
-                    //Console.WriteLine(Math.Round(i * Tick,0));
-                    //sb.AppendLine(Convert.ToString(start.Ticks + i*Tick));
                     sb.AppendLine(String.Format("{0} {1} {2}",i,start.Ticks + i * TickRate,GetAmplSine(i*TickRate)));
                     
                 };
-                //Console.WriteLine(sb);
-                //Console.WriteLine(TimeStampList.First);
-                //Console.WriteLine(AmplList.First);
 
                 //string path = @"C:\Users\Admin\Desktop\Testwriting.txt";
                 string filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Testwriting.txt";
-
               
                 File.AppendAllText(filePath, sb.ToString());
-
             }
         }
 
         public double GetAmplSine(long attime)
         {
-            
             //Console.WriteLine("TEst");
             //Console.WriteLine(Freq);
-            //Console.WriteLine(Ampl*Math.Sin(2 * Math.PI*Freq*0.25));
+            Console.WriteLine(Ampl*Math.Sin(2 * Math.PI*Freq*0.25));
             return Ampl * Math.Sin(2*Math.PI*Freq*attime/1e7);
         }
 
