@@ -1,20 +1,11 @@
-﻿using ScottPlot;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using System.ComponentModel;
+using System.Drawing;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using WpfApp2.Model;
 using WpfApp2.ViewModel;
 
@@ -23,105 +14,219 @@ namespace WpfApp2
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
+
         public MainWindow()
         {
             InitializeComponent();
 
-            //SignalProfile testProfile;
-            //testProfile = new SignalProfile(Model.WaveForm.Sine);
-            //testProfile.PrintInfo();
-            //testProfile = new SignalProfile((Model.WaveForm)1);
-            //testProfile.PrintInfo();
-            //SimulationProfile myProfile = new SimulationProfile((WaveForm)2, 1000, 2, 3, 12400);
-            //myProfile.PrintInfo();
-            //GenerateSignalData test = new GenerateSignalData(myProfile);
-            //test.ExportToJson();
-            GenerateSignalData newProfile = new GenerateSignalData(0,1,5,20,1);
-            newProfile.ExportToJson();
-            //newProfile.PrintData();
 
-            TestFunc();
+            this.DataContext = this;
+
+            initiateDefaultValue();
         }
 
-        public void TestFunc()
+        private void VisualizateData(SimulationProfile smProfile, int numberOfWave)
         {
+            double displayduration = (double)numberOfWave / smProfile.getFreq() + (double)1 / smProfile.getRate();
+            GenerateSignalData displayData = new GenerateSignalData(smProfile.getSignalProfile(), displayduration);
+            displayData.PrintData();
+            //double[] x = GenerateSignalData.ConvertToDouble(displayData.getTimeStamp());
+            double linewidth = 1, marksize = 5;
+            string text = $" Wave: {displayData.getWave()}\nFreq: {displayData.getFreq()} Hz\nAmpl: {displayData.getAmpl()} A\nRate: {displayData.getRate()}\nDura: {smProfile.getDuration()} s";
+            double[] x = GenerateSignalData.ConvertToDouble(displayData.getNo());
+            double[] y = displayData.getAmplData();
+            if ((double)displayData.getRate() / displayData.getFreq() > 50)
+            {
+                linewidth = 2;
+                marksize = 0;
+            }
 
-            int pointCount = 50;
-            double[] x = DataGen.Consecutive(pointCount);
-            double[] sin = DataGen.Sin(pointCount);
-            double[] cos = DataGen.Cos(pointCount);
-
-            myWpfPlot.plt.PlotScatter(x, sin);
-            myWpfPlot.plt.PlotScatter(x, cos);
+            myWpfPlot.plt.Clear();
+            myWpfPlot.plt.PlotScatter(x, y, lineWidth: linewidth, markerSize: marksize, label: text);
             myWpfPlot.plt.Style(ScottPlot.Style.Light2);
+            myWpfPlot.plt.Title("Signal Data", fontName: "Verdana", color: Color.BlueViolet, bold: true);
+            myWpfPlot.plt.YLabel("Amplitude", fontSize: 16, color: Color.Green);
+            myWpfPlot.plt.XLabel("Time(Ticks)", color: Color.Green);
+            myWpfPlot.plt.Style(dataBg: Color.LightYellow);
+            myWpfPlot.plt.PlotAnnotation(text, -10, 10, fontSize: 9);
             myWpfPlot.Render();
-
-            //plt.SaveFig("PlotTypes_Scatter_CustomizeLines.png");
         }
-        public long OffsetFreq, Freq,TickRate,Rate;
-        public double OffsetAmpl, Ampl;
-        public decimal Tick,Duration;
 
-        public void initiateWithGUI()
+        #region Propertise
+
+        public bool mValidInput { get; set; }
+        public long mRate, mDuration;
+        public double mOffsetAmpl;
+        public long mOffsetFreq { get; set; }
+
+        private WaveForm _wave;
+        public WaveForm mWave
         {
-
-            //Freq = Convert.ToInt64(txtFreq.Text);
-            //Ampl = Convert.ToDouble(txtAmp.Text);
+            get { return _wave; }
+            set
+            {
+                if (_wave != value)
+                { _wave = value; OnPropertyChanged("mWave"); }
+            }
         }
 
+        private long _freq;
+        public long mFreq
+        {
+            get { return _freq; }
+            set
+            {
+                if (_freq != value)
+                { _freq = value; OnPropertyChanged("mFreq"); }
+            }
+        }
+        private double _ampl;
+        public double mAmpl
+        {
+            get { return _ampl; }
+            set
+            {
+                if (_ampl != value)
+                { _ampl = value; OnPropertyChanged("mAmpl"); }
+            }
+        }
+        #endregion
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void initiateDefaultValue()
+        {
+            mFreq = 25;
+            mAmpl = 5;
+            mRate = 1000;
+            mDuration = 10;
+            mWave = WaveForm.Sine;
+            mValidInput = false;
+
+            this.PropertyChanged += AutoDrawing;
+            OnPropertyChanged("");
+        }
+
+        #region Some Control Element
         private void sldFreq_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            //Slider slider = sender as Slider;
-            //Console.WriteLine((sender as Slider).Value);
-            OffsetFreq = (long)(sender as Slider).Value;
+            mOffsetFreq = (long)(sender as Slider).Value;
         }
 
         private void sldAmp_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            OffsetAmpl = (sender as Slider).Value;
+            mOffsetAmpl = Math.Round((sender as Slider).Value / 1000, 10);
         }
 
+        private void btnFreqPlus_Click(object sender, RoutedEventArgs e)
+        {
+            mFreq += mOffsetFreq;
+        }
+
+        private void btnFreqMinus_Click(object sender, RoutedEventArgs e)
+        {
+            mFreq -= mOffsetFreq;
+        }
+
+        private void btnAmplPlus_Click(object sender, RoutedEventArgs e)
+        {
+            mAmpl += Math.Round(mOffsetAmpl, 10);
+        }
+        private void btnAmplMinus_Click(object sender, RoutedEventArgs e)
+        {
+            mAmpl -= Math.Round(mOffsetAmpl, 10);
+        }
+
+        #endregion
         private void btnReset_Click(object sender, RoutedEventArgs e)
         {
-            TickRate = (long)Math.Round(1e7m / Rate,0);
-            Console.WriteLine("Tick " + TickRate);
-            //if (rdoSine.IsChecked == true)
-            if (true)
+            initiateDefaultValue();
+        }
+
+        private void AutoDrawing(object sender, EventArgs e)
+        {
+            SimulationProfile currentSignal = new SimulationProfile(mWave, mFreq, mAmpl, mRate, mDuration);
+            VisualizateData(currentSignal, 5);
+        }
+
+        private void btnSimulate_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Just kidding", "Quick Infor", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void btnSimulateToJson_Click(object sender, RoutedEventArgs e)
+        {
+            SignalProfile sgProfile = new SignalProfile(mWave, mFreq, mAmpl, mRate);
+            SimulationProfile smProfile = new SimulationProfile(sgProfile, mDuration);
+            GenerateSignalData myProf = new GenerateSignalData(smProfile);
+
+            myProf.ExportToJson();
+            MessageBox.Show("Finished Exporting", "Quick Infor", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        //Not quite finish
+        private void NumberValidation(object sender, TextCompositionEventArgs e)
+        {
+            //Regex regex = new Regex("[^a-zA-Z]+");
+
+            Regex regex = new Regex("[0-9]+");
+            if (!regex.IsMatch(e.Text))
             {
-                LinkedList<long> TimeStampList = new LinkedList<long>();
-                LinkedList<double> AmplList = new LinkedList<double>();
-                DateTime start = DateTime.Now;
-                Console.WriteLine(TimeStampList.ToString());
-                Console.WriteLine(AmplList.ToString());
+                mValidInput = false;
+                MessageBox.Show("Number Accept Only !");
+            }
 
-                StringBuilder sb = new StringBuilder();
-                for (long i = 0; i < Rate * Duration; i++)
-                {
-                    sb.AppendLine(String.Format("{0} {1} {2}",i,start.Ticks + i * TickRate,GetAmplSine(i*TickRate)));
-                    
-                };
+        }
+        //Not quite
+        private void DoubleValidation(object sender, TextCompositionEventArgs e)
+        {
 
-                //string path = @"C:\Users\Admin\Desktop\Testwriting.txt";
-                string filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Testwriting.txt";
-              
-                File.AppendAllText(filePath, sb.ToString());
+            Regex regex = new Regex("[0-9.]+");
+            if (!regex.IsMatch(e.Text))
+            {
+                mValidInput = false;
+                MessageBox.Show("Number Accept Only !");
+            }
+            try
+            {
+                double.Parse(txtAmp.Text);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Pls input a double number !");
+                return;
             }
         }
-
-        public double GetAmplSine(long attime)
-        {
-            //Console.WriteLine("TEst");
-            //Console.WriteLine(Freq);
-            Console.WriteLine(Ampl*Math.Sin(2 * Math.PI*Freq*0.25));
-            return Ampl * Math.Sin(2*Math.PI*Freq*attime/1e7);
-        }
-
-        public double GetValueSawtooth(long attime)
-        {
-            return 0;
-        }
-
     }
+
+    public class ComparisonConverter : IValueConverter
+    {
+        //public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        //{
+        //    return value?.Equals(parameter);
+        //}
+
+        //public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        //{
+        //    return value?.Equals(true) == true ? parameter : Binding.DoNothing;
+        //}
+
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return ((WaveForm)value).HasFlag((WaveForm)parameter);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return value.Equals(true) ? parameter : Binding.DoNothing;
+        }
+    }
+
 }

@@ -1,9 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WpfApp2.Model
 {
@@ -13,15 +9,15 @@ namespace WpfApp2.Model
         [JsonProperty("SignalProfile")]
         private SignalProfile mSgProfile;
         [JsonProperty("Last")]
-        private long mDuration;
+        private double mDuration;
 
-        public SimulationProfile(SignalProfile aProfile, long duration)
+        public SimulationProfile(SignalProfile aProfile, double duration)
         {
             mSgProfile = aProfile;
             mDuration = duration;
         }
 
-        public SimulationProfile(WaveForm wave = 0, long freq = 130, double ampl = 5, long rate = 9600, long duration = 1)
+        public SimulationProfile(WaveForm wave = 0, long freq = 130, double ampl = 5, long rate = 9600, double duration = 1)
         {
             mSgProfile = new SignalProfile();
             mSgProfile.setWave(wave);
@@ -40,7 +36,7 @@ namespace WpfApp2.Model
             mDuration = second;
         }
 
-        public long getDuration()
+        public double getDuration()
         {
             return mDuration;
         }
