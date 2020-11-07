@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:WpfApp2"
         xmlns:myenum="clr-namespace:WpfApp2.Model"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
 
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
         Title="FUNCTION GENERATOR"  Height="550" Width="1000" FontFamily="Verdana" 
@@ -38,9 +39,14 @@
         </Style>
 
 
-        <CollectionViewSource
-          Source="{Binding Path=mMultipleShotList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-          x:Key="myCollectionView" />
+        <CollectionViewSource Source="{Binding Path=mMultipleShotList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+          x:Key="myCollectionView">
+            <!--<CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="mWave" Direction="Descending" />
+            </CollectionViewSource.SortDescriptions>-->
+
+        </CollectionViewSource>
+        
 
         <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues"
                         ObjectType="{x:Type sys:Enum}">
@@ -257,7 +263,7 @@
 
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Remark" Binding="{Binding Path=mRemark}"/>
-                            <DataGridTemplateColumn Header="WaveForm" Width="90">
+                            <DataGridTemplateColumn Header="WaveForm" Width="90" CanUserSort="True" SortMemberPath="mWave">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding Path=mWave}" />
