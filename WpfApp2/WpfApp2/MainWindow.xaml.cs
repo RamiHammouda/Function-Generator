@@ -1,6 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,16 +30,16 @@ namespace WpfApp2
             this.DataContext = this;
 
             initiateDefaultValue();
+
         }
 
         private void VisualizateData(SimulationProfile smProfile, int numberOfWave)
         {
             double displayduration = (double)numberOfWave / smProfile.getFreq() + (double)1 / smProfile.getRate();
-            GenerateSignalData displayData = new GenerateSignalData(smProfile.getSignalProfile(), displayduration);
-            displayData.PrintData();
-            //double[] x = GenerateSignalData.ConvertToDouble(displayData.getTimeStamp());
+            GenerateSignalData displayData = new GenerateSignalData(smProfile.getSignalProfile(), displayduration, true);
+            //displayData.PrintData();
             double linewidth = 1, marksize = 5;
-            string text = $" Wave: {displayData.getWave()}\nFreq: {displayData.getFreq()} Hz\nAmpl: {displayData.getAmpl()} A\nRate: {displayData.getRate()}\nDura: {smProfile.getDuration()} s";
+            string text = $"Wave: {displayData.getWave()}\nFreq: {displayData.getFreq()} Hz\nAmpl: {displayData.getAmpl()} V\nRate: {displayData.getRate()}\nDura: {smProfile.getDuration()} s";
             double[] x = GenerateSignalData.ConvertToDouble(displayData.getNo());
             double[] y = displayData.getAmplData();
             if ((double)displayData.getRate() / displayData.getFreq() > 50)
@@ -60,6 +65,8 @@ namespace WpfApp2
         public long mRate, mDuration;
         public double mOffsetAmpl;
         public long mOffsetFreq { get; set; }
+
+        //public ListBindableAttribute targetFromDB = new ListBindableAttribute();
 
         private WaveForm _wave;
         public WaveForm mWave
@@ -101,6 +108,17 @@ namespace WpfApp2
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        private ObservableCollection<GenerateSignalData> _multipleShotList;
+        public ObservableCollection<GenerateSignalData> mMultipleShotList
+        {
+            get { return _multipleShotList; }
+            set
+            {
+                if (_multipleShotList != value)
+                { _multipleShotList = value; OnPropertyChanged("_multipleShotList"); }
+            }
+        }
+
         public void initiateDefaultValue()
         {
             mFreq = 25;
@@ -111,7 +129,15 @@ namespace WpfApp2
             mValidInput = false;
 
             this.PropertyChanged += AutoDrawing;
-            OnPropertyChanged("");
+            OnPropertyChanged("IamIronMan");
+
+            _multipleShotList = new ObservableCollection<GenerateSignalData>()
+            { new GenerateSignalData(),
+             new GenerateSignalData(0,230,7,510,2,sendToDb:true),
+              new GenerateSignalData(WaveForm.Random,320,3,993,2,targetOnDb:"Inputs_Entschlammung1_Status"),
+              new GenerateSignalData(WaveForm.Sawtooth,sendToDb:true,targetOnDb:"Inputs_TestVarLReal")
+            };
+
         }
 
         #region Some Control Element
@@ -122,7 +148,7 @@ namespace WpfApp2
 
         private void sldAmp_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            mOffsetAmpl = Math.Round((sender as Slider).Value / 1000, 10);
+            mOffsetAmpl = Math.Round((sender as Slider).Value / 1000, 3);
         }
 
         private void btnFreqPlus_Click(object sender, RoutedEventArgs e)
@@ -137,11 +163,11 @@ namespace WpfApp2
 
         private void btnAmplPlus_Click(object sender, RoutedEventArgs e)
         {
-            mAmpl += Math.Round(mOffsetAmpl, 10);
+            mAmpl += Math.Round(mOffsetAmpl, 3);
         }
         private void btnAmplMinus_Click(object sender, RoutedEventArgs e)
         {
-            mAmpl -= Math.Round(mOffsetAmpl, 10);
+            mAmpl -= Math.Round(mOffsetAmpl, 3);
         }
 
         #endregion
@@ -153,7 +179,7 @@ namespace WpfApp2
         private void AutoDrawing(object sender, EventArgs e)
         {
             SimulationProfile currentSignal = new SimulationProfile(mWave, mFreq, mAmpl, mRate, mDuration);
-            VisualizateData(currentSignal, 5);
+            VisualizateData(currentSignal, 4);
         }
 
         private void btnSimulate_Click(object sender, RoutedEventArgs e)
@@ -165,10 +191,53 @@ namespace WpfApp2
         {
             SignalProfile sgProfile = new SignalProfile(mWave, mFreq, mAmpl, mRate);
             SimulationProfile smProfile = new SimulationProfile(sgProfile, mDuration);
-            GenerateSignalData myProf = new GenerateSignalData(smProfile);
+            GenerateSignalData myProf = new GenerateSignalData(smProfile, true);
 
             myProf.ExportToJson();
             MessageBox.Show("Finished Exporting", "Quick Infor", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void btnMSimulateToJson_Click(object sender, RoutedEventArgs e)
+        {
+            if (mMultipleShotList.Count < 1)
+                return;
+            List<GenerateSignalData> sendList = new List<GenerateSignalData>();
+            foreach (GenerateSignalData item in mMultipleShotList)
+                if (item.checkSendToDB() == true) { 
+                    item.GenerateData();
+                    sendList.Add(item);
+                }
+            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            //string fileName = DateTime.Now.Ticks.ToString();
+            string fileName = "PrintList";
+            //string filePath = desktopPath + @"\GenerateData.json";
+            string filePath = desktopPath + "\\" + fileName + ".json";
+
+            var serializer = new JsonSerializer { Formatting = Formatting.Indented, TypeNameHandling = TypeNameHandling.Auto };
+            //var serializer = new JsonSerializer { TypeNameHandling = TypeNameHandling.Auto };
+            using (StreamWriter writer = File.CreateText(filePath)) { serializer.Serialize(writer, sendList); }
+
+        
+        //myProf.ExportToJson();
+        MessageBox.Show("Finished Exporting", "Quick Infor", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        private void MenuItemDel_Click(object sender, RoutedEventArgs e)
+        {
+            if (MultiShot.SelectedItem == null || mMultipleShotList.Count == 0) return;  //safety first
+
+            try
+            {
+                mMultipleShotList.Remove((GenerateSignalData)MultiShot.SelectedItem);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("You must be so funny :)", "Wow", MessageBoxButton.OK, MessageBoxImage.Information);
+                Debug.WriteLine(ex.Message);
+            }
+        }
+        private void MenuItemAdd_Click(object sender, RoutedEventArgs e)
+        {
+            mMultipleShotList.Add(new GenerateSignalData());
         }
 
         //Not quite finish

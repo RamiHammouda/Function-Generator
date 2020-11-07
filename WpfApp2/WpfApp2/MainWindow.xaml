@@ -5,8 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp2"
         xmlns:myenum="clr-namespace:WpfApp2.Model"
-        mc:Ignorable="d"
-        Title="FUNCTION GENERATOR"  Height="450" Width="800" FontFamily="Verdana" 
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+
+        mc:Ignorable="d" WindowStartupLocation="CenterScreen"
+        Title="FUNCTION GENERATOR"  Height="550" Width="1000" FontFamily="Verdana" 
         Background="#FFEEFAFF" Icon="icons8-gears-80.png">
     <Window.Resources>
         <Style TargetType="{x:Type TextBox}">
@@ -18,136 +20,278 @@
             </Style.Resources>
         </Style>
 
+
         <Style x:Key="FutureUsing" TargetType="{x:Type Control}">
             <Setter Property="Foreground" Value="White"/>
         </Style>
 
+        <Style  TargetType="{x:Type DataGridCell}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridCell}">
+                        <Grid Background="{TemplateBinding Background}">
+                            <ContentPresenter VerticalAlignment="Center" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <CollectionViewSource
+          Source="{Binding Path=mMultipleShotList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+          x:Key="myCollectionView" />
+
+        <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues"
+                        ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="myenum:WaveForm"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
     </Window.Resources>
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="8"/>
-            <ColumnDefinition Width="12"/>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="10"/>
-            <ColumnDefinition Width="200"/>
-            <ColumnDefinition Width="20"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="10"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="20"/>
-        </Grid.RowDefinitions>
+        <TabControl Padding="0">
+            <TabControl.Resources>
+                <Style TargetType="{x:Type Grid}">
+                    <Setter Property="Background" Value="#FFEEFAFF"></Setter>
+                </Style>
+            </TabControl.Resources>
 
-        <WpfPlot Name="myWpfPlot" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1" Grid.RowSpan="1"/>
+            <TabItem  Header="Single Shot" Height="20" Width="150">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="100*"/>
+                        <ColumnDefinition Width="439*"/>
+                        <ColumnDefinition Width="15"/>
+                        <ColumnDefinition Width="160"/>
+                        <ColumnDefinition Width="20"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="20"/>
+                    </Grid.RowDefinitions>
 
-        <StackPanel Grid.Column="5" Grid.Row="1" Orientation="Vertical" Grid.ColumnSpan="1" Grid.RowSpan="2" MinWidth="200">
-            <StackPanel.Resources>
-                <local:ComparisonConverter x:Key="ComparisonConverter" />
-            </StackPanel.Resources>
-            <Label FontWeight="Bold" Content="Signal-Wave Form" />
-            <RadioButton Name="rdoSine" GroupName="waveForm" Content="Sine" Margin="5" IsChecked="{Binding Path=mWave, Mode =TwoWay,UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static myenum:WaveForm.Sine}}" />
-            <RadioButton Name="rdoSawt" GroupName="waveForm" Content="Sawtooth" Margin="5" IsChecked="{Binding Path=mWave, Mode =TwoWay,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static myenum:WaveForm.Sawtooth}}"/>
-            <RadioButton Name="rdoRand" GroupName="waveForm" Content="Random" Margin="5" IsChecked="{Binding Path=mWave, Mode =TwoWay,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static myenum:WaveForm.Random}}"/>
-            <!--<Button x:Name="btnReset" Content="Reset" Click="btnReset_Click" Margin="5" BorderThickness="0">
-                <Button.Resources>
-                    <Style TargetType="{x:Type Border}">
-                        <Setter Property="CornerRadius" Value="2"/>
-                    </Style>
-                </Button.Resources>
-            </Button>-->
-        </StackPanel>
+                    <WpfPlot Name="myWpfPlot" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" Grid.RowSpan="1"/>
 
-        <StackPanel Orientation="Vertical" Grid.Column ="5" Grid.Row="3" VerticalAlignment="Center" >
+                    <StackPanel Grid.Column="5" Grid.Row="1" Orientation="Vertical" Grid.ColumnSpan="2" Grid.RowSpan="2" MinWidth="200" Margin="0,0,-20,0">
+                        <StackPanel.Resources>
+                            <local:ComparisonConverter x:Key="ComparisonConverter" />
+                        </StackPanel.Resources>
+                        <Label FontWeight="Bold" Content="Signal-Wave Form" />
+                        <RadioButton Name="rdoSine" GroupName="waveForm" Content="Sine" Margin="5" IsChecked="{Binding Path=mWave, Mode =TwoWay,UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static myenum:WaveForm.Sine}}" />
+                        <RadioButton Name="rdoSawt" GroupName="waveForm" Content="Sawtooth" Margin="5" IsChecked="{Binding Path=mWave, Mode =TwoWay,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static myenum:WaveForm.Sawtooth}}"/>
+                        <RadioButton Name="rdoRand" GroupName="waveForm" Content="Random" Margin="5" IsChecked="{Binding Path=mWave, Mode =TwoWay,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static myenum:WaveForm.Random}}"/>
+                        <!--<Button x:Name="btnReset" Content="Reset" Click="btnReset_Click" Margin="5" BorderThickness="0">
+                            <Button.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="2"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>-->
+                    </StackPanel>
 
-            <Button x:Name="btnReset" 
-                Content="Reset" Click="btnReset_Click" Margin="5" BorderThickness="0" Height="20">
-                <Button.Resources>
-                    <Style TargetType="{x:Type Border}">
-                        <Setter Property="CornerRadius" Value="2"/>
-                    </Style>
-                </Button.Resources>
-            </Button>
+                    <StackPanel Orientation="Vertical" Grid.Column ="5" Grid.Row="3" VerticalAlignment="Center" Margin="0,9,0,10" >
 
-            <Button x:Name="btnSaveToJson" 
-                Content="Simulate to Json" Click="btnSimulateToJson_Click" Margin="5" FontWeight="DemiBold" Height="22">
-                <Button.Resources>
-                    <Style TargetType="{x:Type Border}">
-                        <Setter Property="CornerRadius" Value="2"/>
-                    </Style>
-                </Button.Resources>
-            </Button>
-        </StackPanel>
-        <DockPanel VerticalAlignment="Center" Grid.Column="5" Grid.Row="4">
-            <Button x:Name="btnSimulate" Click="btnSimulate_Click" Content="Simulate to DB" Margin="5" FontWeight="Bold" Height="22">
-                <Button.Resources>
-                    <Style TargetType="{x:Type Border}">
-                        <Setter Property="CornerRadius" Value="2"/>
-                    </Style>
-                </Button.Resources>
-            </Button>
-        </DockPanel>
+                        <Button x:Name="btnReset" Content="Reset" Click="btnReset_Click" Margin="5" BorderThickness="0" Height="20">
+                            <Button.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="2"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
 
-        <StackPanel Grid.Column="2" Grid.Row="3" Orientation="Vertical">
-            <Label Content="Frequency (Hz)" FontWeight="Bold"/>
-            <StackPanel Orientation="Horizontal">
-                <TextBox x:Name="txtFreq" Width ="120" Margin="0,0" Height="19"
+                        <Button x:Name="btnSaveToJson" Content="Simulate to Json" Click="btnSimulateToJson_Click" Margin="5" FontWeight="DemiBold" Height="22" BorderThickness="0.5">
+                            <Button.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="2"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+                    </StackPanel>
+                    <DockPanel VerticalAlignment="Center" Grid.Column="5" Grid.Row="4" Margin="0,24,0,25">
+                        <Button x:Name="btnSimulate" Click="btnSimulate_Click" Content="Simulate to DB" Margin="5" FontWeight="Bold" Height="22">
+                            <Button.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="2"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+                    </DockPanel>
+
+                    <StackPanel Grid.Column="1" Grid.Row="3" Orientation="Vertical">
+                        <Label Content="Frequency (Hz)" FontWeight="Bold"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBox x:Name="txtFreq" Width ="120" Margin="0,0" Height="19"
                      PreviewTextInput="NumberValidation"
                      Text="{Binding Path=mFreq, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <StackPanel Orientation="Vertical">
-                    <Button x:Name="btnFreqPlus" Click="btnFreqPlus_Click" Content="&#9650;" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
-                    <Button x:Name="btnFreqMinus" Click="btnFreqMinus_Click" Content="&#9660;" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
-                </StackPanel>
-            </StackPanel>
-        </StackPanel>
+                            <StackPanel Orientation="Vertical">
+                                <Button x:Name="btnFreqPlus" Click="btnFreqPlus_Click" Content="&#9650;" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
+                                <Button x:Name="btnFreqMinus" Click="btnFreqMinus_Click" Content="&#9660;" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
 
-        <StackPanel Grid.Column="3" Grid.ColumnSpan="1" Grid.Row="3" Margin="10,0,0,0">
-            <Label Content="Offset" VerticalAlignment="Bottom" Margin="0,10,0,0"/>
-            <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                <Slider x:Name="sldFreq" Minimum="1" Maximum="100" TickFrequency="5"
+                    <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="3" Margin="10,0,0,0">
+                        <Label Content="Offset" VerticalAlignment="Bottom" Margin="0,10,0,0"/>
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                            <Slider x:Name="sldFreq" Minimum="1" Maximum="100" TickFrequency="5"
                     TickPlacement="BottomRight" ValueChanged="sldFreq_ValueChanged" Value="1"
                     MinWidth="300" AutoToolTipPlacement="TopLeft" Foreground="Blue"/>
-                <DockPanel>
-                    <Label DockPanel.Dock="Left" Content="1 Hz" FontSize="10" HorizontalAlignment="Left"/>
-                    <Label DockPanel.Dock="Right" Content="100 Hz" FontSize="10" HorizontalAlignment="Right"/>
-                </DockPanel>
-            </StackPanel>
-        </StackPanel>
+                            <DockPanel>
+                                <Label DockPanel.Dock="Left" Content="1 Hz" FontSize="10" HorizontalAlignment="Left"/>
+                                <Label DockPanel.Dock="Right" Content="100 Hz" FontSize="10" HorizontalAlignment="Right"/>
+                            </DockPanel>
+                        </StackPanel>
+                    </StackPanel>
 
-        <StackPanel Grid.Column="2" Grid.Row="4" Orientation="Vertical">
-            <Label Content="Amplitude (V)" FontWeight="Bold" VerticalAlignment="Center"/>
-            <StackPanel Orientation="Horizontal">
-                <TextBox x:Name="txtAmp" Width ="120" Margin="0,0" Height="19" PreviewTextInput="DoubleValidation" >
-                    <TextBox.Text>
-                        <Binding Path="mAmpl" UpdateSourceTrigger="PropertyChanged">
-                            <!--<Binding.ValidationRules>
-                            <local:IsDoubleValidationRule ValidatesOnTargetUpdated="True" />
-                        </Binding.ValidationRules>-->
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-                <StackPanel Orientation="Vertical">
-                    <Button x:Name="btnAmplPlus" Click="btnAmplPlus_Click" Content="&#9650;" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
-                    <Button x:Name="btnAmplMinus" Click="btnAmplMinus_Click" Content="&#9660;" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
-                </StackPanel>
-            </StackPanel>
-        </StackPanel>
+                    <StackPanel Grid.Column="1" Grid.Row="4" Orientation="Vertical">
+                        <Label Content="Amplitude (V)" FontWeight="Bold" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBox x:Name="txtAmp" Width ="120" Margin="0,0" Height="19" PreviewTextInput="DoubleValidation" >
+                                <TextBox.Text>
+                                    <Binding Path="mAmpl" UpdateSourceTrigger="PropertyChanged">
+                                        <!--<Binding.ValidationRules>
+                                            <local:IsDoubleValidationRule ValidatesOnTargetUpdated="True" />
+                                        </Binding.ValidationRules>-->
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <StackPanel Orientation="Vertical">
+                                <Button x:Name="btnAmplPlus" Click="btnAmplPlus_Click" Content="&#9650;" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
+                                <Button x:Name="btnAmplMinus" Click="btnAmplMinus_Click" Content="&#9660;" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
 
-        <StackPanel Grid.Column="3" Grid.ColumnSpan="1" Grid.Row="4" Margin="10,0,0,0">
-            <Label Content="Offset" VerticalAlignment="Bottom" Margin="0,10,0,0"/>
-            <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                <Slider x:Name="sldAmp" Minimum="1" Maximum="50" TickFrequency="5"
+                    <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="4" Margin="10,0,0,0">
+                        <Label Content="Offset" VerticalAlignment="Bottom" Margin="0,10,0,0"/>
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                            <Slider x:Name="sldAmp" Minimum="1" Maximum="50" TickFrequency="5"
                     TickPlacement="BottomRight" ValueChanged="sldAmp_ValueChanged" Value="1"
                     MinWidth="300" AutoToolTipPlacement="TopLeft" Foreground="Blue"/>
-                <DockPanel >
-                    <Label DockPanel.Dock="Left" Content="1 mV" FontSize="10" HorizontalAlignment="Left" />
-                    <Label DockPanel.Dock="Right" Content="50 mV" FontSize="10" HorizontalAlignment="Right" />
-                </DockPanel>
-            </StackPanel>
-        </StackPanel>
+                            <DockPanel >
+                                <Label DockPanel.Dock="Left" Content="1 mV" FontSize="10" HorizontalAlignment="Left" />
+                                <Label DockPanel.Dock="Right" Content="50 mV" FontSize="10" HorizontalAlignment="Right" />
+                            </DockPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Multiple Shot" Height="20" Width="150">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="15"/>
+                        <ColumnDefinition Width="160"/>
+                        <ColumnDefinition Width="20"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="40"/>
+                    </Grid.RowDefinitions>
+
+                    <Label Content="Test" Grid.Column="1" Grid.Row="1"/>
+                    <StackPanel Orientation="Vertical" Grid.Column ="4" Grid.Row="2" VerticalAlignment="Bottom" Height="99" >
+
+                        <Button x:Name="btnMSimuToJson" Content="M.Simulate to Json" Click="btnMSimulateToJson_Click" Margin="5,0,5,45" BorderThickness="0.5" Height="22" FontWeight="Bold">
+                            <Button.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="2"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+
+                        <Button x:Name="btMSimuToDB" Content="M.Simulate to DB" Click="btnSimulate_Click" Margin="5,0,5,10" FontWeight="Bold" Height="22">
+                            <Button.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="2"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+                    </StackPanel>
+
+                    <!--<DataGrid Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2"
+                              ItemsSource="{Binding Path=mMultipleShotList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        
+                    </DataGrid>-->
+
+                    <DataGrid x:Name ="MultiShot" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2" AlternatingRowBackground="LightGreen"
+                              CanUserAddRows="True" CanUserDeleteRows="True" AutoGenerateColumns="False" RowHeight="20" 
+                              EnableRowVirtualization="True"
+                              ItemsSource="{Binding Source={StaticResource myCollectionView}}">
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="FontWeight" Value="DemiBold"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Delete Item"  Click="MenuItemDel_Click">
+                                    <MenuItem.Icon>
+                                        <Image Source="D:/icons8-delete-file-48.png" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Add Item"  Click="MenuItemAdd_Click" >
+                                    <MenuItem.Icon>
+                                        <Image Source="D:/icons8-add-file-48.png" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Remark" Binding="{Binding Path=mRemark}"/>
+                            <DataGridTemplateColumn Header="WaveForm" Width="90">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Path=mWave}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                                <DataGridTemplateColumn.CellEditingTemplate>
+                                    <DataTemplate>
+                                        <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" 
+                                                  SelectedItem="{Binding Source={StaticResource myCollectionView}, Path=mWave}" >
+                                        </ComboBox>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellEditingTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Frequency(Hz)" Binding="{Binding Path=mFreq}"/>
+                            <DataGridTextColumn Header="Ampl(V)"  Binding="{Binding Path=mAmpl}"/>
+                            <DataGridTextColumn Header="Sample Rate"  Binding="{Binding Path=mRate}"/>
+                            <DataGridTextColumn Header="Duration(s)" Binding="{Binding Path=mDuration}"/>
+                            <DataGridTextColumn Header="Target Column on DB" Binding="{Binding Path=mTargetOnDB}"/>
+                            <DataGridCheckBoxColumn Header="Send?" Binding="{Binding Path=mSendToDB}"/>
+
+                        </DataGrid.Columns>
+                        
+
+                    </DataGrid>
+
+                </Grid>
+            </TabItem>
+
+
+            <TabItem Header="Setting" Height="20" Width="150">
+                <Grid>
+
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>

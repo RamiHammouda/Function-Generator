@@ -3,21 +3,20 @@ using System;
 
 namespace WpfApp2.Model
 {
-    class SimulationProfile
+    public class SimulationProfile
     {
-
         [JsonProperty("SignalProfile")]
         private SignalProfile mSgProfile;
         [JsonProperty("Last")]
         private double mDuration;
 
-        public SimulationProfile(SignalProfile aProfile, double duration)
+        public SimulationProfile(SignalProfile aProfile, double duration=2)
         {
             mSgProfile = aProfile;
             mDuration = duration;
         }
 
-        public SimulationProfile(WaveForm wave = 0, long freq = 130, double ampl = 5, long rate = 9600, double duration = 1)
+        public SimulationProfile(WaveForm wave = 0, long freq = 130, double ampl = 5, long rate = 960, double duration = 2)
         {
             mSgProfile = new SignalProfile();
             mSgProfile.setWave(wave);

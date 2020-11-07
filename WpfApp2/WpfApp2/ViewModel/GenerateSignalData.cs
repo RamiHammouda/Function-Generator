@@ -1,16 +1,24 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Security.RightsManagement;
 using System.Text;
 using WpfApp2.Model;
 
 namespace WpfApp2.ViewModel
 {
-    class GenerateSignalData
+    public class GenerateSignalData
     {
-        private SignalProfile mProfile;
+        [JsonIgnore]
+        public SignalProfile mProfile;
         [JsonProperty("SimuProfile")]
         private SimulationProfile mSmProfile;
+
+        [JsonProperty("TargetOnDB")]
+        public string mTargetOnDB { get; set; }
+
+        [JsonProperty("Remark")]
+        public string mRemark { get; set; }
 
         [JsonProperty("No")]
         private long[] mNo;
@@ -20,17 +28,43 @@ namespace WpfApp2.ViewModel
         private double[] mAmplArray;
 
         //For quick access and control;
-        private WaveForm mWave;
-        private long mFreq;
-        private double mAmpl;
-        private long mRate;
-        private double mDuration;
+        
+        [JsonIgnore]
+        public WaveForm mWave { get; set; }
+        [JsonIgnore]
+        public long mFreq { get; set; }
+        [JsonIgnore]
+        public  double mAmpl { get; set; }
+        [JsonIgnore]
+        public long mRate { get; set; }
+        [JsonIgnore]
+        public double mDuration { get; set; }
         private long aTimeStep;
         private long mENumber;
         private delegate double GetWaveValue(long inputTime);
         private GetWaveValue getWaveValue;
+        [JsonIgnore]
+        public bool mSendToDB { get; set; }
+       
 
-        public GenerateSignalData(SignalProfile aProfile, double duration)
+        public GenerateSignalData()
+        {
+            mProfile = new SignalProfile();
+            mSmProfile = new SimulationProfile(mProfile);
+            mWave = mProfile.getWave();
+            mFreq = mProfile.getFreq();
+            mAmpl = mProfile.getAmpl();
+            mRate = mProfile.getRate();
+            mDuration = mSmProfile.getDuration();
+            bool autoTriggerData = false;
+            mSendToDB = false;
+            mTargetOnDB = "Inputs_Wasserstrahl2_Status";
+            mRemark = "Test2";
+            InitiateData();
+            if (autoTriggerData)
+            { GenerateData(); }
+        }
+        public GenerateSignalData(SignalProfile aProfile, double duration=1, bool autoTriggerData=false, bool sendToDb = false, string targetOnDb = "Inputs_Wasserstrahl2_Status", string name = "Test")
         {
             mProfile = aProfile;
             mSmProfile = new SimulationProfile(aProfile, duration);
@@ -39,10 +73,15 @@ namespace WpfApp2.ViewModel
             mAmpl = mProfile.getAmpl();
             mRate = mProfile.getRate();
             mDuration = duration;
+            mSendToDB = sendToDb;
+            mTargetOnDB = targetOnDb;
+            mRemark = name;
             InitiateData();
-            GenerateData();
+            if (autoTriggerData)
+            {GenerateData();}
+
         }
-        public GenerateSignalData(SimulationProfile simuProfile)
+        public GenerateSignalData(SimulationProfile simuProfile, bool autoTriggerData = false, bool sendToDb = false, string targetOnDb = "Inputs_Wasserstrahl2_Status", string name = "Test")
         {
             mSmProfile = simuProfile;
             mProfile = mSmProfile.getSignalProfile();
@@ -51,10 +90,14 @@ namespace WpfApp2.ViewModel
             mAmpl = mProfile.getAmpl();
             mRate = mProfile.getRate();
             mDuration = mSmProfile.getDuration();
+            mSendToDB = sendToDb;
+            mTargetOnDB = targetOnDb;
+            mRemark = name;
             InitiateData();
-            GenerateData();
+            if (autoTriggerData)
+            { GenerateData(); }
         }
-        public GenerateSignalData(WaveForm wave = 0, long freq = 100, double ampl = 5, long rate = 50, double duration = 1)
+        public GenerateSignalData(WaveForm wave = 0, long freq = 100, double ampl = 5, long rate = 50, double duration = 1, bool autoTriggerData = false, bool sendToDb = false, string targetOnDb = "Inputs_Wasserstrahl2_Status", string name = "Test")
         {
             mProfile = new SignalProfile(wave, freq, ampl, rate);
             mSmProfile = new SimulationProfile(mProfile, duration);
@@ -63,8 +106,12 @@ namespace WpfApp2.ViewModel
             mAmpl = ampl;
             mRate = rate;
             mDuration = duration;
+            mSendToDB = sendToDb;
+            mTargetOnDB = targetOnDb;
+            mRemark = name;
             InitiateData();
-            GenerateData();
+            if (autoTriggerData)
+            { GenerateData(); }
         }
 
         public long[] getTimeStamp()
@@ -109,11 +156,24 @@ namespace WpfApp2.ViewModel
         {
             return mAmpl;
         }
+
+        public void setTargetOnDB(string target)
+        {
+            mTargetOnDB = target;
+        }
+
+        public bool checkSendToDB()
+        {
+            return mSendToDB;
+        }
+
         //Hardcore to Desktop first
         public void ExportToJson()
         {
             string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            string filePath = desktopPath + @"\SignalGenerator.json";
+            string fileName = DateTime.Now.Ticks.ToString();
+            //string filePath = desktopPath + @"\GenerateData.json";
+            string filePath = desktopPath + "\\"+ fileName +".json";
 
             var serializer = new JsonSerializer { Formatting = Formatting.Indented, TypeNameHandling = TypeNameHandling.Auto };
             //var serializer = new JsonSerializer { TypeNameHandling = TypeNameHandling.Auto };
@@ -142,6 +202,7 @@ namespace WpfApp2.ViewModel
             mTimeStampArray = new long[mENumber];
             mAmplArray = new double[mENumber];
             //GetWaveValue getWaveValue;
+
             if (mWave == WaveForm.Sine)
                 getWaveValue = GetSineValue;
             else if (mWave == WaveForm.Sawtooth)
