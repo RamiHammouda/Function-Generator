@@ -9,7 +9,7 @@
 
 # Motivation
 
-In the process of developing a main software for project water jet cutting factory (ES Leistand 4.0) database plays an important role. It stores the communicating signal of all sensors in the factory, so that the main control system can analyze the sensor's signal, knows state of devices… and issues proper actions. Therefore, we need to build a software to simulate all sensors' signal. And **Function Generator** comes up with the answer :). This software helps to generate data for database, simulate the operation state of sensor from operating parts of factory
+In the process of developing a main software for project water jet cutting factory (ES Leistand 4.0) database plays an important role. It stores the communicating signal of all sensors in the factory, so that the main control system can analyze the sensor's signal, knows state of devices… and issues proper actions. Therefore, we need to build a software to simulate all sensors' signal. And **Function Generator** comes up with the answer :). This software helps to generate data for database, simulate the operation states of sensor from operating parts of factory.
 
 # Screenshot
 
@@ -45,6 +45,6 @@ Built on **Microsoft .Net Framework** 4.7.2
 - [x] Delete a signal profile directly from UI
 
 - [x] Export signal data to JSON file
-- [x] Provide a reset button to set all value to defaul
+- [x] Provide a reset button to set all value to default
 # License
-**Mit** ©***Team 8:*** **Viet Anh Hoang, Khac Hoa Le, Patrick Schmidt, Rami Hammouda.**
+**MIT** ©***Team 8:*** **Viet Anh Hoang, Khac Hoa Le, Patrick Schmidt, Rami Hammouda.**
