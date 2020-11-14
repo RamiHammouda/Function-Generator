@@ -1,0 +1,22 @@
+image : mcr.microsoft.com/dotnet/framework/sdk:4.8
+
+stages:
+  - build
+
+before_script:
+    - cd WpfApp2
+
+build_App:
+  stage: build
+  tags:
+   - Docker 
+   - FB2
+   - Windows 
+   - Runner 
+  script:
+   - nuget.exe restore "WpfApp2.sln"
+   - MSBuild.exe "WpfApp2.sln" -t:Build -p:Configuration=Release /p:Platform="Any CPU" /clp:ErrorsOnly
+  artifacts:
+    expire_in: 10 days
+    paths:
+      - .\WpfApp2\WpfApp2\bin\Release
