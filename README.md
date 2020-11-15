@@ -1,10 +1,12 @@
 # Function Generator
+[![pipeline status](https://gitlab.rz.htw-berlin.de/softwareentwicklungsprojekt/wise2020-21/team8/badges/master/pipeline.svg)](https://gitlab.rz.htw-berlin.de/softwareentwicklungsprojekt/wise2020-21/team8/-/commits/master)
+
 <p align="center">
-  <img src="https://i.ibb.co/1f3XBB5/Whats-App-Image-2020-11-07-at-11-40-01.jpg" width="1000">
+  <img align="center" src="https://i.ibb.co/cXb3BVJ/Tab3.png" width="400">
 </p>
 
 
-**Function Generator** is Windows desktop application, which aims to help the lovely engineers in **GFaI GmbH** to simulate the ***sensor signal*** for main software using in water jet cutting factory. 
+**Function Generator** is Windows desktop application, which aims to help the lovely engineers in **GFaI GmbH** to ***simulate*** the ***sensor signal*** for main software using in water jet cutting factory. 
 
 
 # Motivation
@@ -21,7 +23,7 @@ In the process of developing a main software for project water jet cutting facto
 
 # Technologystack:
 
-Built on **Microsoft .Net Framework** 4.7.2
+Built on **Microsoft .Net Framework** 4.7.2 , **Language C#**
 
 - **WPF** for UI
 
