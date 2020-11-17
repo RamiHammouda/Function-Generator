@@ -94,7 +94,11 @@
                         <Label FontWeight="Bold" Content="Signal-Wave Form" />
                         <RadioButton Name="rdoSine" GroupName="waveForm" Content="Sine" Margin="5" IsChecked="{Binding Path=mWave, Mode =TwoWay,UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static myenum:WaveForm.Sine}}" />
                         <RadioButton Name="rdoSawt" GroupName="waveForm" Content="Sawtooth" Margin="5" IsChecked="{Binding Path=mWave, Mode =TwoWay,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static myenum:WaveForm.Sawtooth}}"/>
+                        <RadioButton Name="rdoTria" GroupName="waveForm" Content="Triangle" Margin="5" IsChecked="{Binding Path=mWave, Mode =TwoWay,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static myenum:WaveForm.Triangle}}"/>
+                        <RadioButton Name="rdoSquare" GroupName="waveForm" Content="Square" Margin="5" IsChecked="{Binding Path=mWave, Mode =TwoWay,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static myenum:WaveForm.Square}}"/>
                         <RadioButton Name="rdoRand" GroupName="waveForm" Content="Random" Margin="5" IsChecked="{Binding Path=mWave, Mode =TwoWay,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static myenum:WaveForm.Random}}"/>
+                        <RadioButton Name="rdoRandDigi" GroupName="waveForm" Content="Random Digital" Margin="5" IsChecked="{Binding Path=mWave, Mode =TwoWay,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static myenum:WaveForm.RandomDigital}}"/>
+                        
                         <!--<Button x:Name="btnReset" Content="Reset" Click="btnReset_Click" Margin="5" BorderThickness="0">
                             <Button.Resources>
                                 <Style TargetType="{x:Type Border}">

@@ -8,7 +8,10 @@ namespace WpfApp2.Model
     {
         Sine,
         Sawtooth,
-        Random
+        Square,
+        Triangle,
+        Random,
+        RandomDigital,
     }
     public class SignalProfile
     {

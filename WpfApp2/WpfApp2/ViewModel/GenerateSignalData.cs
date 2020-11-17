@@ -64,7 +64,7 @@ namespace WpfApp2.ViewModel
             if (autoTriggerData)
             { GenerateData(); }
         }
-        public GenerateSignalData(SignalProfile aProfile, double duration=1, bool autoTriggerData=false, bool sendToDb = false, string targetOnDb = "Inputs_Wasserstrahl2_Status", string name = "Test")
+        public GenerateSignalData(SignalProfile aProfile, double duration=1, bool autoTriggerData=false, bool sendToDb = false, string targetOnDb = "Inputs_Wasserstrahl2_Status", string name = "Default")
         {
             mProfile = aProfile;
             mSmProfile = new SimulationProfile(aProfile, duration);
@@ -81,7 +81,7 @@ namespace WpfApp2.ViewModel
             {GenerateData();}
 
         }
-        public GenerateSignalData(SimulationProfile simuProfile, bool autoTriggerData = false, bool sendToDb = false, string targetOnDb = "Inputs_Wasserstrahl2_Status", string name = "Test")
+        public GenerateSignalData(SimulationProfile simuProfile, bool autoTriggerData = false, bool sendToDb = false, string targetOnDb = "Inputs_Wasserstrahl1_Status", string name = "Default")
         {
             mSmProfile = simuProfile;
             mProfile = mSmProfile.getSignalProfile();
@@ -97,7 +97,7 @@ namespace WpfApp2.ViewModel
             if (autoTriggerData)
             { GenerateData(); }
         }
-        public GenerateSignalData(WaveForm wave = 0, long freq = 100, double ampl = 5, long rate = 50, double duration = 1, bool autoTriggerData = false, bool sendToDb = false, string targetOnDb = "Inputs_Wasserstrahl2_Status", string name = "Test")
+        public GenerateSignalData(WaveForm wave = 0, long freq = 100, double ampl = 5, long rate = 50, double duration = 1, bool autoTriggerData = false, bool sendToDb = false, string targetOnDb = "Inputs_Wasserstrahl2_Status", string name = "Default")
         {
             mProfile = new SignalProfile(wave, freq, ampl, rate);
             mSmProfile = new SimulationProfile(mProfile, duration);
@@ -203,25 +203,51 @@ namespace WpfApp2.ViewModel
             mAmplArray = new double[mENumber];
             //GetWaveValue getWaveValue;
 
+            rand = new Random();
+
             if (mWave == WaveForm.Sine)
                 getWaveValue = GetSineValue;
             else if (mWave == WaveForm.Sawtooth)
                 getWaveValue = GetSawtoothValue;
             else getWaveValue = GetRandomValue;
+            switch (mWave)
+            {
+                case WaveForm.Sine:getWaveValue = GetSineValue;break;
+                case WaveForm.Sawtooth:getWaveValue = GetSawtoothValue; break;
+                case WaveForm.Triangle: getWaveValue = GetTriangleValue; break;
+                case WaveForm.Square: getWaveValue = GetSquareValue; break;
+                case WaveForm.Random: getWaveValue = GetRandomValue; break;
+                case WaveForm.RandomDigital: getWaveValue = GetRandomDigitalValue; break;
+
+            }
         }
-        
-        public double GetSineValue(long atTimeInTicks)
+
+        private double GetSineValue(long atTimeInTicks)
         {
             return Math.Round(mAmpl * Math.Sin(2 * Math.PI * mFreq * atTimeInTicks / 1e7), 10);
         }
-        public double GetRandomValue(long atTimeInTicks)
+
+        private double GetSawtoothValue(long atTimeInTicks)
         {
-            return 3.5;
+            return (2 * mAmpl / Math.PI) * Math.Atan(Math.Tan((atTimeInTicks / 1e7) * Math.PI * mFreq));
+        }
+        private double GetSquareValue(long atTimeInTicks)
+        {
+            return mAmpl * Math.Sign(Math.Sin(2 * Math.PI * atTimeInTicks / 1e7 * mFreq));
+        }
+        private double GetTriangleValue(long atTimeInTicks)
+        {
+            return 2 * mAmpl / Math.PI * Math.Asin(Math.Sin(2 * Math.PI * mFreq * atTimeInTicks / 1e7));
         }
 
-        public double GetSawtoothValue(long atTimeInTicks)
+        private Random rand;
+        private double GetRandomValue(long atTimeInTicks)
         {
-            return 2.5;
+            return (rand.NextDouble() * mAmpl * 2 - mAmpl);
+        }
+        private double GetRandomDigitalValue(long atTimeInTicks)
+        {
+            return (double)rand.Next(0, 2);
         }
 
         public void PrintData()

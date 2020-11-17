@@ -184,7 +184,7 @@ namespace WpfApp2
 
         private void btnSimulate_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Just kidding", "Quick Infor", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Just Kidding", "Quick Infor", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void btnSimulateToJson_Click(object sender, RoutedEventArgs e)
