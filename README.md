@@ -38,10 +38,13 @@ Built on **Microsoft .Net Framework** 4.7.2 , **Language C#**
 - [x] Realtime signal data visualization
 
 - [x] Simulate ***Sine*** signal
-- [ ] Simulate ***Sawtooth*** signal
-- [ ] Simulate ***Square*** signal
-- [ ] Simulate ***Analog Random*** signal
-- [ ] Simulate ***Digital Random*** signal
+- [x] Simulate ***Sawtooth*** signal
+- [x] Simulate ***Square*** signal
+- [x] Simulate ***Triangle*** signal
+- [x] Simulate ***Analog Random*** signal
+- [x] Simulate ***Digital Random*** signal
+
+- [ ] Input Data Validation
 
 - [x] Add a new signal profile directly from UI
 - [x] Delete a signal profile directly from UI
