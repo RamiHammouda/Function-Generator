@@ -21,9 +21,9 @@ namespace WpfApp2
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-
+        
         public MainWindow()
-        {
+        {           
             InitializeComponent();
 
 
