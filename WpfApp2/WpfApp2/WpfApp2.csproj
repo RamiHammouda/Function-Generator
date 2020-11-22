@@ -74,9 +74,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="NUnitTesting\AmplitudeTesting.cs" />
     <Compile Include="Model\SignalProfile.cs" />
     <Compile Include="Model\SimulationProfile.cs" />
-    <Compile Include="Testing_SingleShot.cs" />
+    <Compile Include="NUnitTesting\FrequencyTesting.cs" />
+    <Compile Include="NUnitTesting\JsonTesting.cs" />
     <Compile Include="ViewModel\GenerateSignalData.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

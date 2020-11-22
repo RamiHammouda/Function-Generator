@@ -65,7 +65,7 @@ namespace WpfApp2
         public long mRate, mDuration;
         public double mOffsetAmpl;
         public long mOffsetFreq { get; set; }
-
+        public bool exportingIsFinished;
         //public ListBindableAttribute targetFromDB = new ListBindableAttribute();
 
         private WaveForm _wave;
@@ -187,7 +187,7 @@ namespace WpfApp2
             MessageBox.Show("Just Kidding", "Quick Infor", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        private void btnSimulateToJson_Click(object sender, RoutedEventArgs e)
+        public void btnSimulateToJson_Click(object sender, RoutedEventArgs e)
         {
             SignalProfile sgProfile = new SignalProfile(mWave, mFreq, mAmpl, mRate);
             SimulationProfile smProfile = new SimulationProfile(sgProfile, mDuration);
@@ -195,6 +195,7 @@ namespace WpfApp2
 
             myProf.ExportToJson();
             MessageBox.Show("Finished Exporting", "Quick Infor", MessageBoxButton.OK, MessageBoxImage.Information);
+            exportingIsFinished = true;
         }
 
         private void btnMSimulateToJson_Click(object sender, RoutedEventArgs e)
@@ -241,17 +242,15 @@ namespace WpfApp2
         }
 
         //Not quite finish
-        private void NumberValidation(object sender, TextCompositionEventArgs e)
+        public void NumberValidation(object sender, TextCompositionEventArgs e)
         {
-            //Regex regex = new Regex("[^a-zA-Z]+");
-
+            //Regex regex = new Regex("[^a-zA-Z]+");           
             Regex regex = new Regex("[0-9]+");
             if (!regex.IsMatch(e.Text))
             {
                 mValidInput = false;
                 MessageBox.Show("Number Accept Only !");
-            }
-
+            } 
         }
         //Not quite
         private void DoubleValidation(object sender, TextCompositionEventArgs e)
