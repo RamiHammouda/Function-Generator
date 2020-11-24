@@ -79,6 +79,8 @@
     <Compile Include="Model\SimulationProfile.cs" />
     <Compile Include="NUnitTesting\FrequencyTesting.cs" />
     <Compile Include="NUnitTesting\JsonTesting.cs" />
+    <Compile Include="NUnitTesting\MultipeShot.cs" />
+    <Compile Include="NUnitTesting\ResetButton.cs" />
     <Compile Include="ViewModel\GenerateSignalData.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

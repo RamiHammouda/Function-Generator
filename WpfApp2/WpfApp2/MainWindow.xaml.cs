@@ -67,6 +67,12 @@ namespace WpfApp2
         public long mOffsetFreq { get; set; }
         public bool exportingIsFinished;
         //public ListBindableAttribute targetFromDB = new ListBindableAttribute();
+        public bool offsetFreqValueIncreased = false;
+        public bool offsetFreqValueDecreased = false;
+        public bool offsetAmpValueIncreased = false;
+        public bool offsetAmpValueDecreased = false;
+        public bool ItemAdded = false;
+        public bool ItemDeleted = false;
 
         private WaveForm _wave;
         public WaveForm mWave
@@ -151,27 +157,31 @@ namespace WpfApp2
             mOffsetAmpl = Math.Round((sender as Slider).Value / 1000, 3);
         }
 
-        private void btnFreqPlus_Click(object sender, RoutedEventArgs e)
+        public void btnFreqPlus_Click(object sender, RoutedEventArgs e)
         {
             mFreq += mOffsetFreq;
+            offsetFreqValueIncreased = true;
         }
 
-        private void btnFreqMinus_Click(object sender, RoutedEventArgs e)
+        public void btnFreqMinus_Click(object sender, RoutedEventArgs e)
         {
             mFreq -= mOffsetFreq;
+            offsetFreqValueDecreased = true;
         }
 
-        private void btnAmplPlus_Click(object sender, RoutedEventArgs e)
+        public void btnAmplPlus_Click(object sender, RoutedEventArgs e)
         {
             mAmpl += Math.Round(mOffsetAmpl, 3);
+            offsetAmpValueIncreased = true;
         }
-        private void btnAmplMinus_Click(object sender, RoutedEventArgs e)
+        public void btnAmplMinus_Click(object sender, RoutedEventArgs e)
         {
             mAmpl -= Math.Round(mOffsetAmpl, 3);
+            offsetAmpValueDecreased = true;
         }
 
         #endregion
-        private void btnReset_Click(object sender, RoutedEventArgs e)
+        public void btnReset_Click(object sender, RoutedEventArgs e)
         {
             initiateDefaultValue();
         }
@@ -222,23 +232,26 @@ namespace WpfApp2
         //myProf.ExportToJson();
         MessageBox.Show("Finished Exporting", "Quick Infor", MessageBoxButton.OK, MessageBoxImage.Information);
         }
-        private void MenuItemDel_Click(object sender, RoutedEventArgs e)
+        public void MenuItemDel_Click(object sender, RoutedEventArgs e)
         {
+            
             if (MultiShot.SelectedItem == null || mMultipleShotList.Count == 0) return;  //safety first
-
             try
             {
                 mMultipleShotList.Remove((GenerateSignalData)MultiShot.SelectedItem);
-            }
+                ItemDeleted = true;
+            }            
             catch (Exception ex)
             {
                 MessageBox.Show("You must be so funny :)", "Wow", MessageBoxButton.OK, MessageBoxImage.Information);
-                Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message); 
             }
+            
         }
-        private void MenuItemAdd_Click(object sender, RoutedEventArgs e)
+        public void MenuItemAdd_Click(object sender, RoutedEventArgs e)
         {
             mMultipleShotList.Add(new GenerateSignalData());
+            ItemAdded = true;
         }
 
         //Not quite finish
