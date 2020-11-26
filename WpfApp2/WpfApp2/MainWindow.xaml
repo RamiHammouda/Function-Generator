@@ -254,12 +254,12 @@
                             <ContextMenu>
                                 <MenuItem Header="Delete Item"  Click="MenuItemDel_Click">
                                     <MenuItem.Icon>
-                                        <Image Source="D:/icons8-delete-file-48.png" />
+                                        <Image Source="icons8-delete-file-48.png" />
                                     </MenuItem.Icon>
                                 </MenuItem>
                                 <MenuItem Header="Add Item"  Click="MenuItemAdd_Click" >
                                     <MenuItem.Icon>
-                                        <Image Source="D:/icons8-add-file-48.png" />
+                                        <Image Source="icons8-add-file-48.png" />
                                     </MenuItem.Icon>
                                 </MenuItem>
                             </ContextMenu>

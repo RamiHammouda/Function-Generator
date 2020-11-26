@@ -26,45 +26,12 @@ namespace WpfApp2
         {           
             InitializeComponent();
 
-
-            this.DataContext = this;
-
             initiateDefaultValue();
-
         }
 
-        private void VisualizateData(SimulationProfile smProfile, int numberOfWave)
-        {
-            double displayduration = (double)numberOfWave / smProfile.getFreq() + (double)1 / smProfile.getRate();
-            GenerateSignalData displayData = new GenerateSignalData(smProfile.getSignalProfile(), displayduration, true);
-            //displayData.PrintData();
-            double linewidth = 1, marksize = 5;
-            string text = $"Wave: {displayData.getWave()}\nFreq: {displayData.getFreq()} Hz\nAmpl: {displayData.getAmpl()} V\nRate: {displayData.getRate()}\nDura: {smProfile.getDuration()} s";
-            double[] x = GenerateSignalData.ConvertToDouble(displayData.getNo());
-            double[] y = displayData.getAmplData();
-            if ((double)displayData.getRate() / displayData.getFreq() > 50)
-            {
-                linewidth = 2;
-                marksize = 0;
-            }
+        
+        #region Properties For Testing Only
 
-            myWpfPlot.plt.Clear();
-            myWpfPlot.plt.PlotScatter(x, y, lineWidth: linewidth, markerSize: marksize, label: text);
-            myWpfPlot.plt.Style(ScottPlot.Style.Light2);
-            myWpfPlot.plt.Title("Signal Data", fontName: "Verdana", color: Color.BlueViolet, bold: true);
-            myWpfPlot.plt.YLabel("Amplitude", fontSize: 16, color: Color.Green);
-            myWpfPlot.plt.XLabel("Time(Ticks)", color: Color.Green);
-            myWpfPlot.plt.Style(dataBg: Color.LightYellow);
-            myWpfPlot.plt.PlotAnnotation(text, -10, 10, fontSize: 9);
-            myWpfPlot.Render();
-        }
-
-        #region Propertise
-
-        public bool mValidInput { get; set; }
-        public long mRate, mDuration;
-        public double mOffsetAmpl;
-        public long mOffsetFreq { get; set; }
         public bool exportingIsFinished;
         //public ListBindableAttribute targetFromDB = new ListBindableAttribute();
         public bool offsetFreqValueIncreased = false;
@@ -73,6 +40,13 @@ namespace WpfApp2
         public bool offsetAmpValueDecreased = false;
         public bool ItemAdded = false;
         public bool ItemDeleted = false;
+        #endregion
+
+        #region Preoperties
+        public bool mValidInput { get; set; }
+        public long mRate, mDuration;
+        public double mOffsetAmpl;
+        public long mOffsetFreq { get; set; }
 
         private WaveForm _wave;
         public WaveForm mWave
@@ -105,7 +79,6 @@ namespace WpfApp2
                 { _ampl = value; OnPropertyChanged("mAmpl"); }
             }
         }
-        #endregion
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -125,26 +98,7 @@ namespace WpfApp2
             }
         }
 
-        public void initiateDefaultValue()
-        {
-            mFreq = 25;
-            mAmpl = 5;
-            mRate = 1000;
-            mDuration = 10;
-            mWave = WaveForm.Sine;
-            mValidInput = false;
-
-            this.PropertyChanged += AutoDrawing;
-            OnPropertyChanged("IamIronMan");
-
-            _multipleShotList = new ObservableCollection<GenerateSignalData>()
-            { new GenerateSignalData(),
-             new GenerateSignalData(0,230,7,510,2,sendToDb:true),
-              new GenerateSignalData(WaveForm.Random,320,3,993,2,targetOnDb:"Inputs_Entschlammung1_Status"),
-              new GenerateSignalData(WaveForm.Sawtooth,sendToDb:true,targetOnDb:"Inputs_TestVarLReal")
-            };
-
-        }
+        #endregion
 
         #region Some Control Element
         private void sldFreq_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -181,9 +135,60 @@ namespace WpfApp2
         }
 
         #endregion
+
+        #region Functions and Buttons
         public void btnReset_Click(object sender, RoutedEventArgs e)
         {
             initiateDefaultValue();
+        }
+
+        public void initiateDefaultValue()
+        {
+            this.DataContext = this;
+
+            mFreq = 25;
+            mAmpl = 5;
+            mRate = 1000;
+            mDuration = 10;
+            mWave = WaveForm.Sine;
+            mValidInput = false;
+
+            this.PropertyChanged += AutoDrawing;
+            OnPropertyChanged("IamIronMan");
+
+            _multipleShotList = new ObservableCollection<GenerateSignalData>()
+            { new GenerateSignalData(),
+              new GenerateSignalData(0,230,7,510,2,sendToDb:true),
+              new GenerateSignalData(WaveForm.Random,320,3,993,2,targetOnDb:"Inputs_Entschlammung1_Status"),
+              new GenerateSignalData(WaveForm.Sawtooth,sendToDb:true,targetOnDb:"Inputs_TestVarLReal")
+            };
+
+        }
+
+        private void VisualizateData(SimulationProfile smProfile, int numberOfWave)
+        {
+            double displayduration = (double)numberOfWave / smProfile.getFreq() + (double)1 / smProfile.getRate();
+            GenerateSignalData displayData = new GenerateSignalData(smProfile.getSignalProfile(), displayduration, true);
+            //displayData.PrintData();
+            double linewidth = 1, marksize = 5;
+            string text = $"Wave: {displayData.getWave()}\nFreq: {displayData.getFreq()} Hz\nAmpl: {displayData.getAmpl()} V\nRate: {displayData.getRate()}\nDura: {smProfile.getDuration()} s";
+            double[] x = GenerateSignalData.ConvertToDouble(displayData.getNo());
+            double[] y = displayData.getAmplData();
+            if ((double)displayData.getRate() / displayData.getFreq() > 50)
+            {
+                linewidth = 2;
+                marksize = 0;
+            }
+
+            myWpfPlot.plt.Clear();
+            myWpfPlot.plt.PlotScatter(x, y, lineWidth: linewidth, markerSize: marksize, label: text);
+            myWpfPlot.plt.Style(ScottPlot.Style.Light2);
+            myWpfPlot.plt.Title("Signal Data", fontName: "Verdana", color: Color.BlueViolet, bold: true);
+            myWpfPlot.plt.YLabel("Amplitude", fontSize: 16, color: Color.Green);
+            myWpfPlot.plt.XLabel("Time(Ticks)", color: Color.Green);
+            myWpfPlot.plt.Style(dataBg: Color.LightYellow);
+            myWpfPlot.plt.PlotAnnotation(text, -10, 10, fontSize: 9);
+            myWpfPlot.Render();
         }
 
         private void AutoDrawing(object sender, EventArgs e)
@@ -204,7 +209,7 @@ namespace WpfApp2
             GenerateSignalData myProf = new GenerateSignalData(smProfile, true);
 
             myProf.ExportToJson();
-            MessageBox.Show("Finished Exporting", "Quick Infor", MessageBoxButton.OK, MessageBoxImage.Information);
+            //MessageBox.Show("Finished Exporting", "Quick Infor", MessageBoxButton.OK, MessageBoxImage.Information);
             exportingIsFinished = true;
         }
 
@@ -228,9 +233,8 @@ namespace WpfApp2
             //var serializer = new JsonSerializer { TypeNameHandling = TypeNameHandling.Auto };
             using (StreamWriter writer = File.CreateText(filePath)) { serializer.Serialize(writer, sendList); }
 
-        
-        //myProf.ExportToJson();
-        MessageBox.Show("Finished Exporting", "Quick Infor", MessageBoxButton.OK, MessageBoxImage.Information);
+     
+            //MessageBox.Show("Finished Exporting", "Quick Infor", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         public void MenuItemDel_Click(object sender, RoutedEventArgs e)
         {
@@ -254,7 +258,10 @@ namespace WpfApp2
             ItemAdded = true;
         }
 
-        //Not quite finish
+        #endregion
+
+        #region under Drafting
+        //Not yet finished
         public void NumberValidation(object sender, TextCompositionEventArgs e)
         {
             //Regex regex = new Regex("[^a-zA-Z]+");           
@@ -285,8 +292,11 @@ namespace WpfApp2
                 return;
             }
         }
+        #endregion
+
     }
 
+    #region Support Function
     public class ComparisonConverter : IValueConverter
     {
         //public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -309,5 +319,8 @@ namespace WpfApp2
             return value.Equals(true) ? parameter : Binding.DoNothing;
         }
     }
+
+
+    #endregion
 
 }

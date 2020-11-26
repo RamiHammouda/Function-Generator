@@ -1,4 +1,4 @@
-# Function Generator
+﻿# Function Generator
 [![pipeline status](https://gitlab.rz.htw-berlin.de/softwareentwicklungsprojekt/wise2020-21/team8/badges/master/pipeline.svg)](https://gitlab.rz.htw-berlin.de/softwareentwicklungsprojekt/wise2020-21/team8/-/commits/master)
 
 <p align="center">
@@ -22,16 +22,23 @@ In the process of developing a main software for project water jet cutting facto
 
 
 # Technologystack:
-
+##Build
 Built on **Microsoft .Net Framework** 4.7.2 , **Language C#**
 
 - **WPF** for UI
 
-- **Scotplott** 4.4.2 for Data Visualization
+- **Scotplott** v4.0.42 for Data Visualization
 
 - **MySQL** for Database
 
-...
+- **NewtonSoft** v12.0.3 for Json
+
+- **Nunit** v3.12.0 for Unit-Test
+
+##Test
+- Run on Gitlab CI (Windows Runner)
+- Chocolately Package Manager
+- NUnit 3 Console Runner v3.11.1
 # Feature List
 - [x] Create sensor signal for testing with one **Single** target corlumn on database
 - [x] Creat **Multiple** sensor signal to simulate different using scenario
@@ -50,6 +57,7 @@ Built on **Microsoft .Net Framework** 4.7.2 , **Language C#**
 - [x] Delete a signal profile directly from UI
 
 - [x] Export signal data to JSON file
+- [x] Export all profile signal data to JSON file
 - [x] Provide a reset button to set all value to default
 # License
 **MIT** ©***Team 8:*** **Viet Anh Hoang, Khac Hoa Le, Patrick Schmidt, Rami Hammouda.**

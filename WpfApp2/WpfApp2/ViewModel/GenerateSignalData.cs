@@ -201,15 +201,8 @@ namespace WpfApp2.ViewModel
             mNo = new long[mENumber];
             mTimeStampArray = new long[mENumber];
             mAmplArray = new double[mENumber];
-            //GetWaveValue getWaveValue;
 
             rand = new Random();
-
-            if (mWave == WaveForm.Sine)
-                getWaveValue = GetSineValue;
-            else if (mWave == WaveForm.Sawtooth)
-                getWaveValue = GetSawtoothValue;
-            else getWaveValue = GetRandomValue;
             switch (mWave)
             {
                 case WaveForm.Sine:getWaveValue = GetSineValue;break;
@@ -218,7 +211,6 @@ namespace WpfApp2.ViewModel
                 case WaveForm.Square: getWaveValue = GetSquareValue; break;
                 case WaveForm.Random: getWaveValue = GetRandomValue; break;
                 case WaveForm.RandomDigital: getWaveValue = GetRandomDigitalValue; break;
-
             }
         }
 
