@@ -8,16 +8,12 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.IO;
 
-namespace WpfApp2.SingleShot
+namespace WpfApp2
 {
     [TestFixture]
     [Apartment(ApartmentState.STA)]
     class ResetButton
     {
-        //TestName_Scenario_ExpectedBehavior
-        /// <ResetTest>
-        /// A new application window will be created. The "Reset" Button will be clicked and then it will be verified if the new values are equal to the default values.
-        /// </ResetTest>
         [Test]
         public static void CanResetAllValuesToDefault_ResetIsPressed_ReturnsDefaultValues()
         {

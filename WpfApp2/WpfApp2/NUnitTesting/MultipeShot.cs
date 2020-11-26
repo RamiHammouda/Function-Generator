@@ -14,10 +14,6 @@ namespace WpfApp2.MultipleShot
     [Apartment(ApartmentState.STA)]
     class MultipeShot
     {
-        //TestName_Scenario_ExpectedBehavior
-        /// <AddItemTest>
-        /// A new application window will be created. The "Add Item" Button will be clicked and then it will be verified if the item was added.
-        /// </AddItemTest>
         [Test]
         public static void CanAddNewItem_AddItemClicked_CreatesItem()
         {
@@ -30,9 +26,6 @@ namespace WpfApp2.MultipleShot
             //Assert
             Assert.AreEqual(true, testingWindow.ItemAdded);
         }
-        /// <DeleteItemTest>
-        /// A new application window will be created. The "Delete Item" Button will be clicked and then it will be verified if the item was deleted.
-        /// </DeleteItemTest>
         [Test]
         public static void CanDeleteAnItem_DeleteItemClicked_DeletesItem()
         {
