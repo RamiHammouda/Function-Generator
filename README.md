@@ -31,6 +31,10 @@ Built on **Microsoft .Net Framework** 4.7.2 , **Language C#**
 
 - **MySQL** for Database
 
+- **NewTonSoft** for Json
+
+- **NUNIT** for Testing
+
 ...
 # Feature List
 - [x] Create sensor signal for testing with one **Single** target corlumn on database
