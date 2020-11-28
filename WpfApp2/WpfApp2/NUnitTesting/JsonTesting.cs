@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.IO;
 
-namespace WpfApp2
+namespace WpfApp2.SingleShot
 {
     [TestFixture]
     [Apartment(ApartmentState.STA)]

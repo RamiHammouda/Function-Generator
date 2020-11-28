@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.IO;
 
-namespace WpfApp2
+namespace WpfApp2.SingleShot
 {
     [TestFixture]
     [Apartment(ApartmentState.STA)]
     class AmplitudeTesting
     {
-        [Test]
+        //[Test]
         public static void CanInputAmplitude_InputIsCorrect_ReturnsTrue()
         {
             //Arrange

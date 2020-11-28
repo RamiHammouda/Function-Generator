@@ -9,13 +9,13 @@ using System.Windows;
 using System.IO;
 
 
-namespace WpfApp2
+namespace WpfApp2.SingleShot
 {
     [TestFixture]
     [Apartment(ApartmentState.STA)]
     class FrequencyTesting
     {
-        [Test]      
+        //[Test]      
         public static void CanInputFrequency_InputIsCorrect_ReturnsTrue()
         {
             //Arrange
