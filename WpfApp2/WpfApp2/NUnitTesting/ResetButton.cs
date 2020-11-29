@@ -14,7 +14,7 @@ namespace WpfApp2.SingleShot
     [Apartment(ApartmentState.STA)]
     class ResetButton
     {
-        [Test]
+        //[Test]
         public static void CanResetAllValuesToDefault_ResetIsPressed_ReturnsDefaultValues()
         {
             //Arrange
