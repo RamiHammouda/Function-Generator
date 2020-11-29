@@ -29,7 +29,7 @@ Built on **Microsoft .Net Framework** 4.7.2 , **Language C#**
 
 - **Scotplott** v4.0.42 for Data Visualization
 
-- **MySQL** for Database
+- **MySQL** for Database ([Required: MySQL for Visual Studio](https://dev.mysql.com/downloads/windows/visualstudio/) and [Add Server Source to Visual Studio](https://dev.mysql.com/doc/visual-studio/en/visual-studio-connection-server-explorer.html)
 
 - **Newtonsoft** v12.0.3 for Json
 
@@ -59,6 +59,7 @@ Built on **Microsoft .Net Framework** 4.7.2 , **Language C#**
 - [x] Delete a signal profile directly from UI
 
 - [x] Export signal data to JSON file
+- [ ] Export signal data to MySQL-Server Database
 - [x] Export all profile signal data to JSON file
 - [x] Provide a reset button to set all value to default
 # License
