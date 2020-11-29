@@ -36,15 +36,14 @@ Built on **Microsoft .Net Framework** 4.7.2 , **Language C#**
 - **NUnit** v3.12.0 for Unit-Test
 
 ## Test
+### Automation Testing
 - Run on Gitlab CI (Windows Runner)
 
 - Chocolately Package Manager
 
 - NUnit 3 Console Runner v3.11.1
-
-- Needed Extension for Nunit: NUnit 3 Test Adapter
-
-- NuGet Packages: - NUnit 3.12.0
+### Manual Testing
+- NUnit 3 Test Adapter Extension
 
 # Feature List
 - [x] Create sensor signal for testing with one **Single** target corlumn on database
