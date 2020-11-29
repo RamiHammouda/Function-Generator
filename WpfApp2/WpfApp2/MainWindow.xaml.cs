@@ -21,15 +21,15 @@ namespace WpfApp2
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        
+
         public MainWindow()
-        {           
+        {
             InitializeComponent();
 
             initiateDefaultValue();
         }
 
-        
+
         #region Properties For Testing Only
 
         public bool exportingIsFinished;
@@ -148,7 +148,7 @@ namespace WpfApp2
 
             mFreq = 25;
             mAmpl = 5;
-            mRate = 1000;
+            mRate = 10000;
             mDuration = 10;
             mWave = WaveForm.Sine;
             mValidInput = false;
@@ -169,7 +169,6 @@ namespace WpfApp2
         {
             double displayduration = (double)numberOfWave / smProfile.getFreq() + (double)1 / smProfile.getRate();
             GenerateSignalData displayData = new GenerateSignalData(smProfile.getSignalProfile(), displayduration, true);
-            //displayData.PrintData();
             double linewidth = 1, marksize = 5;
             string text = $"Wave: {displayData.getWave()}\nFreq: {displayData.getFreq()} Hz\nAmpl: {displayData.getAmpl()} V\nRate: {displayData.getRate()}\nDura: {smProfile.getDuration()} s";
             double[] x = GenerateSignalData.ConvertToDouble(displayData.getNo());
@@ -188,7 +187,14 @@ namespace WpfApp2
             myWpfPlot.plt.XLabel("Time(Ticks)", color: Color.Green);
             myWpfPlot.plt.Style(dataBg: Color.LightYellow);
             myWpfPlot.plt.PlotAnnotation(text, -10, 10, fontSize: 9);
-            myWpfPlot.Render();
+            try
+            {
+                myWpfPlot.Render();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+            }
         }
 
         private void AutoDrawing(object sender, EventArgs e)
@@ -219,7 +225,8 @@ namespace WpfApp2
                 return;
             List<GenerateSignalData> sendList = new List<GenerateSignalData>();
             foreach (GenerateSignalData item in mMultipleShotList)
-                if (item.checkSendToDB() == true) { 
+                if (item.checkSendToDB() == true)
+                {
                     item.GenerateData();
                     sendList.Add(item);
                 }
@@ -233,24 +240,23 @@ namespace WpfApp2
             //var serializer = new JsonSerializer { TypeNameHandling = TypeNameHandling.Auto };
             using (StreamWriter writer = File.CreateText(filePath)) { serializer.Serialize(writer, sendList); }
 
-     
             //MessageBox.Show("Finished Exporting", "Quick Infor", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         public void MenuItemDel_Click(object sender, RoutedEventArgs e)
         {
-            
+
             if (MultiShot.SelectedItem == null || mMultipleShotList.Count == 0) return;  //safety first
             try
             {
                 mMultipleShotList.Remove((GenerateSignalData)MultiShot.SelectedItem);
                 ItemDeleted = true;
-            }            
+            }
             catch (Exception ex)
             {
                 MessageBox.Show("You must be so funny :)", "Wow", MessageBoxButton.OK, MessageBoxImage.Information);
-                Debug.WriteLine(ex.Message); 
+                Debug.WriteLine(ex.Message);
             }
-            
+
         }
         public void MenuItemAdd_Click(object sender, RoutedEventArgs e)
         {
@@ -270,7 +276,7 @@ namespace WpfApp2
             {
                 mValidInput = false;
                 MessageBox.Show("Number Accept Only !");
-            } 
+            }
         }
         //Not quite
         private void DoubleValidation(object sender, TextCompositionEventArgs e)

@@ -210,7 +210,7 @@ namespace WpfApp2.ViewModel
                 case WaveForm.Triangle: getWaveValue = GetTriangleValue; break;
                 case WaveForm.Square: getWaveValue = GetSquareValue; break;
                 case WaveForm.Random: getWaveValue = GetRandomValue; break;
-                case WaveForm.RandomDigital: getWaveValue = GetRandomDigitalValue; break;
+                default: getWaveValue = GetRandomDigitalValue; break;
             }
         }
 
