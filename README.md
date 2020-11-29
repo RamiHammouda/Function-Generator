@@ -29,7 +29,7 @@ Built on **Microsoft .Net Framework** 4.7.2 , **Language C#**
 
 - **Scotplott** v4.0.42 for Data Visualization
 
-- **MySQL** for Database ([Required: MySQL for Visual Studio](https://dev.mysql.com/downloads/windows/visualstudio/) and [Add Server Source to Visual Studio](https://dev.mysql.com/doc/visual-studio/en/visual-studio-connection-server-explorer.html)
+- **MySQL** v8.0.21 for Database ([Required: MySQL for Visual Studio](https://dev.mysql.com/downloads/windows/visualstudio/) and [Add Server Source to Visual Studio](https://dev.mysql.com/doc/visual-studio/en/visual-studio-connection-server-explorer.html)
 
 - **Newtonsoft** v12.0.3 for Json
 
