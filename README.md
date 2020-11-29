@@ -22,6 +22,9 @@ In the process of developing a main software for project water jet cutting facto
 
 
 # Technologystack:
+## Tools:
+- OS Windows 10
+- MS Visual Studio 2019
 ## Build
 Built on **Microsoft .Net Framework** 4.7.2 , **Language C#**
 
