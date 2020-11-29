@@ -41,6 +41,11 @@ Built on **Microsoft .Net Framework** 4.7.2 , **Language C#**
 - Chocolately Package Manager
 
 - NUnit 3 Console Runner v3.11.1
+
+- Needed Extension for Nunit: NUnit 3 Test Adapter
+
+- NuGet Packages: - NUnit 3.12.0
+
 # Feature List
 - [x] Create sensor signal for testing with one **Single** target corlumn on database
 - [x] Creat **Multiple** sensor signal to simulate different using scenario
