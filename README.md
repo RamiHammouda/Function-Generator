@@ -39,13 +39,13 @@ Built on **Microsoft .Net Framework** 4.7.2 , **Language C#**
 - **NUnit** v3.12.0 for Unit-Test
 
 ## Test
-### Automation Testing
+### CI Testing
 - Run on Gitlab CI (Windows Runner)
 
-- Chocolately Package Manager
+- Chocolatey Package Manager
 
 - NUnit 3 Console Runner v3.11.1
-### Manual Testing
+### Automation Testing
 - NUnit 3 Test Adapter Extension
 
 # Feature List
