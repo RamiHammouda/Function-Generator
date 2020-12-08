@@ -32,7 +32,7 @@ namespace WpfApp2.ViewModel
         [JsonIgnore]
         public WaveForm mWave { get; set; }
         [JsonIgnore]
-        public long mFreq { get; set; }
+        public double mFreq { get; set; }
         [JsonIgnore]
         public  double mAmpl { get; set; }
         [JsonIgnore]
@@ -133,7 +133,7 @@ namespace WpfApp2.ViewModel
             return mProfile;
         }
 
-        public long getFreq()
+        public double getFreq()
         {
             return mFreq;
         }

@@ -46,7 +46,7 @@
             </CollectionViewSource.SortDescriptions>-->
 
         </CollectionViewSource>
-        
+
 
         <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues"
                         ObjectType="{x:Type sys:Enum}">
@@ -98,7 +98,7 @@
                         <RadioButton Name="rdoSquare" GroupName="waveForm" Content="Square" Margin="5" IsChecked="{Binding Path=mWave, Mode =TwoWay,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static myenum:WaveForm.Square}}"/>
                         <RadioButton Name="rdoRand" GroupName="waveForm" Content="Random" Margin="5" IsChecked="{Binding Path=mWave, Mode =TwoWay,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static myenum:WaveForm.Random}}"/>
                         <RadioButton Name="rdoRandDigi" GroupName="waveForm" Content="Random Digital" Margin="5" IsChecked="{Binding Path=mWave, Mode =TwoWay,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static myenum:WaveForm.RandomDigital}}"/>
-                        
+
                         <!--<Button x:Name="btnReset" Content="Reset" Click="btnReset_Click" Margin="5" BorderThickness="0">
                             <Button.Resources>
                                 <Style TargetType="{x:Type Border}">
@@ -139,14 +139,18 @@
                     <StackPanel Grid.Column="1" Grid.Row="3" Orientation="Vertical">
                         <Label Content="Frequency (Hz)" FontWeight="Bold"/>
                         <StackPanel Orientation="Horizontal">
-                            <TextBox x:Name="txtFreq" Width ="120" Margin="0,0" Height="19"
-                     PreviewTextInput="NumberValidation"
-                     Text="{Binding Path=mFreq, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox x:Name="txtFreq" Width ="120" Margin="0,0" Height="19" VerticalAlignment="Center" PreviewTextInput="DoubleValidation"
+                                Text="{Binding Path=mFreq, Mode=TwoWay,  
+                                ValidatesOnDataErrors=True,ValidatesOnNotifyDataErrors=False, 
+                                NotifyOnValidationError=False,
+                                UpdateSourceTrigger=PropertyChanged, Delay=500}"/>
+
                             <StackPanel Orientation="Vertical">
                                 <Button x:Name="btnFreqPlus" Click="btnFreqPlus_Click" Content="&#9650;" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
                                 <Button x:Name="btnFreqMinus" Click="btnFreqMinus_Click" Content="&#9660;" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
                             </StackPanel>
                         </StackPanel>
+                        <TextBlock Text="{Binding (Validation.Errors)[0].ErrorContent, ElementName=txtFreq}" Foreground="Red" FontSize="9" VerticalAlignment="Bottom"/>
                     </StackPanel>
 
                     <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="3" Margin="10,0,0,0">
@@ -165,20 +169,26 @@
                     <StackPanel Grid.Column="1" Grid.Row="4" Orientation="Vertical">
                         <Label Content="Amplitude (V)" FontWeight="Bold" VerticalAlignment="Center"/>
                         <StackPanel Orientation="Horizontal">
-                            <TextBox x:Name="txtAmp" Width ="120" Margin="0,0" Height="19" PreviewTextInput="DoubleValidation" >
-                                <TextBox.Text>
-                                    <Binding Path="mAmpl" UpdateSourceTrigger="PropertyChanged">
-                                        <!--<Binding.ValidationRules>
+                            <TextBox x:Name="txtAmp" Width ="120" Margin="0,0" Height="19" VerticalAlignment="Center" PreviewTextInput="DoubleValidation" 
+                                Text="{Binding Path=mAmpl, Mode=TwoWay,  
+                                ValidatesOnDataErrors=True,
+                                UpdateSourceTrigger=PropertyChanged, Delay=500}">
+                                <!--<TextBox.Text>
+                                    <Binding Path="mAmpl" Mode ="TwoWay" ValidatesOnDataErrors= "True", UpdateSourceTrigger="PropertyChanged" >
+                                        -->
+                                <!--<Binding.ValidationRules>
                                             <local:IsDoubleValidationRule ValidatesOnTargetUpdated="True" />
                                         </Binding.ValidationRules>-->
+                                <!--
                                     </Binding>
-                                </TextBox.Text>
+                                </TextBox.Text>-->
                             </TextBox>
                             <StackPanel Orientation="Vertical">
                                 <Button x:Name="btnAmplPlus" Click="btnAmplPlus_Click" Content="&#9650;" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
                                 <Button x:Name="btnAmplMinus" Click="btnAmplMinus_Click" Content="&#9660;" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
                             </StackPanel>
                         </StackPanel>
+                        <TextBlock Text="{Binding (Validation.Errors)[0].ErrorContent, ElementName=txtAmp}" Foreground="Red" FontSize="9" VerticalAlignment="Bottom"/>
                     </StackPanel>
 
                     <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="4" Margin="10,0,0,0">
@@ -289,7 +299,7 @@
                             <DataGridCheckBoxColumn Header="Send?" Binding="{Binding Path=mSendToDB}"/>
 
                         </DataGrid.Columns>
-                        
+
 
                     </DataGrid>
 

@@ -2,24 +2,26 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using WpfApp2.Model;
 using WpfApp2.ViewModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
+using System.Linq;
+using System.Windows.Controls;
 
 namespace WpfApp2
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, INotifyPropertyChanged
+    public partial class MainWindow : Window, INotifyPropertyChanged,IDataErrorInfo
     {
 
         public MainWindow()
@@ -28,7 +30,7 @@ namespace WpfApp2
 
             initiateDefaultValue();
         }
-
+        
 
         #region Properties For Testing Only
 
@@ -42,11 +44,13 @@ namespace WpfApp2
         public bool ItemDeleted = false;
         #endregion
 
-        #region Preoperties
+        #region Properties
         public bool mValidInput { get; set; }
-        public long mRate, mDuration;
+        [Range(1,4,ErrorMessage = "Sending Data Rate to Database is limitted to maximum 4 : 4 times/s")]
+        public long mRate;
+        public long mDuration;
         public double mOffsetAmpl;
-        public long mOffsetFreq { get; set; }
+        public double mOffsetFreq { get; set; }
 
         private WaveForm _wave;
         public WaveForm mWave
@@ -59,8 +63,10 @@ namespace WpfApp2
             }
         }
 
-        private long _freq;
-        public long mFreq
+        private double _freq;
+        [Range(0.0001,4,ErrorMessage = "Frequency must from {1} to {2}")]
+        [Required(ErrorMessage = "Frequency is required")]
+        public double mFreq
         {
             get { return _freq; }
             set
@@ -70,6 +76,9 @@ namespace WpfApp2
             }
         }
         private double _ampl;
+        //[Range(0.001, Double.PositiveInfinity, ErrorMessage = "The field {0} must be greater than {1}.")]
+        [Range(0.001, Double.PositiveInfinity, ErrorMessage = "Amplitude must from {1}")]
+        [Required(ErrorMessage = "Amplitude is required")]
         public double mAmpl
         {
             get { return _ampl; }
@@ -98,12 +107,36 @@ namespace WpfApp2
             }
         }
 
+        string IDataErrorInfo.Error => throw new NotImplementedException(); //Part of Annotation
+
+        string IDataErrorInfo.this[string propertyName] { get { return OnValidate(propertyName); } } //Part of Annotation
+
+        protected virtual string OnValidate(string propertyName) //Part of Annotation
+        {
+            if (String.IsNullOrEmpty(propertyName))
+                throw new ArgumentException("Property may not be null or emtpy", propertyName);
+
+            string error = string.Empty;
+            var value = this.GetType().GetProperty(propertyName).GetValue(this, null);
+            var results = new List<System.ComponentModel.DataAnnotations.ValidationResult>(1);
+            var context = new ValidationContext(this, null, null) { MemberName = propertyName };
+            var result = Validator.TryValidateProperty(value, context, results);
+
+            if (!result)
+            {
+                var validationResult = results.First();
+                error = validationResult.ErrorMessage;
+            }
+            return error;
+        }
+
         #endregion
 
         #region Some Control Element
         private void sldFreq_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            mOffsetFreq = (long)(sender as Slider).Value;
+            mOffsetFreq = Math.Round((double)(sender as Slider).Value/100,4)*mFreq;
+            Console.WriteLine((sender as Slider).Value);
         }
 
         private void sldAmp_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -146,9 +179,9 @@ namespace WpfApp2
         {
             this.DataContext = this;
 
-            mFreq = 25;
+            mFreq = 0.2;
             mAmpl = 5;
-            mRate = 10000;
+            mRate = 4;
             mDuration = 10;
             mWave = WaveForm.Sine;
             mValidInput = false;
@@ -271,7 +304,7 @@ namespace WpfApp2
         public void NumberValidation(object sender, TextCompositionEventArgs e)
         {
             //Regex regex = new Regex("[^a-zA-Z]+");           
-            Regex regex = new Regex("[0-9]+");
+            Regex regex = new Regex("[0-9.]+");
             if (!regex.IsMatch(e.Text))
             {
                 mValidInput = false;
@@ -281,13 +314,6 @@ namespace WpfApp2
         //Not quite
         private void DoubleValidation(object sender, TextCompositionEventArgs e)
         {
-
-            Regex regex = new Regex("[0-9.]+");
-            if (!regex.IsMatch(e.Text))
-            {
-                mValidInput = false;
-                MessageBox.Show("Number Accept Only !");
-            }
             try
             {
                 double.Parse(txtAmp.Text);

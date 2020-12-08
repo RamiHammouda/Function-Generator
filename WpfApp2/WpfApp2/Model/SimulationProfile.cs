@@ -16,7 +16,7 @@ namespace WpfApp2.Model
             mDuration = duration;
         }
 
-        public SimulationProfile(WaveForm wave = 0, long freq = 130, double ampl = 5, long rate = 960, double duration = 2)
+        public SimulationProfile(WaveForm wave = 0, double freq = 130, double ampl = 5, long rate = 960, double duration = 2)
         {
             mSgProfile = new SignalProfile();
             mSgProfile.setWave(wave);
@@ -55,14 +55,15 @@ namespace WpfApp2.Model
             return mSgProfile.getRate();
         }
 
-        public long getFreq()
+        public double getFreq()
         {
             return mSgProfile.getFreq();
         }
 
         public void PrintInfo()
         {
-            Console.WriteLine($"Simulation {mSgProfile}, Duration {mDuration}");
+            //Console.WriteLine($"Simulation {mSgProfile}, Duration {mDuration}");
+            Console.WriteLine(ToString());
         }
 
         public override string ToString()

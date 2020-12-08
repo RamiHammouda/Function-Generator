@@ -18,25 +18,25 @@ namespace WpfApp2.Model
         [JsonProperty("Wave")]
         public WaveForm mWave { get; set; }
         [JsonProperty("Freq")]
-        private long mFrequency;
+        private double mFrequency;
         [JsonProperty("Ampl")]
         private double mAmplitude;
         //private int mTick;
         [JsonProperty("Rate")]
         private long mRate;
 
-        public SignalProfile(WaveForm wave = 0, long freq = 100, double ampl = 5, long rate = 9600)
+        public SignalProfile(WaveForm wave = 0, double freq = 100, double ampl = 5, long rate = 9600)
         {
             mFrequency = freq;
             mAmplitude = ampl;
             mWave = wave;
             mRate = rate;
         }
-        public long getFreq()
+        public double getFreq()
         {
             return mFrequency;
         }
-        public void setFreq(long freq = 0)
+        public void setFreq(double freq = 0)
         {
             mFrequency = freq;
         }
@@ -70,7 +70,7 @@ namespace WpfApp2.Model
 
         public void PrintInfo()
         {
-            Console.WriteLine($"a Profile Wave:{mWave} Freq:{mFrequency} Hz, Ampl:{mAmplitude} V, Rate:{mRate}");
+            Console.WriteLine(ToString()); ;
         }
         public override string ToString()
         {
