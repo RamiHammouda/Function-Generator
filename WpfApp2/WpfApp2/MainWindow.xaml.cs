@@ -30,24 +30,34 @@ namespace WpfApp2
 
             initiateDefaultValue();
         }
-        
+
 
         #region Properties For Testing Only
-
-        public bool exportingIsFinished;
         //public ListBindableAttribute targetFromDB = new ListBindableAttribute();
+        public bool exportingIsFinished;
         public bool offsetFreqValueIncreased = false;
         public bool offsetFreqValueDecreased = false;
         public bool offsetAmpValueIncreased = false;
         public bool offsetAmpValueDecreased = false;
         public bool ItemAdded = false;
         public bool ItemDeleted = false;
+        public bool ValidInput = false;
+        public int n;
+        public bool mValidInput { get; set; }
         #endregion
 
         #region Properties
-        public bool mValidInput { get; set; }
-        public bool ValidInput = false;
-        public int n;
+        private string _errorMessage;
+        public string mErrorMessage
+        {
+            get { return _errorMessage; }
+            set
+            {
+                if (_errorMessage != value)
+                { _errorMessage = value; OnPropertyChanged("mErrorMessage"); }
+            }
+        }
+
         [Range(1,4,ErrorMessage = "Sending Data Rate to Database is limitted to maximum 4 : 4 times/s")]
         public long mRate;
         public long mDuration;
@@ -64,7 +74,7 @@ namespace WpfApp2
                 { _wave = value; OnPropertyChanged("mWave"); }
             }
         }
-
+        
         private double _freq;
         [Range(0.0001,4,ErrorMessage = "Frequency must from {1} to {2}")]
         [Required(ErrorMessage = "Frequency is required")]
@@ -129,6 +139,7 @@ namespace WpfApp2
                 var validationResult = results.First();
                 error = validationResult.ErrorMessage;
             }
+            mErrorMessage = error;
             return error;
         }
 
@@ -187,7 +198,7 @@ namespace WpfApp2
             mDuration = 10;
             mWave = WaveForm.Sine;
             mValidInput = false;
-
+            
             this.PropertyChanged += AutoDrawing;
             OnPropertyChanged("IamIronMan");
 
@@ -197,11 +208,12 @@ namespace WpfApp2
               new GenerateSignalData(WaveForm.Random,320,3,993,2,targetOnDb:"Inputs_Entschlammung1_Status"),
               new GenerateSignalData(WaveForm.Sawtooth,sendToDb:true,targetOnDb:"Inputs_TestVarLReal")
             };
-
         }
 
         private void VisualizateData(SimulationProfile smProfile, int numberOfWave)
         {
+            if (!smProfile.checkedSmProfValidation())
+                return;
             double displayduration = (double)numberOfWave / smProfile.getFreq() + (double)1 / smProfile.getRate();
             GenerateSignalData displayData = new GenerateSignalData(smProfile.getSignalProfile(), displayduration, true);
             double linewidth = 1, marksize = 5;
@@ -326,8 +338,9 @@ namespace WpfApp2
             }
             catch (Exception)
             {
-                MessageBox.Show("Pls input a double number !");
-                return; 
+                //MessageBox.Show("Pls input a double number !");
+                //mErrorMessage = "Pls input a double number!";
+                return;
             }
         }
         #endregion
@@ -357,7 +370,6 @@ namespace WpfApp2
             return value.Equals(true) ? parameter : Binding.DoNothing;
         }
     }
-
 
     #endregion
 

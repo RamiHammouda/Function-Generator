@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Security.RightsManagement;
 using System.Text;
@@ -182,6 +183,9 @@ namespace WpfApp2.ViewModel
 
         public void GenerateData()
         {
+            if (!mSmProfile.checkedSmProfValidation())
+                return;
+
             // A Time-Step in Ticks
             aTimeStep = (long)Math.Round(1e7m / mRate, 0);
             long start = DateTime.Now.Ticks;
@@ -192,11 +196,12 @@ namespace WpfApp2.ViewModel
                 mTimeStampArray[i] = start + i * aTimeStep;
                 mAmplArray[i] = getWaveValue(i * aTimeStep);
             };
-
         }
 
         private void InitiateData()
         {
+            if (!mSmProfile.checkedSmProfValidation())
+                return;
             mENumber = (long)Math.Round(mRate * mDuration,0);
             mNo = new long[mENumber];
             mTimeStampArray = new long[mENumber];

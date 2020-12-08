@@ -99,13 +99,13 @@
                         <RadioButton Name="rdoRand" GroupName="waveForm" Content="Random" Margin="5" IsChecked="{Binding Path=mWave, Mode =TwoWay,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static myenum:WaveForm.Random}}"/>
                         <RadioButton Name="rdoRandDigi" GroupName="waveForm" Content="Random Digital" Margin="5" IsChecked="{Binding Path=mWave, Mode =TwoWay,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static myenum:WaveForm.RandomDigital}}"/>
 
-                        <!--<Button x:Name="btnReset" Content="Reset" Click="btnReset_Click" Margin="5" BorderThickness="0">
-                            <Button.Resources>
-                                <Style TargetType="{x:Type Border}">
-                                    <Setter Property="CornerRadius" Value="2"/>
-                                </Style>
-                            </Button.Resources>
-                        </Button>-->
+                        
+                            <Label Name ="lblError" VerticalAlignment="Bottom" Foreground="Red" FontStyle="Italic" Margin="0,20,0,0" MaxWidth="160" HorizontalAlignment="Left">
+                                <Label.Content>
+                                    <AccessText TextWrapping="Wrap" Text="{Binding Path= mErrorMessage, UpdateSourceTrigger=PropertyChanged}"/>
+                                </Label.Content>
+                            </Label>
+                      
                     </StackPanel>
 
                     <StackPanel Orientation="Vertical" Grid.Column ="5" Grid.Row="3" VerticalAlignment="Center" Margin="0,9,0,10" >
@@ -151,17 +151,18 @@
                             </StackPanel>
                         </StackPanel>
                         <TextBlock Text="{Binding (Validation.Errors)[0].ErrorContent, ElementName=txtFreq}" Foreground="Red" FontSize="9" VerticalAlignment="Bottom"/>
+     
                     </StackPanel>
 
                     <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="3" Margin="10,0,0,0">
-                        <Label Content="Offset" VerticalAlignment="Bottom" Margin="0,10,0,0"/>
+                        <Label Content="Offset (mHz)" VerticalAlignment="Bottom" Margin="0,10,0,0"/>
                         <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                            <Slider x:Name="sldFreq" Minimum="1" Maximum="100" TickFrequency="5"
-                    TickPlacement="BottomRight" ValueChanged="sldFreq_ValueChanged" Value="1"
+                            <Slider x:Name="sldFreq" Minimum="0" Maximum="200" TickFrequency="5"
+                    TickPlacement="BottomRight" ValueChanged="sldFreq_ValueChanged" Value="0"
                     MinWidth="300" AutoToolTipPlacement="TopLeft" Foreground="Blue"/>
                             <DockPanel>
-                                <Label DockPanel.Dock="Left" Content="1 Hz" FontSize="10" HorizontalAlignment="Left"/>
-                                <Label DockPanel.Dock="Right" Content="100 Hz" FontSize="10" HorizontalAlignment="Right"/>
+                                <Label DockPanel.Dock="Left" Content="0 mHz" FontSize="10" HorizontalAlignment="Left"/>
+                                <Label DockPanel.Dock="Right" Content="200 mHz" FontSize="10" HorizontalAlignment="Right"/>
                             </DockPanel>
                         </StackPanel>
                     </StackPanel>
@@ -192,14 +193,14 @@
                     </StackPanel>
 
                     <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="4" Margin="10,0,0,0">
-                        <Label Content="Offset" VerticalAlignment="Bottom" Margin="0,10,0,0"/>
+                        <Label Content="Offset (mV)" VerticalAlignment="Bottom" Margin="0,10,0,0"/>
                         <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                            <Slider x:Name="sldAmp" Minimum="1" Maximum="50" TickFrequency="5"
-                    TickPlacement="BottomRight" ValueChanged="sldAmp_ValueChanged" Value="1"
+                            <Slider x:Name="sldAmp" Minimum="0" Maximum="500" TickFrequency="50"
+                    TickPlacement="BottomRight" ValueChanged="sldAmp_ValueChanged" Value="0"
                     MinWidth="300" AutoToolTipPlacement="TopLeft" Foreground="Blue"/>
                             <DockPanel >
-                                <Label DockPanel.Dock="Left" Content="1 mV" FontSize="10" HorizontalAlignment="Left" />
-                                <Label DockPanel.Dock="Right" Content="50 mV" FontSize="10" HorizontalAlignment="Right" />
+                                <Label DockPanel.Dock="Left" Content="0 mV" FontSize="10" HorizontalAlignment="Left" />
+                                <Label DockPanel.Dock="Right" Content="500 mV" FontSize="10" HorizontalAlignment="Right" />
                             </DockPanel>
                         </StackPanel>
                     </StackPanel>

@@ -70,5 +70,10 @@ namespace WpfApp2.Model
         {
             return $"Simulation {mSgProfile}, Duration {mDuration}";
         }
+
+        public bool checkedSmProfValidation()
+        {
+            return mSgProfile.checkedSgProfValidatation() && mDuration >= 0;
+        }
     }
 }

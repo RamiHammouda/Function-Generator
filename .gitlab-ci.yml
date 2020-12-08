@@ -25,7 +25,7 @@ build_App:
 
 
 test_App:
-  interruptible: true
+  #interruptible: true
   #allow_failure: true
 
   stage: test
@@ -43,6 +43,6 @@ test_App:
     when: always
     paths:
       - .\WpfApp2\WpfApp2\bin\Release\TestResult.xml
-    reports:
-      junit:
-        - .\WpfApp2\WpfApp2\bin\Release\TestResult.xml
+    #reports:
+      #junit:
+        #- .\WpfApp2\WpfApp2\bin\Release\TestResult.xml

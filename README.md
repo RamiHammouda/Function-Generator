@@ -6,7 +6,7 @@
 </p>
 
 
-**Function Generator** is Windows desktop application, which aims to help the lovely engineers in **GFai e.V* to ***simulate*** the ***sensor signal*** for main software using in water jet cutting factory. 
+**Function Generator** is Windows desktop application, which aims to help the lovely engineers in **GFai e.V** to ***simulate*** the ***sensor signal*** for main software using in water jet cutting factory. 
 
 
 # Motivation
@@ -32,7 +32,7 @@ Built on **Microsoft .Net Framework** 4.7.2 , **Language C#**
 
 - **Scotplott** v4.0.42 for Data Visualization
 
-- **MySQL** v8.0.21 for Database ([Required: MySQL for Visual Studio](https://dev.mysql.com/downloads/windows/visualstudio/) and [Add Server Source to Visual Studio](https://dev.mysql.com/doc/visual-studio/en/visual-studio-connection-server-explorer.html)
+- **MySQL** v8.0.21 for Database ([Required: MySQL for Visual Studio](https://dev.mysql.com/downloads/windows/visualstudio/) and [Add Server Source to Visual Studio](https://dev.mysql.com/doc/visual-studio/en/visual-studio-connection-server-explorer.html))
 
 - **Newtonsoft** v12.0.3 for Json
 
@@ -59,14 +59,13 @@ Built on **Microsoft .Net Framework** 4.7.2 , **Language C#**
 - [x] Simulate ***Triangle*** signal
 - [x] Simulate ***Analog Random*** signal
 - [x] Simulate ***Digital Random*** signal
-
-- [ ] Input Data Validation
+- [x] Input Data Validation
 
 - [x] Add a new signal profile directly from UI
 - [x] Delete a signal profile directly from UI
 
-- [x] Export signal data to JSON file
 - [ ] Export signal data to MySQL-Server Database
+- [x] Export signal data to JSON file
 - [x] Export all profile signal data to JSON file
 - [x] Provide a reset button to set all value to default
 # License

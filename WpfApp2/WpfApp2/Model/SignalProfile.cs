@@ -15,10 +15,14 @@ namespace WpfApp2.Model
     }
     public class SignalProfile
     {
+
+        private bool mBiggerThanZero = true;
         [JsonProperty("Wave")]
         public WaveForm mWave { get; set; }
+
         [JsonProperty("Freq")]
         private double mFrequency;
+
         [JsonProperty("Ampl")]
         private double mAmplitude;
         //private int mTick;
@@ -76,5 +80,10 @@ namespace WpfApp2.Model
         {
             return $"a Profile Wave:{mWave} Freq:{mFrequency} Hz, Ampl:{mAmplitude} V, Rate:{mRate}";
         }
-    };
+
+        public bool checkedSgProfValidatation()
+        {
+            return (mAmplitude > 0) && (mFrequency > 0) && (mRate > 0);
+        }
+    }
 }
