@@ -14,7 +14,7 @@ namespace WpfApp2.SingleShot
     [Apartment(ApartmentState.STA)]
     class ResetButton
     {
-        //[Test]
+        [Test]
         public static void CanResetAllValuesToDefault_ResetIsPressed_ReturnsDefaultValues()
         {
             //Arrange
@@ -24,7 +24,7 @@ namespace WpfApp2.SingleShot
             //Act
             testingWindow.btnReset_Click(sender,e);
             //Assert
-            Assert.AreEqual(true, ((testingWindow.mFreq == 25) && (testingWindow.mAmpl == 5) && (testingWindow.mRate == 1000) && (testingWindow.mDuration == 10) && (testingWindow.mWave == Model.WaveForm.Sine)));
+            Assert.AreEqual(true, ((testingWindow.mFreq == 0.2) && (testingWindow.mAmpl == 5) && (testingWindow.mRate == 4) && (testingWindow.mDuration == 10) && (testingWindow.mWave == Model.WaveForm.Sine)));
         }
 
     }

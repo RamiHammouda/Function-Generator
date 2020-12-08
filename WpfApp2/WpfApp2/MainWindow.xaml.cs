@@ -46,6 +46,8 @@ namespace WpfApp2
 
         #region Properties
         public bool mValidInput { get; set; }
+        public bool ValidInput = false;
+        public int n;
         [Range(1,4,ErrorMessage = "Sending Data Rate to Database is limitted to maximum 4 : 4 times/s")]
         public long mRate;
         public long mDuration;
@@ -303,6 +305,10 @@ namespace WpfApp2
         //Not yet finished
         public void NumberValidation(object sender, TextCompositionEventArgs e)
         {
+            if ( ( int.TryParse( e.Text, out n)) == true )
+            {
+                mValidInput = true;
+            }
             //Regex regex = new Regex("[^a-zA-Z]+");           
             Regex regex = new Regex("[0-9.]+");
             if (!regex.IsMatch(e.Text))
@@ -321,7 +327,7 @@ namespace WpfApp2
             catch (Exception)
             {
                 MessageBox.Show("Pls input a double number !");
-                return;
+                return; 
             }
         }
         #endregion

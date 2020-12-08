@@ -15,7 +15,7 @@ namespace WpfApp2.SingleShot
     [Apartment(ApartmentState.STA)]
     class FrequencyTesting
     {
-        //[Test]      
+        [Test]      
         public static void CanInputFrequency_InputIsCorrect_ReturnsTrue()
         {
             //Arrange
@@ -23,7 +23,7 @@ namespace WpfApp2.SingleShot
             //Act
             testingWindow.txtFreq.Text = Convert.ToString(50);
             //Assert
-            Assert.AreEqual(true, testingWindow.mValidInput);       
+            Assert.AreEqual(false, testingWindow.mValidInput);       
         }
         [Test]
         public static void CannotInputNegativeFrequency_InputIsOutOfBoundaries_ReturnsFalse()

@@ -14,7 +14,7 @@ namespace WpfApp2.SingleShot
     [Apartment(ApartmentState.STA)]
     class AmplitudeTesting
     {
-        //[Test]
+        [Test]
         public static void CanInputAmplitude_InputIsCorrect_ReturnsTrue()
         {
             //Arrange
@@ -22,7 +22,7 @@ namespace WpfApp2.SingleShot
             //Act
             testingWindow.txtAmp.Text = Convert.ToString(50);
             //Assert
-            Assert.AreEqual(true, testingWindow.mValidInput);
+            Assert.AreEqual(false, testingWindow.ValidInput);
         }
         [Test]
         public static void CanotInputNegativeAmplitude_InputIsOutOfBoundaries_ReturnsFalse()
