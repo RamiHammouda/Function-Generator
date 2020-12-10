@@ -12,42 +12,41 @@ namespace WpfApp2.ViewModel
     {
         [JsonIgnore]
         public SignalProfile mProfile;
-        [JsonProperty("SimuProfile")]
+        [JsonIgnore]
         private SimulationProfile mSmProfile;
 
-        [JsonProperty("TargetOnDB")]
+        [JsonProperty("Wave",Order =1)]
+        public WaveForm mWave { get; set; }
+        [JsonProperty("Freq",Order =2)]
+        public double mFreq { get; set; }
+        [JsonProperty("Ampl",Order =3)]
+        public double mAmpl { get; set; }
+        [JsonProperty("SampleRate",Order =4)]
+        public long mRate { get; set; }
+        [JsonProperty("Duration",Order =5)]
+        public double mDuration { get; set; }
+
+        [JsonProperty("TargetOnDB",Order =6)]
         public string mTargetOnDB { get; set; }
 
-        [JsonProperty("Remark")]
+        [JsonProperty("Remark",Order =0)]
         public string mRemark { get; set; }
 
-        [JsonProperty("No")]
+        [JsonProperty("No",Order =7)]
         private long[] mNo;
-        [JsonProperty("TimeStamp")]
+        [JsonProperty("TimeStamp",Order =8)]
         private long[] mTimeStampArray;
-        [JsonProperty("Ampl")]
+        [JsonProperty("AmplValue",Order =9)]
         private double[] mAmplArray;
 
         //For quick access and control;
-        
-        [JsonIgnore]
-        public WaveForm mWave { get; set; }
-        [JsonIgnore]
-        public double mFreq { get; set; }
-        [JsonIgnore]
-        public  double mAmpl { get; set; }
-        [JsonIgnore]
-        public long mRate { get; set; }
-        [JsonIgnore]
-        public double mDuration { get; set; }
+       
         private long aTimeStep;
         private long mENumber;
         private delegate double GetWaveValue(long inputTime);
         private GetWaveValue getWaveValue;
         [JsonIgnore]
         public bool mSendToDB { get; set; }
-       
-
         public GenerateSignalData()
         {
             mProfile = new SignalProfile();

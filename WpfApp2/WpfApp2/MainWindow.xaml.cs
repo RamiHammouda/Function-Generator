@@ -21,7 +21,7 @@ namespace WpfApp2
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, INotifyPropertyChanged,IDataErrorInfo
+    public partial class MainWindow : Window, INotifyPropertyChanged, IDataErrorInfo
     {
 
         public MainWindow()
@@ -58,7 +58,7 @@ namespace WpfApp2
             }
         }
 
-        [Range(1,4,ErrorMessage = "Sending Data Rate to Database is limitted to maximum 4 : 4 times/s")]
+        [Range(1, 4, ErrorMessage = "Sending Data Rate to Database is limitted to maximum 4 : 4 times/s")]
         public long mRate;
         public long mDuration;
         public double mOffsetAmpl;
@@ -74,9 +74,9 @@ namespace WpfApp2
                 { _wave = value; OnPropertyChanged("mWave"); }
             }
         }
-        
+
         private double _freq;
-        [Range(0.0001,4,ErrorMessage = "Frequency must from {1} to {2}")]
+        [Range(0.0001, 4, ErrorMessage = "Frequency must from {1} to {2}")]
         [Required(ErrorMessage = "Frequency is required")]
         public double mFreq
         {
@@ -119,6 +119,20 @@ namespace WpfApp2
             }
         }
 
+        public string[] mMyTargetOnDB { get; set; }
+
+        private string _selectedTargetOnDB;
+        public string mSelectedTargetOnDB
+        {
+            get { return _selectedTargetOnDB; }
+            set
+            {
+                if (_selectedTargetOnDB != value)
+                { _selectedTargetOnDB = value; OnPropertyChanged("mSelectedTargetOnDB"); }
+            }
+        }
+
+
         string IDataErrorInfo.Error => throw new NotImplementedException(); //Part of Annotation
 
         string IDataErrorInfo.this[string propertyName] { get { return OnValidate(propertyName); } } //Part of Annotation
@@ -148,8 +162,8 @@ namespace WpfApp2
         #region Some Control Element
         private void sldFreq_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            mOffsetFreq = Math.Round((double)(sender as Slider).Value/100,4)*mFreq;
-            Console.WriteLine((sender as Slider).Value);
+
+            mOffsetFreq = Math.Round((sender as Slider).Value / 1000, 3);
         }
 
         private void sldAmp_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -198,16 +212,60 @@ namespace WpfApp2
             mDuration = 10;
             mWave = WaveForm.Sine;
             mValidInput = false;
-            
+
             this.PropertyChanged += AutoDrawing;
             OnPropertyChanged("IamIronMan");
 
             _multipleShotList = new ObservableCollection<GenerateSignalData>()
             { new GenerateSignalData(),
               new GenerateSignalData(0,230,7,510,2,sendToDb:true),
-              new GenerateSignalData(WaveForm.Random,320,3,993,2,targetOnDb:"Inputs_Entschlammung1_Status"),
-              new GenerateSignalData(WaveForm.Sawtooth,sendToDb:true,targetOnDb:"Inputs_TestVarLReal")
+              //new GenerateSignalData(WaveForm.Random,320,3,993,2,targetOnDb:"Inputs_Entschlammung1_Status"),
+              //new GenerateSignalData(WaveForm.Sawtooth,sendToDb:true,targetOnDb:"Inputs_TestVarLReal")
             };
+            mMyTargetOnDB = GetTargetOnDB();
+            mSelectedTargetOnDB = mMyTargetOnDB[0];
+
+            //not quite follow Binding Rule, but simple and practical :)
+            sldFreq.Value = 0;
+            sldAmp.Value = 0;
+
+        }
+
+
+        private string[] GetTargetOnDB()
+        {
+            string[] targetArray =
+            {
+                "Inputs_TestVarLReal",
+                "Inputs_TestVarDInt",
+                "Inputs_TestVarLInt",
+                "Inputs_TestVarReal",
+                "IEC_Timer_fuellstand_feinstfilter_DB_IN",
+                "IEC_Timer_fuellstand_feinstfilter_DB_Q",
+                "Inputs_SystemStatus_running",
+                "Inputs_Error_code",
+                "Inputs_Grobfilter_Status",
+                "Inputs_Entschlammung1_Status",
+                "Inputs_Entschlammung2_Status",
+                "Inputs_Feinstfilter_Status",
+                "Inputs_Feinfilter_Status",
+                "Inputs_Wasserstrahl1_Status",
+                "Inputs_Wasserstrahl2_Status",
+                "Inputs_Wasserreinigung_Status",
+                "Inputs_Feinstfilter_fuellstand",
+                "Inputs_SystemStatus_running_old_Entschlammung1",
+                "Inputs_Feinstfilter_fuellstand_trigger_out",
+                "Inputs_SystemStatus_running_old_Entschlammung2",
+                "Inputs_SystemStatus_running_old_Feinstfilter",
+                "Inputs_SystemStatus_running_old_Feinfilter",
+                "Inputs_SystemStatus_running_old_Grobfilter",
+                "Inputs_SystemStatus_running_old_Wasserstrahl1",
+                "Inputs_SystemStatus_running_old_Wasserstrahl2",
+                "Inputs_SystemStatus_running_old_Wasserreinigung",
+                "Memory_Feinstfilter_fuellstand_trigger_run"
+            };
+
+            return targetArray;
         }
 
         private void VisualizateData(SimulationProfile smProfile, int numberOfWave)
@@ -220,6 +278,7 @@ namespace WpfApp2
             string text = $"Wave: {displayData.getWave()}\nFreq: {displayData.getFreq()} Hz\nAmpl: {displayData.getAmpl()} V\nRate: {displayData.getRate()}\nDura: {smProfile.getDuration()} s";
             double[] x = GenerateSignalData.ConvertToDouble(displayData.getNo());
             double[] y = displayData.getAmplData();
+
             if ((double)displayData.getRate() / displayData.getFreq() > 50)
             {
                 linewidth = 2;
@@ -234,6 +293,7 @@ namespace WpfApp2
             myWpfPlot.plt.XLabel("Time(Ticks)", color: Color.Green);
             myWpfPlot.plt.Style(dataBg: Color.LightYellow);
             myWpfPlot.plt.PlotAnnotation(text, -10, 10, fontSize: 9);
+
             try
             {
                 myWpfPlot.Render();
@@ -247,7 +307,10 @@ namespace WpfApp2
         private void AutoDrawing(object sender, EventArgs e)
         {
             SimulationProfile currentSignal = new SimulationProfile(mWave, mFreq, mAmpl, mRate, mDuration);
+
+            currentSignal.PrintInfo();
             VisualizateData(currentSignal, 4);
+
         }
 
         private void btnSimulate_Click(object sender, RoutedEventArgs e)
@@ -272,7 +335,7 @@ namespace WpfApp2
                 return;
             List<GenerateSignalData> sendList = new List<GenerateSignalData>();
             foreach (GenerateSignalData item in mMultipleShotList)
-                if (item.checkSendToDB() == true)
+                if (item.checkSendToDB())
                 {
                     item.GenerateData();
                     sendList.Add(item);
@@ -317,7 +380,7 @@ namespace WpfApp2
         //Not yet finished
         public void NumberValidation(object sender, TextCompositionEventArgs e)
         {
-            if ( ( int.TryParse( e.Text, out n)) == true )
+            if ((int.TryParse(e.Text, out n)) == true)
             {
                 mValidInput = true;
             }

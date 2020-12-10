@@ -68,7 +68,7 @@ namespace WpfApp2.Model
 
         public override string ToString()
         {
-            return $"Simulation {mSgProfile}, Duration {mDuration}";
+            return $"Simulation {mSgProfile}, Duration: {mDuration}";
         }
 
         public bool checkedSmProfValidation()

@@ -15,13 +15,11 @@ namespace WpfApp2.Model
     }
     public class SignalProfile
     {
-
-        private bool mBiggerThanZero = true;
         [JsonProperty("Wave")]
         public WaveForm mWave { get; set; }
 
         [JsonProperty("Freq")]
-        private double mFrequency;
+        public double mFrequency { get; set; }
 
         [JsonProperty("Ampl")]
         private double mAmplitude;
