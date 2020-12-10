@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Text;
+using System.Windows;
+using System.Collections.Generic;
 using MySql.Data;
 using MySql.Data.MySqlClient;
 
@@ -10,32 +13,88 @@ namespace WpfApp2.DBClass
 */
     public class DBConnection
     {
-        #region Fields and Properties
+        #region Fields
+        protected string serverIP;
+        protected int portNumber;
+        protected string username;
+        protected string password;
+        protected string database;
+        protected string tablename;
+        protected string timestamp;
+        protected string columnName;
+        #endregion
 
+        #region Properties
         /// <summary>
         /// Server IP as String
         /// </summary>
-        protected string ServerIP { private get; set; }
+        public string ServerIP
+        {
+            get => serverIP;
+            set => serverIP = value;
+        }
 
         /// <summary>
         /// Port as Int
         /// </summary>
-        protected int PortNumber { private get; set; }
+        public int PortNumber
+        {
+            get => portNumber;
+            set => portNumber = value;
+        }
 
         /// <summary>
         /// User as String
         /// </summary>
-        protected string Username { private get; set; }
+        public string Username
+        {
+            get => username;
+            set => username = value;
+        }
 
         /// <summary>
         /// Password as String
         /// </summary>
-        protected string Password { private get; set; }
+        public string Password
+        {
+            get => password;
+            set => password = value;
+        }
 
         /// <summary>
         /// DB Name as String
         /// </summary>
-        protected string Database { private get; set; }
+        public string Database
+        {
+            get => database;
+            set => database = value;
+        }
+
+        /// <summary>
+        /// Table name as string
+        /// </summary>
+        public string TableName
+        {
+            get => TableName;
+            set => TableName = value;
+        }
+
+        /// <summary>
+        /// Returns the actual TimeStamp in MySQL Format
+        /// </summary>
+        public string TimeStamp
+        {
+            get => timestamp = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.ffff");
+        }
+
+        /// <summary>
+        /// Target Column on DB
+        /// </summary>
+        public string ColumnName
+        {
+            get => columnName;
+            set => columnName = value;
+        }
 
         /// <summary>
         /// DB ConnectionString
@@ -95,6 +154,11 @@ namespace WpfApp2.DBClass
             Database = dbname;
         }
 
+        /// <summary>
+        /// Build the Connection supported by ConnectionString and queryString Vars.
+        /// </summary>
+        /// <param name="ConnectionString">Collection of Informations, including FQDN, User/PW, Portnumber, TargetDatabase</param>
+        /// <param name="queryString"></param>
         public void Connect(string ConnectionString, string queryString)
         {
             using (MySqlConnection cn = new MySqlConnection(ConnectionString))
@@ -104,24 +168,70 @@ namespace WpfApp2.DBClass
                 try
                 {
                     command.Connection.Open();                              // Establish Connection to DB
-                    // Implement  
+                    command.ExecuteNonQuery();
                 }
                 catch
                 {
-                    // Implement Connection failed routine..
+                    Exception e = new Exception();
+                    MessageBox.Show(e.Message);
                 }
             }
         }
 
+        /// <summary>
+        /// Reading in the DB
+        /// </summary>
+        /// <param name="ConnectionString">ConnectionString delivered by ConnectionString Var</param>
+        /// <param name="queryString">QueryString delivered by function Callin Reader</param>
+        private List<Tuple<string, string>> Reader(string ConnectionString, string queryString)
+        {
+            List<Tuple<string, string>> columns = new List<Tuple<string, string>>();
+            
+            using (MySqlConnection cn = new MySqlConnection(ConnectionString))
+            {
+                MySqlCommand command = new MySqlCommand(queryString, cn);
 
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Tuple<string, string> nameAndType = Tuple.Create<string, string>(reader.GetString(0), reader.GetString(1));
+                        columns.Add(nameAndType);
+                    }
+                }
+            }
+            return columns;
+        }
 
-        // DB Value Select
+        /// <summary>
+        /// Get all the Columns from DB
+        /// </summary>
+        /// <returns>List<string> object with all column-names in the DB.</returns>
+        public List<Tuple<string, string>> GetColumns()
+        {
+            List<Tuple<string, string>> columns = new List<Tuple<string, string>>();
+
+            string queryString = $"SELECT `COLUMN_NAME`, `DATA_TYPE` FROM `INFORMATION_SCHEMA`.`COLUMNS`  WHERE `TABLE_SCHEMA`= '{Database}' AND `TABLE_NAME`= '{TableName}' ORDER BY table_name, ordinal_position; ";
+
+            Reader(ConnectionString, queryString);
+
+            return columns;
+        }
 
         // DB Value Insert
+        public void Insert(List<string> columns)
+        {
+            StringBuilder sb = new StringBuilder();
 
-        // DB Value Update
+            foreach (string name in columns)
+            {
+                sb.Append($"{name}, ");
+            }
 
-        // DB Value Delete
+            string queryString = $"INSERT INTO {Database}.{TableName}(TimeStamp, {sb.ToString()}) VALUES ({TimeStamp}, )  ";
+            
+            Connect(ConnectionString, queryString);
+        }
         #endregion
     }
 }
