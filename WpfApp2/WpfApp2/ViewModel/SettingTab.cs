@@ -9,18 +9,36 @@ using System.Windows;
 
 namespace WpfApp2.ViewModel
 {
-    public class SettingTab: INotifyPropertyChanged
+    public class SettingTab : INotifyPropertyChanged
     {
-        
+
         public string mServer { get; set; }
         public string mPort { get; set; }
         public string mUserId { get; set; }
         public string mPassword { get; set; }
         public string mDatabaseName { get; set; }
-        public string mTabName{ get; set; }
+        public string mTabName { get; set; }
 
-        public bool mElementVisible { get; set; }
-        public bool mBeautifulJson { get; set; }
+        private bool _beautifulJson, _elementEnable;
+        public bool mElementEnable
+        {
+            get { return _elementEnable; }
+            set
+            {
+                if (_elementEnable != value)
+                { _elementEnable = value; OnPropertyChanged("mElementEnable"); }
+            }
+        }
+
+        public bool mBeautifulJson
+        {
+            get { return _beautifulJson; }
+            set
+            {
+                if (_beautifulJson != value)
+                { _beautifulJson = value; OnPropertyChanged("mBeautifulJson"); }
+            }
+        }
 
         private string _errorServer;
         public string mErrorServer
@@ -58,7 +76,7 @@ namespace WpfApp2.ViewModel
                 return _instance;
             }
         }
-        public void SetSetting(string server="fgdb-f2-htw.selfhost.co", string port="3306", string user="hoale", string pword= "TestPW123!456", string dbname="plc_data", string tabname="plc_data",bool visible = false, bool beauty = true)
+        public void SetSetting(string server = "fgdb-f2-htw.selfhost.co", string port = "3306", string user = "hoale", string pword = "TestPW123!456", string dbname = "plc_data", string tabname = "plc_data", bool enable = false, bool beauty = true)
         {
             mServer = server;
             mPort = port;
@@ -66,8 +84,16 @@ namespace WpfApp2.ViewModel
             mPassword = pword;
             mDatabaseName = dbname;
             mTabName = tabname;
-            mElementVisible = visible;
+            mElementEnable = enable;
             mBeautifulJson = beauty;
+
+            PropertyChanged += PrintSomeInfo;
+            OnPropertyChanged("Test");
+        }
+
+        private void PrintSomeInfo(object sender, EventArgs e)
+        {
+            Console.WriteLine($"Element Visible:{mElementEnable}, Beautiful Format:{mBeautifulJson}");
         }
 
         public bool CheckConnection()
@@ -77,7 +103,7 @@ namespace WpfApp2.ViewModel
                 conn.Close();
 
             string connStr = String.Format("server={0};user id={1}; password={2}; database={3}; port={4}; pooling=false",
-                mServer, mUserId, mPassword, mDatabaseName,mPort);
+                mServer, mUserId, mPassword, mDatabaseName, mPort);
 
             try
             {
@@ -101,6 +127,14 @@ namespace WpfApp2.ViewModel
             return $"server={mServer};user id={mUserId}; password={mPassword}; database={mDatabaseName}; port={mPort}; pooling=false";
         }
 
-
+        public void PrintInfo()
+        {
+            Console.WriteLine(this.GetConnectionString());
+        }
+        public bool ReverseEditMode()
+        {
+            mElementEnable = !mElementEnable;
+            return mElementEnable;
+        }
     }
 }
