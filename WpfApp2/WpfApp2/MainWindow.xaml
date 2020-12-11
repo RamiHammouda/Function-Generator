@@ -7,10 +7,12 @@
         xmlns:myenum="clr-namespace:WpfApp2.Model"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        xmlns:w="clr-namespace:WpfApp2.ViewModel"
 
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
         Title="FUNCTION GENERATOR"  Height="550" Width="1000" FontFamily="Verdana" 
-        Background="#FFEEFAFF" Icon="icons8-gears-80.png">
+        Background="#FFEEFAFF" Icon="/Images/icons8-gears-80.png">
+
     <Window.Resources>
 
         <Style TargetType="{x:Type TextBox}">
@@ -226,9 +228,14 @@
                         <RowDefinition Height="40"/>
                     </Grid.RowDefinitions>
 
+
+                    <!--<Image Name="resultImg" Width ="30" Grid.Column="4" Grid.Row="2" VerticalAlignment="Top" Source="{Binding Path = mUriImage,UpdateSourceTrigger=PropertyChanged}"/>-->
+
+
                     <Label Content="Test" Grid.Column="1" Grid.Row="1"/>
                     <StackPanel Orientation="Vertical" Grid.Column ="4" Grid.Row="2" VerticalAlignment="Bottom" Height="99" >
 
+                        
                         <Button x:Name="btnMSimuToJson" Content="M.Simulate to Json" Click="btnMSimulateToJson_Click" Margin="5,0,5,45" BorderThickness="0.5" Height="22" FontWeight="Bold">
                             <Button.Resources>
                                 <Style TargetType="{x:Type Border}">
@@ -236,6 +243,7 @@
                                 </Style>
                             </Button.Resources>
                         </Button>
+                    
 
                         <Button x:Name="btMSimuToDB" Content="M.Simulate to DB" Click="btnSimulate_Click" Margin="5,0,5,10" FontWeight="Bold" Height="22">
                             <Button.Resources>
@@ -267,12 +275,12 @@
                             <ContextMenu>
                                 <MenuItem Header="Delete Item"  Click="MenuItemDel_Click">
                                     <MenuItem.Icon>
-                                        <Image Source="icons8-delete-file-48.png" />
+                                        <Image Source="/Images/icons8-delete-file-48.png" />
                                     </MenuItem.Icon>
                                 </MenuItem>
                                 <MenuItem Header="Add Item"  Click="MenuItemAdd_Click" >
                                     <MenuItem.Icon>
-                                        <Image Source="icons8-add-file-48.png" />
+                                        <Image Source="/Images/icons8-add-file-48.png" />
                                     </MenuItem.Icon>
                                 </MenuItem>
                             </ContextMenu>
@@ -315,17 +323,18 @@
                             </DataGridTemplateColumn>
                             <DataGridCheckBoxColumn Header="Send?" Binding="{Binding Path=mSendToDB}"/>
                         </DataGrid.Columns>
-                        
+
                     </DataGrid>
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Setting" Height="20" Width="150">
+            <TabItem Header="Setting" DataContext="{Binding Path = mSettingTab}" Height="20" Width="150">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="200"/>
                         <ColumnDefinition Width="150"/>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="150"/>
                         <ColumnDefinition Width="200"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -346,55 +355,76 @@
                         <RowDefinition Height="20"/>
                     </Grid.RowDefinitions>
 
-                    <TextBlock Text="DATABASE CONNECTION SETTING" Grid.Column="1" Grid.ColumnSpan="2"
-                               VerticalAlignment="Bottom" Margin="5" HorizontalAlignment="Center"
+                    <TextBlock Text="DATABASE CONNECTION SETTING" Grid.Column="2" Grid.ColumnSpan="2"
+                               VerticalAlignment="Bottom" Margin="1,0,10,4" HorizontalAlignment="Center"
                                FontSize="15" FontWeight="SemiBold"/>
                     <Label Content="Server(/Server IP)" Grid.Column="1" Grid.Row="1" FontWeight="DemiBold" 
-                           HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                           HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,2"/>
+
                     <Label Content="User ID" Grid.Column="1" Grid.Row="2" FontWeight="DemiBold" 
-                           HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                           HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,2"/>
                     <Label Content="Password" Grid.Column="1" Grid.Row="3" FontWeight="DemiBold" 
-                           HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                           HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,2"/>
                     <Label Content="Database Name" Grid.Column="1" Grid.Row="4" FontWeight="DemiBold" 
-                           HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                           HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,2"/>
                     <Label Content="Table Name" Grid.Column="1" Grid.Row="5" FontWeight="DemiBold" 
-                           HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                           HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,2"/>
 
-                    <TextBox x:Name="txtServer" Grid.Column="2" Grid.Row="1" TextWrapping="Wrap" 
-                             MinHeight="20" Margin="5" MinWidth="200" IsEnabled="True" Padding="2"/>
-                    <TextBox x:Name="txtUser" Grid.Column="2" Grid.Row="2" TextWrapping="Wrap" 
-                             MinHeight="20" Margin="5" MinWidth="200" IsEnabled="True" Padding="2"/>
-                    <PasswordBox x:Name="txtPass" Grid.Column="2" Grid.Row="3" 
-                             MinHeight="20" Margin="5" MinWidth="200" IsEnabled="True" Padding="2"/>
-                    <TextBox x:Name="txtDbName" Grid.Column="2" Grid.Row="4" TextWrapping="Wrap" 
-                             MinHeight="20" Margin="5" MinWidth="200" IsEnabled="True" Padding="2"/>
-                    <TextBox x:Name="txtTabName" Grid.Column="2" Grid.Row="5" TextWrapping="Wrap" 
-                             MinHeight="20" Margin="5" MinWidth="200" IsEnabled="True" Padding="2"/>
+                    <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="1"  >
+                        <Label Content="Port" FontWeight="DemiBold"  VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10,0,5,0" />
+                        <TextBox x:Name="txtPort" Text="{Binding mPort}" MinWidth="87" MinHeight="20"  Margin="5" IsEnabled="True" Padding="2"/>
+                       
+                    </StackPanel>
 
-                    <Button x:Name="btnTestConn" Content="Test Connection" Grid.Column="2" Grid.Row="6"
-                            Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="150" 
-                            HorizontalAlignment="Right" Margin="0,4,5,4" BorderThickness="0.5"/>
+                    <TextBox x:Name="txtServer" Grid.Column="2" Grid.Row="1" Text="{Binding Path=mServer}"
+                             Margin="5,5,5,5" IsEnabled="True" Padding="2"  MinHeight="20" />
 
-                    <TextBlock Text="LOCAL SAVING FILE SETTING" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="7"
-                               VerticalAlignment="Bottom" Margin="5" HorizontalAlignment="Center"
+                    <TextBox x:Name="txtUser" Text="{Binding mUserId}" Grid.Column="2" Grid.Row="2" TextWrapping="Wrap" 
+                             MinHeight="20" Margin="5" MinWidth="200" IsEnabled="True" Padding="2" Grid.ColumnSpan="2"/>
+                    <!--<PasswordBox x:Name="txtPass" Password="cannotbinding" Grid.Column="2" Grid.Row="3" 
+                             MinHeight="20" Margin="5" MinWidth="200" IsEnabled="True" Padding="2" Grid.ColumnSpan="2"/>-->
+                    <PasswordBox x:Name ="txtPass" w:PasswordHelper.Attach ="True" w:PasswordHelper.Password="{Binding Path = mPassword, Mode=TwoWay}"  Grid.Column="2" Grid.Row="3" 
+                             MinHeight="20" Margin="5" MinWidth="200" IsEnabled="True" Padding="2" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="txtDbName" Text="{Binding mDatabaseName}" Grid.Column="2" Grid.Row="4" TextWrapping="Wrap" 
+                             MinHeight="20" Margin="5" MinWidth="200" IsEnabled="True" Padding="2" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="txtTabName" Text="{Binding mTabName}" Grid.Column="2" Grid.Row="5" TextWrapping="Wrap" 
+                             MinHeight="20" Margin="5" MinWidth="200" IsEnabled="True" Padding="2" Grid.ColumnSpan="2"/>
+
+                    <!--<Image Name="resultImg" Width ="25" Grid.Column="2" Grid.Row="6" HorizontalAlignment="Right" Margin="0,0,5,0"
+                           Source="/Images/icons8-ok-48.png"/>-->
+                    <Image Name="resultImg" Width ="25" Grid.Column="2" Grid.Row="6" HorizontalAlignment="Right" Margin="0,0,5,0"
+                           Source="{Binding Path = mUriImage,UpdateSourceTrigger=PropertyChanged}"/>
+                    
+                    <Button x:Name="btnTestConn" Content="Test Connection" Grid.Column="3" Grid.Row="6"
+                            Style="{StaticResource myButtonStyle}" FontWeight="SemiBold"  Margin="0,4,0,4" BorderThickness="0.5" Click="btnTestConn_Click" />
+
+                    <TextBlock Text ="{Binding Path = mErrorServer, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" Grid.Row="7" 
+                           Foreground="Red" FontStyle="Italic" Grid.ColumnSpan="5" TextWrapping="Wrap" HorizontalAlignment="Center" 
+                           VerticalAlignment="Top" Margin="50,0,50,0"/>
+
+
+
+
+                    <TextBlock Text="LOCAL SAVING FILE SETTING" Grid.Column="2" Grid.Row="7" Grid.ColumnSpan="2"
+                               VerticalAlignment="Bottom" Margin="21,0,30,4" HorizontalAlignment="Center"
                                FontSize="15" FontWeight="SemiBold" />
                     <Label Content="Json File Format" Grid.Column="1" Grid.Row="8" FontWeight="DemiBold" 
-                           HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                           HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,3"/>
                     <ComboBox Name="cbbFormat" Grid.Column="2" Grid.Row="8" Width="150" HorizontalAlignment="Left" Margin="5,4,0,4">
 
                     </ComboBox>
 
-                    <Button x:Name="btnEnableEdit" Content="Enable Edit" Grid.Column="3" Grid.Row="9"
+                    <Button x:Name="btnEnableEdit" Content="Enable Edit" Grid.Column="4" Grid.Row="9"
                             Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170"
-                            HorizontalAlignment="Center"  Margin="0,4,5,4" BorderThickness="0.5"/>
-                    <Button x:Name="btnCancel" Content="Cancel" Grid.Column="3" Grid.Row="10"
+                            HorizontalAlignment="Center"  Margin="12,4,18,4" BorderThickness="0.5"/>
+                    <Button x:Name="btnCancel" Content="Cancel" Grid.Column="4" Grid.Row="10"
                             Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170"
-                            HorizontalAlignment="Center" Margin="0,4,5,4" BorderThickness="0.5"/>
+                            HorizontalAlignment="Center" Margin="12,4,18,4" BorderThickness="0.5"/>
 
-                    <Button x:Name="btnOK" Content="OK" Grid.Column="3" Grid.Row="12"
+                    <Button x:Name="btnOK" Content="OK" Grid.Column="4" Grid.Row="12"
                             Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170" Height="25"
-                            HorizontalAlignment="Center"  Margin="0,4,5,4" BorderThickness="1"/>
-                    
+                            HorizontalAlignment="Center"  Margin="12,17,18,17" BorderThickness="1"/>
+
                 </Grid>
             </TabItem>
         </TabControl>
