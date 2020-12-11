@@ -15,6 +15,8 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Controls;
+using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 namespace WpfApp2
 {
@@ -29,6 +31,8 @@ namespace WpfApp2
             InitializeComponent();
 
             initiateDefaultValue();
+            this.mSettingTab = SettingTab.Instance;
+            mSettingTab.SetSetting();
         }
 
 
@@ -47,6 +51,7 @@ namespace WpfApp2
         #endregion
 
         #region Properties
+
         private string _errorMessage;
         public string mErrorMessage
         {
@@ -100,6 +105,8 @@ namespace WpfApp2
                 { _ampl = value; OnPropertyChanged("mAmpl"); }
             }
         }
+
+        public SettingTab mSettingTab { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -156,6 +163,7 @@ namespace WpfApp2
             mErrorMessage = error;
             return error;
         }
+
 
         #endregion
 
@@ -229,6 +237,12 @@ namespace WpfApp2
             sldFreq.Value = 0;
             sldAmp.Value = 0;
 
+            //only for Image Connection Result
+            resultImg.DataContext = this;
+            //Uri myUri = new Uri(@"/Images/icons8-ok-48.png", UriKind.Relative);
+            //Uri myUri2 = new Uri("/WpfApp2;component/Images/icons8-ok-48.png",UriKind.Relative);
+            //resultImg.Source = new BitmapImage(myUri2);
+            //mUriImage = myUri;
         }
 
 
@@ -374,6 +388,28 @@ namespace WpfApp2
             ItemAdded = true;
         }
 
+        private Uri _uriImage;
+        public Uri mUriImage
+        {
+            get { return _uriImage; }
+            set
+            {
+                if (_uriImage != value)
+                { _uriImage = value; OnPropertyChanged("mUriImage"); }
+            }
+        }
+        private async void btnTestConn_Click(object sender, RoutedEventArgs e)
+        {
+            //resultImg.DataContext = this;
+            bool result = await Task.Run(() => mSettingTab.CheckConnection());
+            if (result)
+                mUriImage = new Uri("/Images/icons8-ok-48.png",UriKind.Relative);
+            else
+                mUriImage = new Uri(@"/Images/icons8-cancel-48.png",UriKind.Relative);
+            //resultImg.Source = new BitmapImage(mUriImage);
+            //Console.WriteLine(result);
+        }
+
         #endregion
 
         #region under Drafting
@@ -408,6 +444,7 @@ namespace WpfApp2
         }
         #endregion
 
+        
     }
 
     #region Support Function
