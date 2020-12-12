@@ -338,7 +338,7 @@ namespace WpfApp2
             SimulationProfile smProfile = new SimulationProfile(sgProfile, mDuration);
             GenerateSignalData myProf = new GenerateSignalData(smProfile, true);
 
-            myProf.ExportToJson();
+            myProf.ExportToJson(mSettingTab.mBeautifulJson);
             //MessageBox.Show("Finished Exporting", "Quick Infor", MessageBoxButton.OK, MessageBoxImage.Information);
             exportingIsFinished = true;
         }
@@ -354,17 +354,19 @@ namespace WpfApp2
                     item.GenerateData();
                     sendList.Add(item);
                 }
-            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            //string fileName = DateTime.Now.Ticks.ToString();
-            string fileName = "PrintList";
-            //string filePath = desktopPath + @"\GenerateData.json";
-            string filePath = desktopPath + "\\" + fileName + ".json";
+            //string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string basePath = Directory.GetCurrentDirectory() + "\\AppData";
+            Directory.CreateDirectory(basePath);
+            string fileName = "MultipleSignal " + DateTime.Now.ToString("yyyy-MM-dd HH.mm.ss ffff");
+            string filePath = basePath + "\\" + fileName + ".json";
 
-            var serializer = new JsonSerializer { Formatting = Formatting.Indented, TypeNameHandling = TypeNameHandling.Auto };
-            //var serializer = new JsonSerializer { TypeNameHandling = TypeNameHandling.Auto };
+            JsonSerializer serializer;
+            if (mSettingTab.mBeautifulJson)
+                serializer = new JsonSerializer { Formatting = Formatting.Indented, TypeNameHandling = TypeNameHandling.Auto };
+            else
+                serializer = new JsonSerializer { TypeNameHandling = TypeNameHandling.Auto };
             using (StreamWriter writer = File.CreateText(filePath)) { serializer.Serialize(writer, sendList); }
 
-            //MessageBox.Show("Finished Exporting", "Quick Infor", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         public void MenuItemDel_Click(object sender, RoutedEventArgs e)
         {
@@ -403,11 +405,27 @@ namespace WpfApp2
             //resultImg.DataContext = this;
             bool result = await Task.Run(() => mSettingTab.CheckConnection());
             if (result)
-                mUriImage = new Uri("/Images/icons8-ok-48.png",UriKind.Relative);
+                mUriImage = new Uri("/Images/icons8-ok-48.png", UriKind.Relative);
             else
-                mUriImage = new Uri(@"/Images/icons8-cancel-48.png",UriKind.Relative);
+                mUriImage = new Uri(@"/Images/icons8-cancel-48.png", UriKind.Relative);
             //resultImg.Source = new BitmapImage(mUriImage);
             //Console.WriteLine(result);
+        }
+        private void btnEnableEdit_Click(object sender, RoutedEventArgs e)
+        {
+            if (!mSettingTab.ReverseEditMode())
+                btnEnableEdit.Content = "Enable Edit";
+            else btnEnableEdit.Content = "Disable Edit";
+        }
+
+        private void btnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            myTabControl.SelectedIndex = 0;
+        }
+
+        private void btnOK_Click(object sender, RoutedEventArgs e)
+        {
+            mSettingTab.PrintInfo();
         }
 
         #endregion
@@ -442,6 +460,7 @@ namespace WpfApp2
                 return;
             }
         }
+
         #endregion
 
         

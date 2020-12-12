@@ -69,7 +69,7 @@
     </Window.Resources>
 
     <Grid>
-        <TabControl Padding="0">
+        <TabControl Name="myTabControl" Padding="0">
             <TabControl.Resources>
                 <Style TargetType="{x:Type Grid}">
                     <Setter Property="Background" Value="#FFEEFAFF"></Setter>
@@ -235,7 +235,7 @@
                     <Label Content="Test" Grid.Column="1" Grid.Row="1"/>
                     <StackPanel Orientation="Vertical" Grid.Column ="4" Grid.Row="2" VerticalAlignment="Bottom" Height="99" >
 
-                        
+
                         <Button x:Name="btnMSimuToJson" Content="M.Simulate to Json" Click="btnMSimulateToJson_Click" Margin="5,0,5,45" BorderThickness="0.5" Height="22" FontWeight="Bold">
                             <Button.Resources>
                                 <Style TargetType="{x:Type Border}">
@@ -243,7 +243,7 @@
                                 </Style>
                             </Button.Resources>
                         </Button>
-                    
+
 
                         <Button x:Name="btMSimuToDB" Content="M.Simulate to DB" Click="btnSimulate_Click" Margin="5,0,5,10" FontWeight="Bold" Height="22">
                             <Button.Resources>
@@ -372,31 +372,31 @@
 
                     <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="1"  >
                         <Label Content="Port" FontWeight="DemiBold"  VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10,0,5,0" />
-                        <TextBox x:Name="txtPort" Text="{Binding mPort}" MinWidth="87" MinHeight="20"  Margin="5" IsEnabled="True" Padding="2"/>
-                       
+                        <TextBox x:Name="txtPort" Text="{Binding mPort}" MinWidth="87" MinHeight="20"  Margin="5" IsEnabled="{Binding mElementEnable}" Padding="2"/>
+
                     </StackPanel>
 
                     <TextBox x:Name="txtServer" Grid.Column="2" Grid.Row="1" Text="{Binding Path=mServer}"
-                             Margin="5,5,5,5" IsEnabled="True" Padding="2"  MinHeight="20" />
+                             Margin="5,5,5,5" IsEnabled="{Binding mElementEnable}" Padding="2"  MinHeight="20" />
 
                     <TextBox x:Name="txtUser" Text="{Binding mUserId}" Grid.Column="2" Grid.Row="2" TextWrapping="Wrap" 
-                             MinHeight="20" Margin="5" MinWidth="200" IsEnabled="True" Padding="2" Grid.ColumnSpan="2"/>
+                             MinHeight="20" Margin="5" MinWidth="200" IsEnabled="{Binding mElementEnable}" Padding="2" Grid.ColumnSpan="2"/>
                     <!--<PasswordBox x:Name="txtPass" Password="cannotbinding" Grid.Column="2" Grid.Row="3" 
                              MinHeight="20" Margin="5" MinWidth="200" IsEnabled="True" Padding="2" Grid.ColumnSpan="2"/>-->
                     <PasswordBox x:Name ="txtPass" w:PasswordHelper.Attach ="True" w:PasswordHelper.Password="{Binding Path = mPassword, Mode=TwoWay}"  Grid.Column="2" Grid.Row="3" 
-                             MinHeight="20" Margin="5" MinWidth="200" IsEnabled="True" Padding="2" Grid.ColumnSpan="2"/>
+                             MinHeight="20" Margin="5" MinWidth="200" IsEnabled="{Binding mElementEnable}" Padding="2" Grid.ColumnSpan="2"/>
                     <TextBox x:Name="txtDbName" Text="{Binding mDatabaseName}" Grid.Column="2" Grid.Row="4" TextWrapping="Wrap" 
-                             MinHeight="20" Margin="5" MinWidth="200" IsEnabled="True" Padding="2" Grid.ColumnSpan="2"/>
+                             MinHeight="20" Margin="5" MinWidth="200" IsEnabled="{Binding mElementEnable}" Padding="2" Grid.ColumnSpan="2"/>
                     <TextBox x:Name="txtTabName" Text="{Binding mTabName}" Grid.Column="2" Grid.Row="5" TextWrapping="Wrap" 
-                             MinHeight="20" Margin="5" MinWidth="200" IsEnabled="True" Padding="2" Grid.ColumnSpan="2"/>
+                             MinHeight="20" Margin="5" MinWidth="200" IsEnabled="{Binding mElementEnable}" Padding="2" Grid.ColumnSpan="2"/>
 
                     <!--<Image Name="resultImg" Width ="25" Grid.Column="2" Grid.Row="6" HorizontalAlignment="Right" Margin="0,0,5,0"
                            Source="/Images/icons8-ok-48.png"/>-->
                     <Image Name="resultImg" Width ="25" Grid.Column="2" Grid.Row="6" HorizontalAlignment="Right" Margin="0,0,5,0"
                            Source="{Binding Path = mUriImage,UpdateSourceTrigger=PropertyChanged}"/>
-                    
-                    <Button x:Name="btnTestConn" Content="Test Connection" Grid.Column="3" Grid.Row="6"
-                            Style="{StaticResource myButtonStyle}" FontWeight="SemiBold"  Margin="0,4,0,4" BorderThickness="0.5" Click="btnTestConn_Click" />
+
+                    <Button x:Name="btnTestConn" Content="Test Connection" Grid.Column="3" Grid.Row="6" IsEnabled="{Binding mElementEnable}" 
+                            Style="{StaticResource myButtonStyle}" FontWeight="SemiBold"  Margin="0,4,5,4" BorderThickness="0.5" Click="btnTestConn_Click" />
 
                     <TextBlock Text ="{Binding Path = mErrorServer, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" Grid.Row="7" 
                            Foreground="Red" FontStyle="Italic" Grid.ColumnSpan="5" TextWrapping="Wrap" HorizontalAlignment="Center" 
@@ -410,20 +410,23 @@
                                FontSize="15" FontWeight="SemiBold" />
                     <Label Content="Json File Format" Grid.Column="1" Grid.Row="8" FontWeight="DemiBold" 
                            HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,3"/>
-                    <ComboBox Name="cbbFormat" Grid.Column="2" Grid.Row="8" Width="150" HorizontalAlignment="Left" Margin="5,4,0,4">
+                    <ComboBox Name="cbbFormat" Grid.Column="2" Grid.Row="8" IsEnabled="{Binding mElementEnable}" Width="150" HorizontalAlignment="Left" Margin="5,4,0,4">
+                        <ComboBoxItem Content="Beautiful Format" IsSelected="{Binding mBeautifulJson, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <ComboBoxItem Content="Compact Format" />
 
                     </ComboBox>
 
                     <Button x:Name="btnEnableEdit" Content="Enable Edit" Grid.Column="4" Grid.Row="9"
                             Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170"
-                            HorizontalAlignment="Center"  Margin="12,4,18,4" BorderThickness="0.5"/>
-                    <Button x:Name="btnCancel" Content="Cancel" Grid.Column="4" Grid.Row="10"
+                            HorizontalAlignment="Center"  Margin="12,4,18,4" BorderThickness="0.5" Click="btnEnableEdit_Click"/>
+                    
+                    <Button x:Name="btnCancel" Content="Cancel" Grid.Column="4" Grid.Row="10" IsEnabled="{Binding mElementEnable}" 
                             Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170"
-                            HorizontalAlignment="Center" Margin="12,4,18,4" BorderThickness="0.5"/>
+                            HorizontalAlignment="Center" Margin="12,4,18,4" BorderThickness="0.5" Click="btnCancel_Click"/>
 
-                    <Button x:Name="btnOK" Content="OK" Grid.Column="4" Grid.Row="12"
+                    <Button x:Name="btnOK" Content="OK" Grid.Column="4" Grid.Row="12" IsEnabled="{Binding mElementEnable}" 
                             Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170" Height="25"
-                            HorizontalAlignment="Center"  Margin="12,17,18,17" BorderThickness="1"/>
+                            HorizontalAlignment="Center"  Margin="12,17,18,17" BorderThickness="1" Click="btnOK_Click"/>
 
                 </Grid>
             </TabItem>

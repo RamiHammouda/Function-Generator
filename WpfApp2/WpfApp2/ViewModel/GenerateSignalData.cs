@@ -168,15 +168,20 @@ namespace WpfApp2.ViewModel
         }
 
         //Hardcore to Desktop first
-        public void ExportToJson()
+        public void ExportToJson(bool beaufiful = true)
         {
-            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            string fileName = DateTime.Now.Ticks.ToString();
-            //string filePath = desktopPath + @"\GenerateData.json";
-            string filePath = desktopPath + "\\"+ fileName +".json";
+            //string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string basePath = Directory.GetCurrentDirectory() + "\\AppData";
+            Directory.CreateDirectory(basePath);
+            string fileName = "SingleSignal "+ DateTime.Now.ToString("yyyy-MM-dd HH.mm.ss ffff");
+            string filePath = basePath + "\\"+ fileName +".json";
 
-            var serializer = new JsonSerializer { Formatting = Formatting.Indented, TypeNameHandling = TypeNameHandling.Auto };
-            //var serializer = new JsonSerializer { TypeNameHandling = TypeNameHandling.Auto };
+            JsonSerializer serializer;
+            if (beaufiful)
+                serializer = new JsonSerializer { Formatting = Formatting.Indented, TypeNameHandling = TypeNameHandling.Auto };
+            else
+                serializer = new JsonSerializer { TypeNameHandling = TypeNameHandling.Auto };
+
             using (StreamWriter writer = File.CreateText(filePath)) { serializer.Serialize(writer, this); }
         }
 
