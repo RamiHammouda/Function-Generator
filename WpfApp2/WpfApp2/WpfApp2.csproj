@@ -124,11 +124,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="DBClass\DBForm.cs" />
-    <Compile Include="DBClass\DBConnection.cs" />
     <Compile Include="DBViewWindows.xaml.cs">
       <DependentUpon>DBViewWindows.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Model\MyDBEntity.cs" />
     <Compile Include="NUnitTesting\AmplitudeTesting.cs" />
     <Compile Include="Model\SignalProfile.cs" />
     <Compile Include="Model\SimulationProfile.cs" />
