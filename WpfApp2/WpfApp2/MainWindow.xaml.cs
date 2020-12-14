@@ -17,6 +17,7 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using System.Globalization;
 
 namespace WpfApp2
 {
@@ -31,8 +32,7 @@ namespace WpfApp2
             InitializeComponent();
 
             initiateDefaultValue();
-            this.mSettingTab = SettingTab.Instance;
-            mSettingTab.SetSetting();
+
         }
 
 
@@ -106,7 +106,7 @@ namespace WpfApp2
             }
         }
 
-        public SettingTab mSettingTab { get; set; }
+        public SettingInfor mSettingTab { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -126,7 +126,7 @@ namespace WpfApp2
             }
         }
 
-        public string[] mMyTargetOnDB { get; set; }
+        public List<string> mMyTargetOnDB { get; set; }
 
         private string _selectedTargetOnDB;
         public string mSelectedTargetOnDB
@@ -164,6 +164,7 @@ namespace WpfApp2
             return error;
         }
 
+        public ColumnDBSelectableHelper originalColumnWithSelection { get; set; }
 
         #endregion
 
@@ -213,6 +214,16 @@ namespace WpfApp2
         public void initiateDefaultValue()
         {
             this.DataContext = this;
+            //originalColumnWithSelection = new ColumnDBSelectableHelper(GetTargetOnDB());
+            List<ColumnDBSelectableHelper> originalTargetList = new List<ColumnDBSelectableHelper>();
+            foreach (string column in GetTargetOnDB())
+                originalTargetList.Add(new ColumnDBSelectableHelper(true, column));
+
+            cbbTargetList.ItemsSource = originalTargetList;
+            //Because all elemente of Settingtab already has datacontext to SettingTab (inXml)
+            //so cbb must set Datacontext to return to this class
+            //cbbTargetList.DataContext = this;
+            //txtCombobox.DataContext = this;
 
             mFreq = 0.2;
             mAmpl = 5;
@@ -233,6 +244,9 @@ namespace WpfApp2
             mMyTargetOnDB = GetTargetOnDB();
             mSelectedTargetOnDB = mMyTargetOnDB[0];
 
+            this.mSettingTab = SettingInfor.Instance;
+            mSettingTab.SetSetting();
+
             //not quite follow Binding Rule, but simple and practical :)
             sldFreq.Value = 0;
             sldAmp.Value = 0;
@@ -246,7 +260,7 @@ namespace WpfApp2
         }
 
 
-        private string[] GetTargetOnDB()
+        private List<string> GetTargetOnDB()
         {
             string[] targetArray =
             {
@@ -279,7 +293,7 @@ namespace WpfApp2
                 "Memory_Feinstfilter_fuellstand_trigger_run"
             };
 
-            return targetArray;
+            return targetArray.ToList();
         }
 
         private void VisualizateData(SimulationProfile smProfile, int numberOfWave)
@@ -400,16 +414,16 @@ namespace WpfApp2
                 { _uriImage = value; OnPropertyChanged("mUriImage"); }
             }
         }
+        
         private async void btnTestConn_Click(object sender, RoutedEventArgs e)
         {
-            //resultImg.DataContext = this;
             bool result = await Task.Run(() => mSettingTab.CheckConnection());
             if (result)
                 mUriImage = new Uri("/Images/icons8-ok-48.png", UriKind.Relative);
             else
                 mUriImage = new Uri(@"/Images/icons8-cancel-48.png", UriKind.Relative);
+            //resultImg.DataContext = this;
             //resultImg.Source = new BitmapImage(mUriImage);
-            //Console.WriteLine(result);
         }
         private void btnEnableEdit_Click(object sender, RoutedEventArgs e)
         {
@@ -463,7 +477,7 @@ namespace WpfApp2
 
         #endregion
 
-        
+
     }
 
     #region Support Function
@@ -489,6 +503,48 @@ namespace WpfApp2
             return value.Equals(true) ? parameter : Binding.DoNothing;
         }
     }
+
+    public class BoolToVisibleConvert : IValueConverter
+    {
+        //public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        //{
+        //    return (value is bool && (bool)value) ? Visibility.Visible : Visibility.Collapsed
+        //}
+
+        //public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        //{
+        //    return value is Visibility && (Visibility)value == Visibility.Visible;
+        //}
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool bValue = false;
+            if (value is bool)
+            {
+                bValue = (bool)value;
+            }
+            else if (value is Nullable<bool>)
+            {
+                Nullable<bool> tmp = (Nullable<bool>)value;
+                bValue = tmp.HasValue ? tmp.Value : false;
+            }
+            return (bValue) ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is Visibility)
+            {
+                return (Visibility)value == Visibility.Visible;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+
+
 
     #endregion
 

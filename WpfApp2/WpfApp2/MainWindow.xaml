@@ -51,13 +51,11 @@
             <!--<CollectionViewSource.SortDescriptions>
                 <scm:SortDescription PropertyName="mWave" Direction="Descending" />
             </CollectionViewSource.SortDescriptions>-->
-
         </CollectionViewSource>
 
         <CollectionViewSource Source="{Binding Path=mMyTargetOnDB, UpdateSourceTrigger=PropertyChanged}"
          x:Key="myCollectionDBView">
         </CollectionViewSource>
-
 
         <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues"
                         ObjectType="{x:Type sys:Enum}">
@@ -66,10 +64,14 @@
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
 
+
+        <local:BoolToVisibleConvert x:Key="MyBoolToVis"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
     </Window.Resources>
 
     <Grid>
-        <TabControl Name="myTabControl" Padding="0">
+        <TabControl Name="myTabControl" Padding="0" SelectedIndex="2">
             <TabControl.Resources>
                 <Style TargetType="{x:Type Grid}">
                     <Setter Property="Background" Value="#FFEEFAFF"></Setter>
@@ -405,7 +407,7 @@
 
 
 
-                    <TextBlock Text="LOCAL SAVING FILE SETTING" Grid.Column="2" Grid.Row="7" Grid.ColumnSpan="2"
+                    <TextBlock Text="LOCAL SAVING FILE SETTING" Grid.Column="2" Grid.Row="7" Grid.ColumnSpan="2" 
                                VerticalAlignment="Bottom" Margin="21,0,30,4" HorizontalAlignment="Center"
                                FontSize="15" FontWeight="SemiBold" />
                     <Label Content="Json File Format" Grid.Column="1" Grid.Row="8" FontWeight="DemiBold" 
@@ -413,20 +415,48 @@
                     <ComboBox Name="cbbFormat" Grid.Column="2" Grid.Row="8" IsEnabled="{Binding mElementEnable}" Width="150" HorizontalAlignment="Left" Margin="5,4,0,4">
                         <ComboBoxItem Content="Beautiful Format" IsSelected="{Binding mBeautifulJson, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         <ComboBoxItem Content="Compact Format" />
-
                     </ComboBox>
+
+
+                    <TextBlock Name ="txtCombobox" Text="Pls choose Targets on DB" Grid.Column="4" Grid.Row="0" VerticalAlignment="Bottom" Margin="15,0,0,0"
+                               Visibility="{Binding Path = mConnectionTest, Converter={StaticResource MyBoolToVis}}"
+                               >
+                    </TextBlock>
+                    
+                    <ComboBox Name="cbbTargetList" Grid.Column="4" Grid.Row="1" Width="170" Margin="12,4,12,4" IsEnabled="{Binding mElementEnable}">
+                        <ComboBox.Style>
+                            <Style TargetType="{x:Type ComboBox}">
+                                <Setter Property="Visibility" Value="Hidden" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Path=mConnectionTest}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ComboBox.Style>
+
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox Margin ="0,0,5,0" IsChecked="{Binding mIsSelected}"/>
+                                    <TextBlock Text="{Binding mColumnName}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    
 
                     <Button x:Name="btnEnableEdit" Content="Enable Edit" Grid.Column="4" Grid.Row="9"
                             Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170"
-                            HorizontalAlignment="Center"  Margin="12,4,18,4" BorderThickness="0.5" Click="btnEnableEdit_Click"/>
+                            HorizontalAlignment="Center"  Margin="12,4,12,4" BorderThickness="0.5" Click="btnEnableEdit_Click"/>
                     
                     <Button x:Name="btnCancel" Content="Cancel" Grid.Column="4" Grid.Row="10" IsEnabled="{Binding mElementEnable}" 
                             Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170"
-                            HorizontalAlignment="Center" Margin="12,4,18,4" BorderThickness="0.5" Click="btnCancel_Click"/>
+                            HorizontalAlignment="Center" Margin="12,4,12,4" BorderThickness="0.5" Click="btnCancel_Click"/>
 
                     <Button x:Name="btnOK" Content="OK" Grid.Column="4" Grid.Row="12" IsEnabled="{Binding mElementEnable}" 
                             Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170" Height="25"
-                            HorizontalAlignment="Center"  Margin="12,17,18,17" BorderThickness="1" Click="btnOK_Click"/>
+                            HorizontalAlignment="Center"  Margin="12,17,12,17" BorderThickness="1" Click="btnOK_Click"/>
 
                 </Grid>
             </TabItem>

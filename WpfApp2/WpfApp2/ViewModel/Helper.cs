@@ -8,7 +8,40 @@ using System.Windows.Controls;
 
 namespace WpfApp2.ViewModel
 {
-    //Original: http://wpftutorial.net/PasswordBox.html
+    public class ColumnDBSelectableHelper
+    {
+        public bool mIsSelected { get; set; }
+        public string mColumnName { get; set; }
+        public ColumnDBSelectableHelper(bool selected = false, string columnName = "targetColumn")
+        {
+            mIsSelected = selected;
+            mColumnName = columnName;
+        }
+    }
+
+    public class ColumnDBSelectableListHelper<T> : List<T> where T : ColumnDBSelectableHelper
+    {
+        public List<ColumnDBSelectableHelper> myList = new List<ColumnDBSelectableHelper>();
+
+        public ColumnDBSelectableListHelper(List<string> originalColumnList)
+        {
+            foreach (string columnDBname in originalColumnList)
+            {
+                myList.Add(new ColumnDBSelectableHelper(false, columnDBname));
+            }
+        }
+
+        public List<string> GetSelectedTargetToList()
+        {
+            List<string> selectedTargets = new List<string>();
+            foreach (ColumnDBSelectableHelper target in myList)
+                if(target.mIsSelected) selectedTargets.Add(target.mColumnName);
+            return selectedTargets;
+        }
+    }
+
+
+    //Original:http://wpftutorial.net/PasswordBox.html
     public static class PasswordHelper
     {
         public static readonly DependencyProperty PasswordProperty =

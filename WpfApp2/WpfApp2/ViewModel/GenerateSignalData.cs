@@ -47,23 +47,7 @@ namespace WpfApp2.ViewModel
         private GetWaveValue getWaveValue;
         [JsonIgnore]
         public bool mSendToDB { get; set; }
-        public GenerateSignalData()
-        {
-            mProfile = new SignalProfile();
-            mSmProfile = new SimulationProfile(mProfile);
-            mWave = mProfile.getWave();
-            mFreq = mProfile.getFreq();
-            mAmpl = mProfile.getAmpl();
-            mRate = mProfile.getRate();
-            mDuration = mSmProfile.getDuration();
-            bool autoTriggerData = false;
-            mSendToDB = false;
-            mTargetOnDB = "Inputs_Wasserstrahl2_Status";
-            mRemark = "Test2";
-            InitiateData();
-            if (autoTriggerData)
-            { GenerateData(); }
-        }
+
         public GenerateSignalData(SignalProfile aProfile, double duration=1, bool autoTriggerData=false, bool sendToDb = false, string targetOnDb = "Inputs_Wasserstrahl2_Status", string name = "Default")
         {
             mProfile = aProfile;

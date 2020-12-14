@@ -139,8 +139,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\GenerateSignalData.cs" />
-    <Compile Include="ViewModel\PasswordHelper.cs" />
-    <Compile Include="ViewModel\SettingTab.cs" />
+    <Compile Include="ViewModel\Helper.cs" />
+    <Compile Include="ViewModel\SettingInfor.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -9,7 +9,7 @@ using System.Windows;
 
 namespace WpfApp2.ViewModel
 {
-    public class SettingTab : INotifyPropertyChanged
+    public class SettingInfor : INotifyPropertyChanged
     {
 
         public string mServer { get; set; }
@@ -53,12 +53,12 @@ namespace WpfApp2.ViewModel
 
         public MySqlConnection conn { get; set; }
 
-        private SettingTab()
+        private SettingInfor()
         {
 
         }
 
-        private static SettingTab _instance = null;
+        private static SettingInfor _instance = null;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -67,12 +67,12 @@ namespace WpfApp2.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public static SettingTab Instance
+        public static SettingInfor Instance
         {
             get
             {
                 if (_instance == null)
-                    _instance = new SettingTab();
+                    _instance = new SettingInfor();
                 return _instance;
             }
         }
@@ -89,6 +89,7 @@ namespace WpfApp2.ViewModel
 
             PropertyChanged += PrintSomeInfo;
             OnPropertyChanged("Test");
+           
         }
 
         private void PrintSomeInfo(object sender, EventArgs e)
@@ -96,6 +97,18 @@ namespace WpfApp2.ViewModel
             Console.WriteLine($"Element Visible:{mElementEnable}, Beautiful Format:{mBeautifulJson}");
         }
 
+        private bool _connectionTest = false;
+        public bool mConnectionTest
+        {
+            get { return _connectionTest; }
+            set
+            {
+                if (_connectionTest != value)
+                {
+                    _connectionTest = value; OnPropertyChanged("mConnectionTest");
+                }
+            }
+        }
         public bool CheckConnection()
         {
             mErrorServer = "Checking...";
@@ -115,10 +128,12 @@ namespace WpfApp2.ViewModel
             {
                 //MessageBox.Show(ex.Message,"Oopps...", MessageBoxButton.OK, MessageBoxImage.Error);
                 mErrorServer = ex.Message;
+                mConnectionTest = false;
                 return false;
             }
-            conn.Close();
+            //conn.Close();
             mErrorServer = String.Empty;
+            mConnectionTest = true;
             return true;
         }
 
