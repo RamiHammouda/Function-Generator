@@ -81,7 +81,7 @@ namespace WpfApp2.ViewModel
             if (autoTriggerData)
             { GenerateData(); }
         }
-        public GenerateSignalData(WaveForm wave = 0, long freq = 100, double ampl = 5, long rate = 50, double duration = 1, bool autoTriggerData = false, bool sendToDb = false, string targetOnDb = "Inputs_Wasserstrahl2_Status", string name = "Default")
+        public GenerateSignalData(WaveForm wave = 0, double freq = 100, double ampl = 5, long rate = 50, double duration = 1, bool autoTriggerData = false, bool sendToDb = false, string targetOnDb = "Inputs_Wasserstrahl2_Status", string name = "Default")
         {
             mProfile = new SignalProfile(wave, freq, ampl, rate);
             mSmProfile = new SimulationProfile(mProfile, duration);

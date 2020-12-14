@@ -124,7 +124,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\MyDBEntity.cs" />
+    <Compile Include="DBClass\DBForm.cs" />
+    <Compile Include="DBClass\DBConnection.cs" />
+    <Compile Include="DBViewWindows.xaml.cs">
+      <DependentUpon>DBViewWindows.xaml</DependentUpon>
+    </Compile>
     <Compile Include="NUnitTesting\AmplitudeTesting.cs" />
     <Compile Include="Model\SignalProfile.cs" />
     <Compile Include="Model\SimulationProfile.cs" />
@@ -140,6 +144,10 @@
     <Compile Include="ViewModel\GenerateSignalData.cs" />
     <Compile Include="ViewModel\Helper.cs" />
     <Compile Include="ViewModel\SettingInfor.cs" />
+    <Page Include="DBViewWindows.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

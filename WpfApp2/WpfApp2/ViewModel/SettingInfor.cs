@@ -87,9 +87,9 @@ namespace WpfApp2.ViewModel
             mElementEnable = enable;
             mBeautifulJson = beauty;
 
-            PropertyChanged += PrintSomeInfo;
-            OnPropertyChanged("Test");
-           
+            //PropertyChanged += PrintSomeInfo;
+            //OnPropertyChanged("Test");
+
         }
 
         private void PrintSomeInfo(object sender, EventArgs e)

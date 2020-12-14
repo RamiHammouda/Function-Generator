@@ -7,7 +7,6 @@ using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
 using WpfApp2.Model;
 using WpfApp2.ViewModel;
@@ -16,8 +15,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Controls;
 using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
-using System.Globalization;
+using MySql.Data.MySqlClient;
+using System.Data;
 
 namespace WpfApp2
 {
@@ -335,10 +334,7 @@ namespace WpfApp2
         private void AutoDrawing(object sender, EventArgs e)
         {
             SimulationProfile currentSignal = new SimulationProfile(mWave, mFreq, mAmpl, mRate, mDuration);
-
-            currentSignal.PrintInfo();
             VisualizateData(currentSignal, 4);
-
         }
 
         private void btnSimulate_Click(object sender, RoutedEventArgs e)
@@ -384,7 +380,6 @@ namespace WpfApp2
         }
         public void MenuItemDel_Click(object sender, RoutedEventArgs e)
         {
-
             if (MultiShot.SelectedItem == null || mMultipleShotList.Count == 0) return;  //safety first
             try
             {
@@ -414,7 +409,7 @@ namespace WpfApp2
                 { _uriImage = value; OnPropertyChanged("mUriImage"); }
             }
         }
-        
+
         private async void btnTestConn_Click(object sender, RoutedEventArgs e)
         {
             bool result = await Task.Run(() => mSettingTab.CheckConnection());
@@ -444,6 +439,67 @@ namespace WpfApp2
             mSettingTab.PrintInfo();
         }
 
+        private void btnInsertProfile_Click(object sender, RoutedEventArgs e)
+        {
+            mMultipleShotList.Add(new GenerateSignalData(mWave, mFreq, mAmpl, mRate, mDuration));
+        }
+        private DBViewWindows mMyDBView;
+        private void btnViewDatabase_Click(object sender, RoutedEventArgs e)
+        {
+            //Console.WriteLine("tesst");
+            
+
+
+            //DBonly
+            MySqlConnection conn=null;
+            if (conn != null)
+                conn.Close();
+             conn = new MySqlConnection();
+
+            string connStr = String.Format("server={0};user id={1}; password={2}; database={3}; pooling=false",
+                mSettingTab.mServer, mSettingTab.mUserId, mSettingTab.mPassword, mSettingTab.mDatabaseName);
+            string connStr2 = String.Format("server={0};user id={1}; password={2}; database={3}; pooling=false",
+                "127.0.0.1", "hoale", "76047604", "uni_db_klein");
+
+            conn = new MySqlConnection(connStr2);
+
+            if (mMyDBView == null)
+                mMyDBView = new DBViewWindows();
+
+            DataTable dataTable = new DataTable();
+
+            try
+            {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("Select * from studenten", conn);
+                MySqlDataAdapter adp = new MySqlDataAdapter(cmd);
+                //DataSet ds = new DataSet();
+                //adp.Fill(ds, "LoadDataBinding");
+
+                adp.Fill(dataTable);
+                //mMyDBView.myDBGrid.DataContext = ds;
+                
+                
+                mMyDBView.Show();
+                mMyDBView.Focus();
+            }
+            catch (MySqlException ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+
+            
+           
+
+            
+
+            //finally
+            //{
+            //    conn.Close();
+            //}
+        }
+
+
         #endregion
 
         #region under Drafting
@@ -454,7 +510,6 @@ namespace WpfApp2
             {
                 mValidInput = true;
             }
-            //Regex regex = new Regex("[^a-zA-Z]+");           
             Regex regex = new Regex("[0-9.]+");
             if (!regex.IsMatch(e.Text))
             {
@@ -471,16 +526,14 @@ namespace WpfApp2
             }
             catch (Exception)
             {
-                //MessageBox.Show("Pls input a double number !");
-                //mErrorMessage = "Pls input a double number!";
                 return;
             }
         }
 
-        #endregion
-
-
-
-
+        
     }
+
+    #endregion
+
+
 }
