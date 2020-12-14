@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using WpfApp2.Model;
 
 namespace WpfApp2.ViewModel
 {
@@ -37,6 +40,93 @@ namespace WpfApp2.ViewModel
             foreach (ColumnDBSelectableHelper target in myList)
                 if(target.mIsSelected) selectedTargets.Add(target.mColumnName);
             return selectedTargets;
+        }
+    }
+
+
+
+
+    public class ComparisonConverter : IValueConverter
+    {
+        //public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        //{
+        //    return value?.Equals(parameter);
+        //}
+
+        //public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        //{
+        //    return value?.Equals(true) == true ? parameter : Binding.DoNothing;
+        //}
+
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return ((WaveForm)value).HasFlag((WaveForm)parameter);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return value.Equals(true) ? parameter : Binding.DoNothing;
+        }
+    }
+
+    public class BoolToVisibleConvert : IValueConverter
+    {
+        //public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        //{
+        //    return (value is bool && (bool)value) ? Visibility.Visible : Visibility.Collapsed
+        //}
+
+        //public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        //{
+        //    return value is Visibility && (Visibility)value == Visibility.Visible;
+        //}
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool bValue = false;
+            if (value is bool)
+            {
+                bValue = (bool)value;
+            }
+            else if (value is Nullable<bool>)
+            {
+                Nullable<bool> tmp = (Nullable<bool>)value;
+                bValue = tmp.HasValue ? tmp.Value : false;
+            }
+            return (bValue) ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is Visibility)
+            {
+                return (Visibility)value == Visibility.Visible;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+
+    public class NullImageConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+                return DependencyProperty.UnsetValue;
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            // According to https://msdn.microsoft.com/en-us/library/system.windows.data.ivalueconverter.convertback(v=vs.110).aspx#Anchor_1
+            // (kudos Scott Chamberlain), if you do not support a conversion 
+            // back you should return a Binding.DoNothing or a 
+            // DependencyProperty.UnsetValue
+            return Binding.DoNothing;
+            // Original code:
+            // throw new NotImplementedException();
         }
     }
 

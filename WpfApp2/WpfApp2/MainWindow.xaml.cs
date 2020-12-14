@@ -419,9 +419,11 @@ namespace WpfApp2
         {
             bool result = await Task.Run(() => mSettingTab.CheckConnection());
             if (result)
-                mUriImage = new Uri("/Images/icons8-ok-48.png", UriKind.Relative);
+                //mUriImage = new Uri("/Images/icons8-ok-48.png", UriKind.Relative);
+                mUriImage = new Uri("pack://application:,,,/WpfApp2;component/Images/icons8-ok-48.png", UriKind.Absolute);
             else
-                mUriImage = new Uri(@"/Images/icons8-cancel-48.png", UriKind.Relative);
+                //mUriImage = new Uri(@"/Images/icons8-cancel-48.png", UriKind.Relative);
+                mUriImage = new Uri("pack://application:,,,/WpfApp2;component/Images/icons8-cancel-48.png", UriKind.Absolute);
             //resultImg.DataContext = this;
             //resultImg.Source = new BitmapImage(mUriImage);
         }
@@ -478,74 +480,7 @@ namespace WpfApp2
         #endregion
 
 
+
+
     }
-
-    #region Support Function
-    public class ComparisonConverter : IValueConverter
-    {
-        //public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        //{
-        //    return value?.Equals(parameter);
-        //}
-
-        //public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        //{
-        //    return value?.Equals(true) == true ? parameter : Binding.DoNothing;
-        //}
-
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            return ((WaveForm)value).HasFlag((WaveForm)parameter);
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            return value.Equals(true) ? parameter : Binding.DoNothing;
-        }
-    }
-
-    public class BoolToVisibleConvert : IValueConverter
-    {
-        //public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        //{
-        //    return (value is bool && (bool)value) ? Visibility.Visible : Visibility.Collapsed
-        //}
-
-        //public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        //{
-        //    return value is Visibility && (Visibility)value == Visibility.Visible;
-        //}
-
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            bool bValue = false;
-            if (value is bool)
-            {
-                bValue = (bool)value;
-            }
-            else if (value is Nullable<bool>)
-            {
-                Nullable<bool> tmp = (Nullable<bool>)value;
-                bValue = tmp.HasValue ? tmp.Value : false;
-            }
-            return (bValue) ? Visibility.Visible : Visibility.Collapsed;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is Visibility)
-            {
-                return (Visibility)value == Visibility.Visible;
-            }
-            else
-            {
-                return false;
-            }
-        }
-    }
-
-
-
-    #endregion
-
 }

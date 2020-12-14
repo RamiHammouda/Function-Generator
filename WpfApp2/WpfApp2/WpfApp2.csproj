@@ -197,6 +197,9 @@
   <ItemGroup>
     <Resource Include="icons8-gears-80.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\placeholder.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

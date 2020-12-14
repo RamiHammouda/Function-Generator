@@ -11,7 +11,7 @@
 
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
         Title="FUNCTION GENERATOR"  Height="550" Width="1000" FontFamily="Verdana" 
-        Background="#FFEEFAFF" Icon="/Images/icons8-gears-80.png">
+        Background="#FFEEFAFF" Icon="icons8-gears-80.ico">
 
     <Window.Resources>
 
@@ -65,7 +65,8 @@
         </ObjectDataProvider>
 
 
-        <local:BoolToVisibleConvert x:Key="MyBoolToVis"/>
+        <w:NullImageConverter x:Key="nullImageConverter"/>
+        <w:BoolToVisibleConvert x:Key="MyBoolToVis"/>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
 
     </Window.Resources>
@@ -101,7 +102,7 @@
 
                     <StackPanel Grid.Column="4" Grid.Row="1" Orientation="Vertical"  Grid.RowSpan="1" MinWidth="150" Margin="0">
                         <StackPanel.Resources>
-                            <local:ComparisonConverter x:Key="ComparisonConverter" />
+                            <w:ComparisonConverter x:Key="ComparisonConverter" />
                         </StackPanel.Resources>
                         <Label FontWeight="Bold" Content="Signal-Wave Form" />
                         <RadioButton Name="rdoSine" GroupName="waveForm" Content="Sine" Margin="5" IsChecked="{Binding Path=mWave, Mode =TwoWay,UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static myenum:WaveForm.Sine}}" />
@@ -258,7 +259,6 @@
 
                     <!--<DataGrid Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2"
                               ItemsSource="{Binding Path=mMultipleShotList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                        
                     </DataGrid>-->
 
                     <DataGrid x:Name ="MultiShot" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2" AlternatingRowBackground="LightGreen"
@@ -394,9 +394,20 @@
 
                     <!--<Image Name="resultImg" Width ="25" Grid.Column="2" Grid.Row="6" HorizontalAlignment="Right" Margin="0,0,5,0"
                            Source="/Images/icons8-ok-48.png"/>-->
-                    <Image Name="resultImg" Width ="25" Grid.Column="2" Grid.Row="6" HorizontalAlignment="Right" Margin="0,0,5,0"
-                           Source="{Binding Path = mUriImage,UpdateSourceTrigger=PropertyChanged}"/>
 
+                    <!--<Image Name="resultImg" Width ="25" Grid.Column="2" Grid.Row="6" HorizontalAlignment="Right" Margin="0,0,5,0"
+                           Source="{Binding Path = mUriImage,UpdateSourceTrigger=PropertyChanged, Converter={StaticResource nullImageConverter}}"/>-->
+
+                    <Image Name="resultImg" Width ="25" Grid.Column="2" Grid.Row="6" HorizontalAlignment="Right" Margin="0,0,5,0">
+                        <Image.Source>
+                            <Binding Path="mUriImage" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.TargetNullValue>
+                                    <!--<ImageSource>/Images/placeholder.png</ImageSource>-->
+                                    <BitmapImage>pack://application:,,,/WpfApp2;component/Images/placeholder.png</BitmapImage>
+                                </Binding.TargetNullValue>
+                            </Binding>
+                        </Image.Source>
+                    </Image>
                     <Button x:Name="btnTestConn" Content="Test Connection" Grid.Column="3" Grid.Row="6" IsEnabled="{Binding mElementEnable}" 
                             Style="{StaticResource myButtonStyle}" FontWeight="SemiBold"  Margin="0,4,5,4" BorderThickness="0.5" Click="btnTestConn_Click" />
 
@@ -404,9 +415,7 @@
                            Foreground="Red" FontStyle="Italic" Grid.ColumnSpan="5" TextWrapping="Wrap" HorizontalAlignment="Center" 
                            VerticalAlignment="Top" Margin="50,0,50,0"/>
 
-
-
-
+                    
                     <TextBlock Text="LOCAL SAVING FILE SETTING" Grid.Column="2" Grid.Row="7" Grid.ColumnSpan="2" 
                                VerticalAlignment="Bottom" Margin="21,0,30,4" HorizontalAlignment="Center"
                                FontSize="15" FontWeight="SemiBold" />
