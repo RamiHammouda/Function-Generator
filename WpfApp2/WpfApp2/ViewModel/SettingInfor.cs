@@ -1,7 +1,9 @@
 ﻿using MySql.Data.MySqlClient;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,12 +14,17 @@ namespace WpfApp2.ViewModel
 {
     public class SettingInfor : INotifyPropertyChanged
     {
-
+        [JsonProperty("Server", Order = 0)]
         public string mServer { get; set; }
+        [JsonProperty("Port", Order = 1)]
         public string mPort { get; set; }
+        [JsonProperty("UserId", Order = 2)]
         public string mUserId { get; set; }
+        [JsonProperty("Passwrord", Order = 3)]
         public string mPassword { get; set; }
+        [JsonProperty("DatabaseName", Order = 4)]
         public string mDatabaseName { get; set; }
+        [JsonProperty("TableName", Order = 5)]
         public string mTabName { get; set; }
 
         private MyDBEntity mCheckedDB;
@@ -34,7 +41,7 @@ namespace WpfApp2.ViewModel
                 { _elementEnable = value; OnPropertyChanged("mElementEnable"); }
             }
         }
-
+        [JsonProperty("JsonFormat", Order = 6)]
         public bool mBeautifulJson
         {
             get { return _beautifulJson; }
@@ -167,6 +174,17 @@ namespace WpfApp2.ViewModel
         {
             mElementEnable = !mElementEnable;
             return mElementEnable;
+        }
+
+        public void SaveInfoToFile()
+        {
+            string basePath = Directory.GetCurrentDirectory() + "\\AppSetting";
+            Directory.CreateDirectory(basePath);
+            string fileName = "FGSetting";
+            string filePath = basePath + "\\" + fileName + ".json";
+
+            JsonSerializer serializer = new JsonSerializer { Formatting = Formatting.Indented, TypeNameHandling = TypeNameHandling.Auto };
+            using (StreamWriter writer = File.CreateText(filePath)) { serializer.Serialize(writer, this); }
         }
     }
 }

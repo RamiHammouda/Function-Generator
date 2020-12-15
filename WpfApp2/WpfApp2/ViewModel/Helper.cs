@@ -20,18 +20,34 @@ namespace WpfApp2.ViewModel
             mIsSelected = selected;
             mColumnName = columnName;
         }
+
+        public override string ToString()
+        {
+            return $"{mIsSelected}-{mColumnName}";
+        }
+
+        public void PrintInfo()
+        {
+            Console.WriteLine(ToString());
+        }
     }
 
-    public class ColumnDBSelectableListHelper<T> : List<T> where T : ColumnDBSelectableHelper
+    public class ColumnDBSelectableListHelper :List<ColumnDBSelectableHelper>
     {
-        public List<ColumnDBSelectableHelper> myList = new List<ColumnDBSelectableHelper>();
+        private List<ColumnDBSelectableHelper> myList;
 
         public ColumnDBSelectableListHelper(List<string> originalColumnList)
         {
+            myList = new List<ColumnDBSelectableHelper>();
             foreach (string columnDBname in originalColumnList)
             {
                 myList.Add(new ColumnDBSelectableHelper(false, columnDBname));
             }
+        }
+
+        public List<ColumnDBSelectableHelper> getSelectableList()
+        {
+            return myList;
         }
 
         public List<string> GetSelectedTargetToList()
@@ -40,6 +56,12 @@ namespace WpfApp2.ViewModel
             foreach (ColumnDBSelectableHelper target in myList)
                 if(target.mIsSelected) selectedTargets.Add(target.mColumnName);
             return selectedTargets;
+        }
+
+        public void PrintInfo()
+        {
+            foreach (ColumnDBSelectableHelper item in myList)
+                item.PrintInfo();
         }
     }
 

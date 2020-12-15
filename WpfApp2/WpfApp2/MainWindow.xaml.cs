@@ -213,16 +213,6 @@ namespace WpfApp2
         public void initiateDefaultValue()
         {
             this.DataContext = this;
-            //originalColumnWithSelection = new ColumnDBSelectableHelper(GetTargetOnDB());
-            List<ColumnDBSelectableHelper> originalTargetList = new List<ColumnDBSelectableHelper>();
-            foreach (string column in GetTargetOnDB())
-                originalTargetList.Add(new ColumnDBSelectableHelper(true, column));
-
-            cbbTargetList.ItemsSource = originalTargetList;
-            //Because all elemente of Settingtab already has datacontext to SettingTab (inXml)
-            //so cbb must set Datacontext to return to this class
-            //cbbTargetList.DataContext = this;
-            //txtCombobox.DataContext = this;
 
             mFreq = 0.2;
             mAmpl = 5;
@@ -241,10 +231,21 @@ namespace WpfApp2
               //new GenerateSignalData(WaveForm.Sawtooth,sendToDb:true,targetOnDb:"Inputs_TestVarLReal")
             };
             mMyTargetOnDB = GetTargetOnDB();
-            mSelectedTargetOnDB = mMyTargetOnDB[0];
+            //mSelectedTargetOnDB = mMyTargetOnDB[10];
+            Console.WriteLine(mSelectedTargetOnDB);
 
             this.mSettingTab = SettingInfor.Instance;
             mSettingTab.SetSetting();
+
+            mCurrentDatabase = new MyDBEntity(mSettingTab);
+            ColumnDBSelectableListHelper selectabeList = new ColumnDBSelectableListHelper(mCurrentDatabase.GetColumns());
+
+            //selectabeList.PrintInfo();
+            cbbTargetList.ItemsSource = selectabeList;
+            //Because all elemente of Settingtab already has datacontext to SettingTab (inXml)
+            //so cbb must set Datacontext to return to this class
+            //cbbTargetList.DataContext = this;
+            //txtCombobox.DataContext = this;
 
             //not quite follow Binding Rule, but simple and practical :)
             sldFreq.Value = 0;
@@ -258,6 +259,7 @@ namespace WpfApp2
             //mUriImage = myUri;
         }
 
+        private List<string> OriginalColumnnOnDB;
 
         private List<string> GetTargetOnDB()
         {
@@ -340,20 +342,23 @@ namespace WpfApp2
         private bool _pressed;
         private void btnSimulate_Click(object sender, RoutedEventArgs e)
         {
-            MyDBEntity myDb = new MyDBEntity(mSettingTab);
-            mCurrentProfile.setMyDB(myDb);
+            mCurrentDatabase = new MyDBEntity(mSettingTab);
+            foreach (string s in OriginalColumnnOnDB)
+                Console.WriteLine(s);
+
+            mCurrentProfile.setMyDB(mCurrentDatabase);
             mCurrentProfile.setTargetOnDB("Inputs_TestVarLReal");
             _pressed = !_pressed;
-            if (_pressed)
-            {
-                btnSimulate.Content = "Stop";
-                mCurrentProfile.StartWriteToDB();
-            }
-            else
-            {
-                mCurrentProfile.Stop();
-                btnSimulate.Content = "Start Saving";
-            }
+            //if (_pressed)
+            //{
+            //    btnSimulate.Content = "Stop";
+            //    mCurrentProfile.StartWriteToDB();
+            //}
+            //else
+            //{
+            //    mCurrentProfile.Stop();
+            //    btnSimulate.Content = "Start Saving";
+            //}
 
         }
 
@@ -425,7 +430,7 @@ namespace WpfApp2
             }
         }
 
-        private MyDBEntity mCheckedDatabase;
+        private MyDBEntity mCurrentDatabase;
 
         private async void btnTestConn_Click(object sender, RoutedEventArgs e)
         {
@@ -434,7 +439,7 @@ namespace WpfApp2
             { 
                 //mUriImage = new Uri("/Images/icons8-ok-48.png", UriKind.Relative);
                 mUriImage = new Uri("pack://application:,,,/WpfApp2;component/Images/icons8-ok-48.png", UriKind.Absolute);
-                mCheckedDatabase = mSettingTab.getCheckedDatabase();
+                mCurrentDatabase = mSettingTab.getCheckedDatabase();
             }
             else
                 //mUriImage = new Uri(@"/Images/icons8-cancel-48.png", UriKind.Relative);
@@ -469,52 +474,15 @@ namespace WpfApp2
         //Under Testing
         private void btnViewDatabase_Click(object sender, RoutedEventArgs e)
         {
-            //Console.WriteLine("tesst");
-
-
-
-            //DBonly
             MySqlConnection conn = null;
             if (conn != null)
                 conn.Close();
             conn = new MySqlConnection();
 
-            string connStr = String.Format("server={0};user id={1}; password={2}; database={3}; pooling=false",
-                mSettingTab.mServer, mSettingTab.mUserId, mSettingTab.mPassword, mSettingTab.mDatabaseName);
-            string connStr2 = String.Format("server={0};user id={1}; password={2}; database={3}; pooling=false",
-                "127.0.0.1", "hoale", "76047604", "uni_db_klein");
-
-            conn = new MySqlConnection(connStr2);
-
             if (mMyDBView == null)
                 mMyDBView = new DBViewWindows();
-
-            DataTable dataTable = new DataTable();
-
-            try
-            {
-                conn.Open();
-                MySqlCommand cmd = new MySqlCommand("Select * from studenten", conn);
-                MySqlDataAdapter adp = new MySqlDataAdapter(cmd);
-                //DataSet ds = new DataSet();
-                //adp.Fill(ds, "LoadDataBinding");
-
-                adp.Fill(dataTable);
-                //mMyDBView.myDBGrid.DataContext = ds;
-
-
-                mMyDBView.Show();
-                mMyDBView.Focus();
-            }
-            catch (MySqlException ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-
-            //finally
-            //{
-            //    conn.Close();
-            //}
+            mMyDBView.Show();
+            mMyDBView.Focus();
         }
 
 
