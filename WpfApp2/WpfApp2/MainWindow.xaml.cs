@@ -227,10 +227,10 @@ namespace WpfApp2
             mFreq = 0.2;
             mAmpl = 5;
             mRate = 4;
-            mDuration = 10;
+            mDuration = 0;
             mWave = WaveForm.Sine;
             mValidInput = false;
-
+            mCurrentProfile = new GenerateSignalData(mWave, mFreq, mAmpl, mRate, mDuration);
             this.PropertyChanged += AutoDrawing;
             OnPropertyChanged("IamIronMan");
 
@@ -303,8 +303,8 @@ namespace WpfApp2
             GenerateSignalData displayData = new GenerateSignalData(smProfile.getSignalProfile(), displayduration, true);
             double linewidth = 1, marksize = 5;
             string text = $"Wave: {displayData.getWave()}\nFreq: {displayData.getFreq()} Hz\nAmpl: {displayData.getAmpl()} V\nRate: {displayData.getRate()}\nDura: {smProfile.getDuration()} s";
-            double[] x = GenerateSignalData.ConvertToDouble(displayData.getNo());
-            double[] y = displayData.getAmplData();
+            double[] x = GenerateSignalData.ConvertToDouble(displayData.getNo().ToArray());
+            double[] y = displayData.getAmplData().ToArray();
 
             if ((double)displayData.getRate() / displayData.getFreq() > 50)
             {
@@ -330,16 +330,31 @@ namespace WpfApp2
                 Debug.WriteLine(e.Message);
             }
         }
-
+        private GenerateSignalData mCurrentProfile;
         private void AutoDrawing(object sender, EventArgs e)
         {
-            SimulationProfile currentSignal = new SimulationProfile(mWave, mFreq, mAmpl, mRate, mDuration);
+            mCurrentProfile = new GenerateSignalData(mWave, mFreq, mAmpl, mRate, mDuration);
+            SimulationProfile currentSignal = mCurrentProfile.getSimulationProfile();
             VisualizateData(currentSignal, 4);
         }
-
+        private bool _pressed;
         private void btnSimulate_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Just Kidding", "Quick Infor", MessageBoxButton.OK, MessageBoxImage.Information);
+            MyDBEntity myDb = new MyDBEntity(mSettingTab);
+            mCurrentProfile.setMyDB(myDb);
+            mCurrentProfile.setTargetOnDB("Inputs_TestVarLReal");
+            _pressed = !_pressed;
+            if (_pressed)
+            {
+                btnSimulate.Content = "Stop";
+                mCurrentProfile.StartWriteToDB();
+            }
+            else
+            {
+                mCurrentProfile.Stop();
+                btnSimulate.Content = "Start Saving";
+            }
+
         }
 
         public void btnSimulateToJson_Click(object sender, RoutedEventArgs e)
@@ -410,12 +425,17 @@ namespace WpfApp2
             }
         }
 
+        private MyDBEntity mCheckedDatabase;
+
         private async void btnTestConn_Click(object sender, RoutedEventArgs e)
         {
             bool result = await Task.Run(() => mSettingTab.CheckConnection());
-            if (result)
+            if (result) 
+            { 
                 //mUriImage = new Uri("/Images/icons8-ok-48.png", UriKind.Relative);
                 mUriImage = new Uri("pack://application:,,,/WpfApp2;component/Images/icons8-ok-48.png", UriKind.Absolute);
+                mCheckedDatabase = mSettingTab.getCheckedDatabase();
+            }
             else
                 //mUriImage = new Uri(@"/Images/icons8-cancel-48.png", UriKind.Relative);
                 mUriImage = new Uri("pack://application:,,,/WpfApp2;component/Images/icons8-cancel-48.png", UriKind.Absolute);
@@ -444,17 +464,20 @@ namespace WpfApp2
             mMultipleShotList.Add(new GenerateSignalData(mWave, mFreq, mAmpl, mRate, mDuration));
         }
         private DBViewWindows mMyDBView;
+       
+
+        //Under Testing
         private void btnViewDatabase_Click(object sender, RoutedEventArgs e)
         {
             //Console.WriteLine("tesst");
-            
+
 
 
             //DBonly
-            MySqlConnection conn=null;
+            MySqlConnection conn = null;
             if (conn != null)
                 conn.Close();
-             conn = new MySqlConnection();
+            conn = new MySqlConnection();
 
             string connStr = String.Format("server={0};user id={1}; password={2}; database={3}; pooling=false",
                 mSettingTab.mServer, mSettingTab.mUserId, mSettingTab.mPassword, mSettingTab.mDatabaseName);
@@ -478,8 +501,8 @@ namespace WpfApp2
 
                 adp.Fill(dataTable);
                 //mMyDBView.myDBGrid.DataContext = ds;
-                
-                
+
+
                 mMyDBView.Show();
                 mMyDBView.Focus();
             }
@@ -487,11 +510,6 @@ namespace WpfApp2
             {
                 MessageBox.Show(ex.ToString());
             }
-
-            
-           
-
-            
 
             //finally
             //{
@@ -530,7 +548,7 @@ namespace WpfApp2
             }
         }
 
-        
+
     }
 
     #endregion

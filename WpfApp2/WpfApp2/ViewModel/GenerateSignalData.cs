@@ -1,9 +1,12 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Security.RightsManagement;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using WpfApp2.Model;
 
 namespace WpfApp2.ViewModel
@@ -15,32 +18,36 @@ namespace WpfApp2.ViewModel
         [JsonIgnore]
         private SimulationProfile mSmProfile;
 
-        [JsonProperty("Wave",Order =1)]
+        [JsonProperty("Wave", Order = 1)]
         public WaveForm mWave { get; set; }
-        [JsonProperty("Freq",Order =2)]
+        [JsonProperty("Freq", Order = 2)]
         public double mFreq { get; set; }
-        [JsonProperty("Ampl",Order =3)]
+        [JsonProperty("Ampl", Order = 3)]
         public double mAmpl { get; set; }
-        [JsonProperty("SampleRate",Order =4)]
+        [JsonProperty("SampleRate", Order = 4)]
         public long mRate { get; set; }
-        [JsonProperty("Duration",Order =5)]
+        [JsonProperty("Duration", Order = 5)]
         public double mDuration { get; set; }
 
-        [JsonProperty("TargetOnDB",Order =6)]
+        [JsonProperty("TargetOnDB", Order = 6)]
         public string mTargetOnDB { get; set; }
 
-        [JsonProperty("Remark",Order =0)]
+        [JsonProperty("Remark", Order = 0)]
         public string mRemark { get; set; }
 
-        [JsonProperty("No",Order =7)]
-        private long[] mNo;
-        [JsonProperty("TimeStamp",Order =8)]
-        private long[] mTimeStampArray;
-        [JsonProperty("AmplValue",Order =9)]
-        private double[] mAmplArray;
+        [JsonProperty("No", Order = 7)]
+        private List<long> mNo;
+        [JsonProperty("TimeStamp", Order = 8)]
+        private List<long> mTimeStampArray;
+        [JsonProperty("AmplValue", Order = 9)]
+        private List<double> mAmplArray;
+
+
 
         //For quick access and control;
-       
+
+
+
         private long aTimeStep;
         private long mENumber;
         private delegate double GetWaveValue(long inputTime);
@@ -48,7 +55,9 @@ namespace WpfApp2.ViewModel
         [JsonIgnore]
         public bool mSendToDB { get; set; }
 
-        public GenerateSignalData(SignalProfile aProfile, double duration=1, bool autoTriggerData=false, bool sendToDb = false, string targetOnDb = "Inputs_Wasserstrahl2_Status", string name = "Default")
+        private MyDBEntity mMyDB;
+
+        public GenerateSignalData(SignalProfile aProfile, double duration = 0, bool autoTriggerData = false, bool sendToDb = false, string targetOnDb = "Inputs_Wasserstrahl2_Status", string name = "Default", MyDBEntity myDB = null)
         {
             mProfile = aProfile;
             mSmProfile = new SimulationProfile(aProfile, duration);
@@ -60,12 +69,13 @@ namespace WpfApp2.ViewModel
             mSendToDB = sendToDb;
             mTargetOnDB = targetOnDb;
             mRemark = name;
+            mMyDB = myDB;
             InitiateData();
             if (autoTriggerData)
-            {GenerateData();}
+            { GenerateData(); }
 
         }
-        public GenerateSignalData(SimulationProfile simuProfile, bool autoTriggerData = false, bool sendToDb = false, string targetOnDb = "Inputs_Wasserstrahl1_Status", string name = "Default")
+        public GenerateSignalData(SimulationProfile simuProfile, bool autoTriggerData = false, bool sendToDb = false, string targetOnDb = "Inputs_Wasserstrahl1_Status", string name = "Default", MyDBEntity myDB = null)
         {
             mSmProfile = simuProfile;
             mProfile = mSmProfile.getSignalProfile();
@@ -77,11 +87,12 @@ namespace WpfApp2.ViewModel
             mSendToDB = sendToDb;
             mTargetOnDB = targetOnDb;
             mRemark = name;
+            mMyDB = myDB;
             InitiateData();
             if (autoTriggerData)
             { GenerateData(); }
         }
-        public GenerateSignalData(WaveForm wave = 0, double freq = 100, double ampl = 5, long rate = 50, double duration = 1, bool autoTriggerData = false, bool sendToDb = false, string targetOnDb = "Inputs_Wasserstrahl2_Status", string name = "Default")
+        public GenerateSignalData(WaveForm wave = 0, double freq = 0.1, double ampl = 7, long rate = 2, double duration = 0, bool autoTriggerData = false, bool sendToDb = false, string targetOnDb = "Inputs_Wasserstrahl2_Status", string name = "Default", MyDBEntity myDB = null)
         {
             mProfile = new SignalProfile(wave, freq, ampl, rate);
             mSmProfile = new SimulationProfile(mProfile, duration);
@@ -93,21 +104,22 @@ namespace WpfApp2.ViewModel
             mSendToDB = sendToDb;
             mTargetOnDB = targetOnDb;
             mRemark = name;
+            mMyDB = myDB;
             InitiateData();
             if (autoTriggerData)
             { GenerateData(); }
         }
 
-        public long[] getTimeStamp()
+        public List<long> getTimeStamp()
         {
             return mTimeStampArray;
         }
-        public double[] getAmplData()
+        public List<double> getAmplData()
         {
             return mAmplArray;
         }
 
-        public long[] getNo()
+        public List<long> getNo()
         {
             return mNo;
         }
@@ -115,6 +127,11 @@ namespace WpfApp2.ViewModel
         public SignalProfile getSignalProfile()
         {
             return mProfile;
+        }
+
+        public SimulationProfile getSimulationProfile()
+        {
+            return mSmProfile;
         }
 
         public double getFreq()
@@ -151,14 +168,13 @@ namespace WpfApp2.ViewModel
             return mSendToDB;
         }
 
-        //Hardcore to Desktop first
         public void ExportToJson(bool beaufiful = true)
         {
             //string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             string basePath = Directory.GetCurrentDirectory() + "\\AppData";
             Directory.CreateDirectory(basePath);
-            string fileName = "SingleSignal "+ DateTime.Now.ToString("yyyy-MM-dd HH.mm.ss ffff");
-            string filePath = basePath + "\\"+ fileName +".json";
+            string fileName = "SingleSignal " + DateTime.Now.ToString("yyyy-MM-dd HH.mm.ss ffff");
+            string filePath = basePath + "\\" + fileName + ".json";
 
             JsonSerializer serializer;
             if (beaufiful)
@@ -168,7 +184,7 @@ namespace WpfApp2.ViewModel
 
             using (StreamWriter writer = File.CreateText(filePath)) { serializer.Serialize(writer, this); }
         }
-
+        //For Json Only
         public void GenerateData()
         {
             if (!mSmProfile.checkedSmProfValidation())
@@ -180,26 +196,94 @@ namespace WpfApp2.ViewModel
 
             for (long i = 0; i < mENumber; i++)
             {
-                mNo[i] = i;
-                mTimeStampArray[i] = start + i * aTimeStep;
-                mAmplArray[i] = getWaveValue(i * aTimeStep);
+                mNo.Add(i);
+                mTimeStampArray.Add(start + i * aTimeStep);
+                mAmplArray.Add(getWaveValue(i * aTimeStep));
             };
+        }
+
+
+        private CancellationTokenSource _canceller;
+        public async void StartWriteToDB()
+        {
+            mNo.Clear();
+            mTimeStampArray.Clear();
+            mAmplArray.Clear();
+
+            if (!mSmProfile.checkedSmProfValidation() && mDuration > 0)
+                return;
+            _canceller = new CancellationTokenSource();
+            int waitingTime = (int)(1000 / mRate);
+            mMyDB.InsertInTargetColumn(mTargetOnDB);
+            long now;
+            if (mDuration == 0)
+            {
+                int i = 0;
+                await Task.Run(() =>
+                {
+                while (!_canceller.Token.IsCancellationRequested)
+                {
+                    now = DateTime.Now.Ticks;
+                    mNo.Add(i);
+                    mTimeStampArray.Add(now);
+                    mAmplArray.Add(getWaveValue(mTimeStampArray[i]));
+                    mMyDB.Insert(mAmplArray[i]);
+                    Console.WriteLine("{0}  -  {1}", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), mAmplArray[i]);  //For Debug Only
+                    i++;
+                    Thread.Sleep(waitingTime);
+                    }
+                });
+
+            }
+            else
+            {
+                await Task.Run(() =>
+                {
+                    for (int i = 0; i < mENumber; i++)
+                    {
+                        if (_canceller.Token.IsCancellationRequested)
+                            return;
+                        now = DateTime.Now.Ticks;
+                        mNo.Add(i);
+                        mTimeStampArray.Add(now);
+                        mAmplArray.Add(getWaveValue(mTimeStampArray[i]));
+                        mMyDB.Insert(mAmplArray[i]);
+                        //Console.WriteLine("Timestamp:{0}  Value:{1}", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), mAmplArray[i]);  //For Debug Only
+                        Thread.Sleep(waitingTime);
+                    };
+                });
+            }
+            Console.WriteLine("Finished Writing");
+            _canceller.Dispose();
+
+        }
+
+        public void Stop()
+        {
+            try 
+            {
+                _canceller.Cancel();
+            }
+            catch (ObjectDisposedException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private void InitiateData()
         {
             if (!mSmProfile.checkedSmProfValidation())
                 return;
-            mENumber = (long)Math.Round(mRate * mDuration,0);
-            mNo = new long[mENumber];
-            mTimeStampArray = new long[mENumber];
-            mAmplArray = new double[mENumber];
+            mENumber = (long)Math.Round(mRate * mDuration, 0);
+            mNo = new List<long>();
+            mTimeStampArray = new List<long>();
+            mAmplArray = new List<double>();
 
             rand = new Random();
             switch (mWave)
             {
-                case WaveForm.Sine:getWaveValue = GetSineValue;break;
-                case WaveForm.Sawtooth:getWaveValue = GetSawtoothValue; break;
+                case WaveForm.Sine: getWaveValue = GetSineValue; break;
+                case WaveForm.Sawtooth: getWaveValue = GetSawtoothValue; break;
                 case WaveForm.Triangle: getWaveValue = GetTriangleValue; break;
                 case WaveForm.Square: getWaveValue = GetSquareValue; break;
                 case WaveForm.Random: getWaveValue = GetRandomValue; break;
@@ -207,6 +291,10 @@ namespace WpfApp2.ViewModel
             }
         }
 
+        public void setMyDB(MyDBEntity myDB)
+        {
+            mMyDB = myDB;
+        }
         private double GetSineValue(long atTimeInTicks)
         {
             return Math.Round(mAmpl * Math.Sin(2 * Math.PI * mFreq * atTimeInTicks / 1e7), 10);
@@ -250,13 +338,13 @@ namespace WpfApp2.ViewModel
         {
             long length = arr.Length;
             double[] result = new double[length];
-            for (long i = 0; i < length;i++ )
+            for (long i = 0; i < length; i++)
             {
                 result[i] = (double)arr[i];
             }
             return result;
         }
 
-       
+
     }
 }

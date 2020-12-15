@@ -142,7 +142,7 @@
                         </Button>
                     </StackPanel>
                     <DockPanel VerticalAlignment="Center" Grid.Column="4" Grid.Row="4" Margin="0,24,0,25">
-                        <Button x:Name="btnSimulate" Click="btnSimulate_Click" Content="Save to Database" Margin="5" FontWeight="SemiBold" Height="22">
+                        <Button Name="btnSimulate" Click="btnSimulate_Click" Content="Save To DB" Margin="5" FontWeight="SemiBold" Height="22">
                             <Button.Resources>
                                 <Style TargetType="{x:Type Border}">
                                     <Setter Property="CornerRadius" Value="2"/>

@@ -32,6 +32,7 @@ namespace WpfApp2.Model
                 return "SERVER=" + serverIP + "; PORT =" + portNumber + "; DATABASE=" + database + ";" + "UID=" + username + ";" + "PASSWORD=" + password + ";";
             }
         }
+
         #endregion
 
         #region Constructor

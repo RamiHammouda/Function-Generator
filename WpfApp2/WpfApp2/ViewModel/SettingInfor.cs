@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using WpfApp2.Model;
 
 namespace WpfApp2.ViewModel
 {
@@ -19,7 +20,11 @@ namespace WpfApp2.ViewModel
         public string mDatabaseName { get; set; }
         public string mTabName { get; set; }
 
+        private MyDBEntity mCheckedDB;
+
         private bool _beautifulJson, _elementEnable;
+
+        
         public bool mElementEnable
         {
             get { return _elementEnable; }
@@ -86,10 +91,8 @@ namespace WpfApp2.ViewModel
             mTabName = tabname;
             mElementEnable = enable;
             mBeautifulJson = beauty;
-
             //PropertyChanged += PrintSomeInfo;
             //OnPropertyChanged("Test");
-
         }
 
         private void PrintSomeInfo(object sender, EventArgs e)
@@ -109,9 +112,10 @@ namespace WpfApp2.ViewModel
                 }
             }
         }
+        //Move to use from DB instead
         public bool CheckConnection()
         {
-            mErrorServer = "Checking...";
+            mErrorServer = "Checking..Pls wait for a moment";
             if (conn != null)
                 conn.Close();
 
@@ -123,10 +127,10 @@ namespace WpfApp2.ViewModel
                 conn = new MySqlConnection(connStr);
                 conn.Open();
 
+                mCheckedDB = new MyDBEntity(this);
             }
             catch (MySqlException ex)
             {
-                //MessageBox.Show(ex.Message,"Oopps...", MessageBoxButton.OK, MessageBoxImage.Error);
                 mErrorServer = ex.Message;
                 mConnectionTest = false;
                 return false;
@@ -135,6 +139,19 @@ namespace WpfApp2.ViewModel
             mErrorServer = String.Empty;
             mConnectionTest = true;
             return true;
+        }
+
+        //public bool ConnectionTest()
+        //{
+        //    mErrorServer = "Checking..Pls wait for a moment";
+        //    MyDBEntity myCurrentDB = new MyDBEntity(this);
+        //    mConnectionTest = myCurrentDB.CheckConnection();
+        //    mErrorServer = myCurrentDB.Notify;
+        //    return mConnectionTest;
+        //}
+        public MyDBEntity getCheckedDatabase()
+        {
+            return mCheckedDB;
         }
 
         public string GetConnectionString()

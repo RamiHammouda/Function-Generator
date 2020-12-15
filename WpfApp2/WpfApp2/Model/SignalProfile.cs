@@ -27,7 +27,7 @@ namespace WpfApp2.Model
         [JsonProperty("Rate")]
         private long mRate;
 
-        public SignalProfile(WaveForm wave = 0, double freq = 100, double ampl = 5, long rate = 9600)
+        public SignalProfile(WaveForm wave = 0, double freq = 0.3, double ampl = 5, long rate = 4)
         {
             mFrequency = freq;
             mAmplitude = ampl;
