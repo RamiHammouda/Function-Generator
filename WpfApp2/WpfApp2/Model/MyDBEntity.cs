@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 
@@ -17,7 +17,7 @@ namespace WpfApp2.Model
         private string password;
         private string database;
         private string tableName;
-        private string timestamp = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+        private string timestamp;
         private string tar;
         #endregion
 
@@ -25,13 +25,12 @@ namespace WpfApp2.Model
         /// <summary>
         /// DB ConnectionString
         /// </summary>
-        private string ConnectionString
-        {
-            get
-            {
-                return "SERVER=" + serverIP + "; PORT =" + portNumber + "; DATABASE=" + database + ";" + "UID=" + username + ";" + "PASSWORD=" + password + ";";
-            }
-        }
+        private string ConnectionString => "SERVER=" + serverIP + "; PORT =" + portNumber + "; DATABASE=" + database + ";" + "UID=" + username + ";" + "PASSWORD=" + password + ";";
+
+        /// <summary>
+        /// Return TimeStamp in MySQL Format
+        /// </summary>
+        public string TimeStamp => DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
 
         #endregion
 
