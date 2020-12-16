@@ -14,10 +14,19 @@ namespace WpfApp2.ViewModel
 {
     public class SettingInfor : INotifyPropertyChanged
     {
+        private string _port;
         [JsonProperty("Server", Order = 0)]
         public string mServer { get; set; }
         [JsonProperty("Port", Order = 1)]
-        public string mPort { get; set; }
+        public string mPort
+        {
+            get { return _port; }
+            set
+            {
+                if (_port != value)
+                { _port = value; OnPropertyChanged("mPort"); }
+            }
+        }
         [JsonProperty("UserId", Order = 2)]
         public string mUserId { get; set; }
         [JsonProperty("Passwrord", Order = 3)]
@@ -31,7 +40,7 @@ namespace WpfApp2.ViewModel
 
         private bool _beautifulJson, _elementEnable;
 
-        
+        [JsonIgnore]
         public bool mElementEnable
         {
             get { return _elementEnable; }
@@ -41,7 +50,7 @@ namespace WpfApp2.ViewModel
                 { _elementEnable = value; OnPropertyChanged("mElementEnable"); }
             }
         }
-        [JsonProperty("JsonFormat", Order = 6)]
+        [JsonProperty("BeautyFormat", Order = 6)]
         public bool mBeautifulJson
         {
             get { return _beautifulJson; }
@@ -53,6 +62,7 @@ namespace WpfApp2.ViewModel
         }
 
         private string _errorServer;
+        [JsonIgnore]
         public string mErrorServer
         {
             get { return _errorServer; }
@@ -62,7 +72,7 @@ namespace WpfApp2.ViewModel
                 { _errorServer = value; OnPropertyChanged("mErrorServer"); }
             }
         }
-
+        [JsonIgnore]
         public MySqlConnection conn { get; set; }
 
         private SettingInfor()
@@ -101,13 +111,20 @@ namespace WpfApp2.ViewModel
             //PropertyChanged += PrintSomeInfo;
             //OnPropertyChanged("Test");
         }
-
-        private void PrintSomeInfo(object sender, EventArgs e)
+        private void LoadSetting(SettingInfor aSetting)
         {
-            Console.WriteLine($"Element Visible:{mElementEnable}, Beautiful Format:{mBeautifulJson}");
+            mServer = aSetting.mServer;
+            mPort = aSetting.mPort;
+            mUserId = aSetting.mUserId;
+            mPassword = aSetting.mPassword;
+            mDatabaseName = aSetting.mDatabaseName;
+            mTabName = aSetting.mTabName;
+            mBeautifulJson = aSetting.mBeautifulJson;
+            mFinalTargetList = aSetting.mFinalTargetList;
         }
 
         private bool _connectionTest = false;
+        [JsonIgnore]
         public bool mConnectionTest
         {
             get { return _connectionTest; }
@@ -133,7 +150,6 @@ namespace WpfApp2.ViewModel
             {
                 conn = new MySqlConnection(connStr);
                 conn.Open();
-
                 mCheckedDB = new MyDBEntity(this);
             }
             catch (MySqlException ex)
@@ -148,6 +164,63 @@ namespace WpfApp2.ViewModel
             return true;
         }
 
+        private void CreateDatabase()
+        {
+            mCheckedDB = new MyDBEntity(this);
+        }
+        [JsonIgnore]
+        public List<ColumnDBSelectableHelper> mSelectableTargetList { get; set; }
+        public List<ColumnDBSelectableHelper> GetSelectableList()
+        {
+
+            mSelectableTargetList = new List<ColumnDBSelectableHelper>();
+
+            foreach (string column in mCheckedDB.GetColumns())
+            {
+
+                mSelectableTargetList.Add(new ColumnDBSelectableHelper(true, column));
+            }
+
+            return mSelectableTargetList;
+        }
+        [JsonProperty("FinalTargetList", Order = 7)]
+        public List<string> mFinalTargetList { get; set; }
+
+
+        public List<string> LoadFinalTargetList()
+        {
+            if (!File.Exists(mFilePath))
+                return LoadFinalTargetListFromComboBox();
+            return LoadFinalTargetListFromFile();
+        }
+        public List<string> LoadFinalTargetListFromFile()
+        {
+            mFinalTargetList = new List<string>();
+
+            var serializer = new JsonSerializer { Formatting = Formatting.Indented, TypeNameHandling = TypeNameHandling.Auto };
+            using (StreamReader reader = File.OpenText(mFilePath))
+            {
+                var atest = serializer.Deserialize(reader, typeof(SettingInfor)) as SettingInfor;
+                mFinalTargetList = atest.mFinalTargetList;
+            }
+            Console.WriteLine("CurrentPrint:");
+            this.PrintInfo();
+            this.PrintListInfor();
+            return mFinalTargetList;
+        }
+        public List<string> LoadFinalTargetListFromComboBox()
+        {
+            mFinalTargetList = new List<string>();
+            foreach (ColumnDBSelectableHelper target in mSelectableTargetList)
+            {
+                if (target.mIsSelected) mFinalTargetList.Add(target.mColumnName);
+            }
+
+            //foreach (string str in mFinalTargetList)
+            //    Console.WriteLine(str); 
+            return mFinalTargetList;
+        }
+
         //public bool ConnectionTest()
         //{
         //    mErrorServer = "Checking..Pls wait for a moment";
@@ -158,17 +231,18 @@ namespace WpfApp2.ViewModel
         //}
         public MyDBEntity getCheckedDatabase()
         {
+            mCheckedDB = new MyDBEntity(this);
             return mCheckedDB;
         }
 
-        public string GetConnectionString()
-        {
-            return $"server={mServer};user id={mUserId}; password={mPassword}; database={mDatabaseName}; port={mPort}; pooling=false";
-        }
 
+        public override string ToString()
+        {
+            return $"Server:{mServer} Port:{mPort} UserId:{mUserId} Password:{mPassword} DatabaseName:{mDatabaseName} TableName:{mTabName}";
+        }
         public void PrintInfo()
         {
-            Console.WriteLine(this.GetConnectionString());
+            Console.WriteLine(ToString());
         }
         public bool ReverseEditMode()
         {
@@ -178,6 +252,11 @@ namespace WpfApp2.ViewModel
 
         public void SaveInfoToFile()
         {
+            LoadFinalTargetListFromComboBox();
+
+            //OK
+            if (!CheckConnection())
+                return;
             string basePath = Directory.GetCurrentDirectory() + "\\AppSetting";
             Directory.CreateDirectory(basePath);
             string fileName = "FGSetting";
@@ -185,6 +264,38 @@ namespace WpfApp2.ViewModel
 
             JsonSerializer serializer = new JsonSerializer { Formatting = Formatting.Indented, TypeNameHandling = TypeNameHandling.Auto };
             using (StreamWriter writer = File.CreateText(filePath)) { serializer.Serialize(writer, this); }
+
+            CreateDatabase();
+        }
+
+        public void PrintListInfor()
+        {
+            foreach (string str in mFinalTargetList)
+                Console.WriteLine(str);
+        }
+        public void LoadInfoToSetting()
+        {
+            mFilePath = Directory.GetCurrentDirectory() + "\\AppSetting\\FGSetting.json";
+            if (!File.Exists(mFilePath))
+            {
+                this.SetSetting();
+                mConnectionTest = true;
+            }
+            else
+                LoadInfoFromFile();
+
+            CreateDatabase();
+        }
+        private string mFilePath;
+        public void LoadInfoFromFile()
+        {
+            var serializer = new JsonSerializer { Formatting = Formatting.Indented, TypeNameHandling = TypeNameHandling.Auto };
+            using (StreamReader reader = File.OpenText(mFilePath))
+            {
+                var atest = serializer.Deserialize(reader, typeof(SettingInfor)) as SettingInfor;
+                this.LoadSetting(atest);
+            }
+
         }
     }
 }

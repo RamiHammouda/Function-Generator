@@ -230,23 +230,20 @@ namespace WpfApp2
               //new GenerateSignalData(WaveForm.Random,320,3,993,2,targetOnDb:"Inputs_Entschlammung1_Status"),
               //new GenerateSignalData(WaveForm.Sawtooth,sendToDb:true,targetOnDb:"Inputs_TestVarLReal")
             };
-            mMyTargetOnDB = GetTargetOnDB();
-            //mSelectedTargetOnDB = mMyTargetOnDB[10];
-            Console.WriteLine(mSelectedTargetOnDB);
 
             this.mSettingTab = SettingInfor.Instance;
-            mSettingTab.SetSetting();
 
-            mCurrentDatabase = new MyDBEntity(mSettingTab);
-            ColumnDBSelectableListHelper selectabeList = new ColumnDBSelectableListHelper(mCurrentDatabase.GetColumns());
+            mSettingTab.LoadInfoToSetting();
 
-            //selectabeList.PrintInfo();
-            cbbTargetList.ItemsSource = selectabeList;
+            cbbTargetList.ItemsSource = mSettingTab.GetSelectableList();
             //Because all elemente of Settingtab already has datacontext to SettingTab (inXml)
             //so cbb must set Datacontext to return to this class
             //cbbTargetList.DataContext = this;
             //txtCombobox.DataContext = this;
 
+            //mMyTargetOnDB = GetTargetOnDB();
+
+            mMyTargetOnDB = mSettingTab.LoadFinalTargetList();
             //not quite follow Binding Rule, but simple and practical :)
             sldFreq.Value = 0;
             sldAmp.Value = 0;
@@ -257,44 +254,6 @@ namespace WpfApp2
             //Uri myUri2 = new Uri("/WpfApp2;component/Images/icons8-ok-48.png",UriKind.Relative);
             //resultImg.Source = new BitmapImage(myUri2);
             //mUriImage = myUri;
-        }
-
-        private List<string> OriginalColumnnOnDB;
-
-        private List<string> GetTargetOnDB()
-        {
-            string[] targetArray =
-            {
-                "Inputs_TestVarLReal",
-                "Inputs_TestVarDInt",
-                "Inputs_TestVarLInt",
-                "Inputs_TestVarReal",
-                "IEC_Timer_fuellstand_feinstfilter_DB_IN",
-                "IEC_Timer_fuellstand_feinstfilter_DB_Q",
-                "Inputs_SystemStatus_running",
-                "Inputs_Error_code",
-                "Inputs_Grobfilter_Status",
-                "Inputs_Entschlammung1_Status",
-                "Inputs_Entschlammung2_Status",
-                "Inputs_Feinstfilter_Status",
-                "Inputs_Feinfilter_Status",
-                "Inputs_Wasserstrahl1_Status",
-                "Inputs_Wasserstrahl2_Status",
-                "Inputs_Wasserreinigung_Status",
-                "Inputs_Feinstfilter_fuellstand",
-                "Inputs_SystemStatus_running_old_Entschlammung1",
-                "Inputs_Feinstfilter_fuellstand_trigger_out",
-                "Inputs_SystemStatus_running_old_Entschlammung2",
-                "Inputs_SystemStatus_running_old_Feinstfilter",
-                "Inputs_SystemStatus_running_old_Feinfilter",
-                "Inputs_SystemStatus_running_old_Grobfilter",
-                "Inputs_SystemStatus_running_old_Wasserstrahl1",
-                "Inputs_SystemStatus_running_old_Wasserstrahl2",
-                "Inputs_SystemStatus_running_old_Wasserreinigung",
-                "Memory_Feinstfilter_fuellstand_trigger_run"
-            };
-
-            return targetArray.ToList();
         }
 
         private void VisualizateData(SimulationProfile smProfile, int numberOfWave)
@@ -338,27 +297,25 @@ namespace WpfApp2
             mCurrentProfile = new GenerateSignalData(mWave, mFreq, mAmpl, mRate, mDuration);
             SimulationProfile currentSignal = mCurrentProfile.getSimulationProfile();
             VisualizateData(currentSignal, 4);
+            //Console.WriteLine(mSelectedTargetOnDB);
         }
         private bool _pressed;
         private void btnSimulate_Click(object sender, RoutedEventArgs e)
         {
             mCurrentDatabase = new MyDBEntity(mSettingTab);
-            foreach (string s in OriginalColumnnOnDB)
-                Console.WriteLine(s);
-
             mCurrentProfile.setMyDB(mCurrentDatabase);
-            mCurrentProfile.setTargetOnDB("Inputs_TestVarLReal");
+            mCurrentProfile.setTargetOnDB(mSelectedTargetOnDB);
             _pressed = !_pressed;
-            //if (_pressed)
-            //{
-            //    btnSimulate.Content = "Stop";
-            //    mCurrentProfile.StartWriteToDB();
-            //}
-            //else
-            //{
-            //    mCurrentProfile.Stop();
-            //    btnSimulate.Content = "Start Saving";
-            //}
+            if (_pressed)
+            {
+                btnSimulate.Content = "Stop";
+                mCurrentProfile.StartWriteToDB();
+            }
+            else
+            {
+                mCurrentProfile.Stop();
+                btnSimulate.Content = "Start Saving";
+            }
 
         }
 
@@ -459,9 +416,10 @@ namespace WpfApp2
             myTabControl.SelectedIndex = 0;
         }
 
-        private void btnOK_Click(object sender, RoutedEventArgs e)
+        private void btnSave_Click(object sender, RoutedEventArgs e)
         {
             mSettingTab.PrintInfo();
+            mSettingTab.SaveInfoToFile();
         }
 
         private void btnInsertProfile_Click(object sender, RoutedEventArgs e)
@@ -516,7 +474,10 @@ namespace WpfApp2
             }
         }
 
-
+        private void btnLoadSetting_Click(object sender, RoutedEventArgs e)
+        {
+            mSettingTab.LoadInfoFromFile();
+        }
     }
 
     #endregion

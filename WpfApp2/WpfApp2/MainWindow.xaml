@@ -369,7 +369,7 @@
 
                     <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="1"  >
                         <Label Content="Port" FontWeight="DemiBold"  VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10,0,5,0" />
-                        <TextBox x:Name="txtPort" Text="{Binding mPort}" MinWidth="87" MinHeight="20"  Margin="5" IsEnabled="{Binding mElementEnable}" Padding="2"/>
+                        <TextBox x:Name="txtPort" Text="{Binding mPort,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" MinWidth="87" MinHeight="20"  Margin="5" IsEnabled="{Binding mElementEnable}" Padding="2"/>
 
                     </StackPanel>
 
@@ -450,6 +450,10 @@
                     </ComboBox>
 
 
+                    <Button x:Name="btnLoadSetting" Content="Load Setting" Grid.Column="4" Grid.Row="11" IsEnabled="{Binding mElementEnable}" 
+                            Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170" Height="25"
+                            HorizontalAlignment="Center"  Margin="12,0,12,0" BorderThickness="1" Click="btnLoadSetting_Click" />
+                    
                     <Button x:Name="btnEnableEdit" Content="Enable Edit" Grid.Column="4" Grid.Row="9"
                             Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170"
                             HorizontalAlignment="Center"  Margin="12,4,12,4" BorderThickness="0.5" Click="btnEnableEdit_Click"/>
@@ -458,9 +462,9 @@
                             Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170"
                             HorizontalAlignment="Center" Margin="12,4,12,4" BorderThickness="0.5" Click="btnCancel_Click"/>
 
-                    <Button x:Name="btnOK" Content="OK" Grid.Column="4" Grid.Row="12" IsEnabled="{Binding mElementEnable}" 
+                    <Button x:Name="btnSave" Content="Save Setting" Grid.Column="4" Grid.Row="12" IsEnabled="{Binding mElementEnable}" 
                             Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170" Height="25"
-                            HorizontalAlignment="Center"  Margin="12,17,12,17" BorderThickness="1" Click="btnOK_Click"/>
+                            HorizontalAlignment="Center"  Margin="12,17,12,17" BorderThickness="1" Click="btnSave_Click"/>
 
                 </Grid>
             </TabItem>
