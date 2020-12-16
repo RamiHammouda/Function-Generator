@@ -17,7 +17,6 @@ namespace WpfApp2.Model
         private string password;
         private string database;
         private string tableName;
-        private string timestamp;
         private string tar;
         #endregion
 
@@ -138,7 +137,7 @@ namespace WpfApp2.Model
         /// <param name="columns">Insert Value as int</param>
         public void Insert(int value)
         {
-            string queryString = $"INSERT INTO {database}.{tableName}(TimeStamp, {tar}) VALUES ('{timestamp}', '{value}')  ";
+            string queryString = $"INSERT INTO {database}.{tableName}(TimeStamp, {tar}) VALUES ('{TimeStamp}', '{value}')  ";
 
             Connect(ConnectionString, queryString);
         }
@@ -149,7 +148,7 @@ namespace WpfApp2.Model
         /// <param name="columns">Insert Value as double</param>
         public void Insert(double value)
         {
-            string queryString = $"INSERT INTO {database}.{tableName}(TimeStamp, {tar}) VALUES ('{timestamp}', '{value}')  ";
+            string queryString = $"INSERT INTO {database}.{tableName}(TimeStamp, {tar}) VALUES ('{TimeStamp}', '{value}')  ";
 
             Connect(ConnectionString, queryString);
         }
@@ -160,7 +159,7 @@ namespace WpfApp2.Model
         /// <param name="columns">Insert Value as long</param>
         public void Insert(long value)
         {
-            string queryString = $"INSERT INTO {database}.{tableName}(TimeStamp, {tar}) VALUES ('{timestamp}', '{value}')  ";
+            string queryString = $"INSERT INTO {database}.{tableName}(TimeStamp, {tar}) VALUES ('{TimeStamp}', '{value}')  ";
 
             Connect(ConnectionString, queryString);
         }
@@ -171,7 +170,7 @@ namespace WpfApp2.Model
         /// <param name="columns">Insert Value as ushort</param>
         public void Insert(ushort value)
         {
-            string queryString = $"INSERT INTO {database}.{tableName}(TimeStamp, {tar}) VALUES ('{timestamp}', '{value}')  ";
+            string queryString = $"INSERT INTO {database}.{tableName}(TimeStamp, {tar}) VALUES ('{TimeStamp}', '{value}')  ";
 
             Connect(ConnectionString, queryString);
         }
@@ -182,7 +181,7 @@ namespace WpfApp2.Model
         /// <param name="columns">Insert Value as sbyte</param>
         public void Insert(sbyte value)
         {
-            string queryString = $"INSERT INTO {database}.{tableName}(TimeStamp, {tar}) VALUES ('{timestamp}', '{value}')  ";
+            string queryString = $"INSERT INTO {database}.{tableName}(TimeStamp, {tar}) VALUES ('{TimeStamp}', '{value}')  ";
 
             Connect(ConnectionString, queryString);
         }
