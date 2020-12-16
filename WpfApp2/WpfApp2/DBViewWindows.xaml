@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp2"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
-        Title="DBViewWindows" Height="450" Width="800"  Background="#FFEEFAFF">
+        Title="DBViewWindows" Height="450" Width="450"  Background="#FFEEFAFF">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20"/>
@@ -18,9 +18,9 @@
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Database" Grid.Column="1" Grid.Row="0" FontSize="20"
-                   VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
-        <DataGrid Name="myDBGrid" Grid.Column="1" Grid.Row="1">
+        <TextBlock Text="Latest 100 value on database" Grid.Column="1" Grid.Row="0" FontSize="18" FontFamily="Verdana"
+                   VerticalAlignment="Bottom" HorizontalAlignment="Left" />
+        <DataGrid x:Name="myDBGrid" ItemsSource="{Binding}" Grid.Column="1" Grid.Row="1">
             
         </DataGrid>
 

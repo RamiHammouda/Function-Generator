@@ -160,7 +160,8 @@ namespace WpfApp2.ViewModel
             }
             //conn.Close();
             mErrorServer = String.Empty;
-            mConnectionTest = true;
+
+            mConnectionTest = mElementEnable ? true: false;
             return true;
         }
 
@@ -172,12 +173,10 @@ namespace WpfApp2.ViewModel
         public List<ColumnDBSelectableHelper> mSelectableTargetList { get; set; }
         public List<ColumnDBSelectableHelper> GetSelectableList()
         {
-
             mSelectableTargetList = new List<ColumnDBSelectableHelper>();
 
-            foreach (string column in mCheckedDB.GetColumns())
-            {
-
+            foreach (string column in mCheckedDB.GetColumns()) 
+            { 
                 mSelectableTargetList.Add(new ColumnDBSelectableHelper(true, column));
             }
 

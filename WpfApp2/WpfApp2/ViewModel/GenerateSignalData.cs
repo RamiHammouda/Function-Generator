@@ -57,7 +57,7 @@ namespace WpfApp2.ViewModel
 
         private MyDBEntity mMyDB;
 
-        public GenerateSignalData(SignalProfile aProfile, double duration = 0, bool autoTriggerData = false, bool sendToDb = false, string targetOnDb = "Inputs_Wasserstrahl2_Status", string name = "Default", MyDBEntity myDB = null)
+        public GenerateSignalData(SignalProfile aProfile, double duration = 0, bool autoTriggerData = false, bool sendToDb = false, string targetOnDb = "Inputs_TestVarLReal", string name = "Default", MyDBEntity myDB = null)
         {
             mProfile = aProfile;
             mSmProfile = new SimulationProfile(aProfile, duration);
@@ -75,7 +75,7 @@ namespace WpfApp2.ViewModel
             { GenerateData(); }
 
         }
-        public GenerateSignalData(SimulationProfile simuProfile, bool autoTriggerData = false, bool sendToDb = false, string targetOnDb = "Inputs_Wasserstrahl1_Status", string name = "Default", MyDBEntity myDB = null)
+        public GenerateSignalData(SimulationProfile simuProfile, bool autoTriggerData = false, bool sendToDb = false, string targetOnDb = "Inputs_TestVarLReal", string name = "Default", MyDBEntity myDB = null)
         {
             mSmProfile = simuProfile;
             mProfile = mSmProfile.getSignalProfile();
@@ -92,7 +92,7 @@ namespace WpfApp2.ViewModel
             if (autoTriggerData)
             { GenerateData(); }
         }
-        public GenerateSignalData(WaveForm wave = 0, double freq = 0.1, double ampl = 7, long rate = 2, double duration = 0, bool autoTriggerData = false, bool sendToDb = false, string targetOnDb = "Inputs_Wasserstrahl2_Status", string name = "Default", MyDBEntity myDB = null)
+        public GenerateSignalData(WaveForm wave = 0, double freq = 0.1, double ampl = 7, long rate = 2, double duration = 0, bool autoTriggerData = false, bool sendToDb = false, string targetOnDb = "Inputs_TestVarLReal", string name = "Default", MyDBEntity myDB = null)
         {
             mProfile = new SignalProfile(wave, freq, ampl, rate);
             mSmProfile = new SimulationProfile(mProfile, duration);
@@ -323,6 +323,10 @@ namespace WpfApp2.ViewModel
             return (double)rand.Next(0, 2);
         }
 
+        public override string ToString()
+        {
+            return $"{mSmProfile} {mTargetOnDB}";
+        }
         public void PrintData()
         {
             mSmProfile.PrintInfo();

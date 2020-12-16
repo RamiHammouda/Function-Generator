@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using System.Data;
 
+
 namespace WpfApp2
 {
     /// <summary>
@@ -226,16 +227,26 @@ namespace WpfApp2
 
             _multipleShotList = new ObservableCollection<GenerateSignalData>()
             { new GenerateSignalData(),
-              new GenerateSignalData(0,230,7,510,2,sendToDb:true),
-              //new GenerateSignalData(WaveForm.Random,320,3,993,2,targetOnDb:"Inputs_Entschlammung1_Status"),
-              //new GenerateSignalData(WaveForm.Sawtooth,sendToDb:true,targetOnDb:"Inputs_TestVarLReal")
+              new GenerateSignalData(0,2,7,4,2,sendToDb:true),
+              new GenerateSignalData(WaveForm.Random,targetOnDb:"Inputs_Entschlammung1_Status"),
+              new GenerateSignalData(WaveForm.Sawtooth,sendToDb:true,targetOnDb:"Inputs_TestVarLReal")
             };
 
             this.mSettingTab = SettingInfor.Instance;
 
             mSettingTab.LoadInfoToSetting();
+            if (!mSettingTab.CheckConnection())
+            {
+                cbbTargetList.ItemsSource = _offLineTargetList;
+                mMyTargetOnDB = _offLineList;
+            }
+            else
+            {
+                cbbTargetList.ItemsSource = mSettingTab.GetSelectableList();
+                mMyTargetOnDB = mSettingTab.LoadFinalTargetList();
+            }
 
-            cbbTargetList.ItemsSource = mSettingTab.GetSelectableList();
+
             //Because all elemente of Settingtab already has datacontext to SettingTab (inXml)
             //so cbb must set Datacontext to return to this class
             //cbbTargetList.DataContext = this;
@@ -243,7 +254,7 @@ namespace WpfApp2
 
             //mMyTargetOnDB = GetTargetOnDB();
 
-            mMyTargetOnDB = mSettingTab.LoadFinalTargetList();
+
             //not quite follow Binding Rule, but simple and practical :)
             sldFreq.Value = 0;
             sldAmp.Value = 0;
@@ -255,7 +266,8 @@ namespace WpfApp2
             //resultImg.Source = new BitmapImage(myUri2);
             //mUriImage = myUri;
         }
-
+        private List<ColumnDBSelectableHelper> _offLineTargetList { get { List<ColumnDBSelectableHelper> aList = new List<ColumnDBSelectableHelper>() { new ColumnDBSelectableHelper(true, "Offline"), new ColumnDBSelectableHelper(true, "Just Kidding") }; return aList; } }
+        private List<string> _offLineList { get { List<string> aList = new List<string>() { "Offline", "Offline only" }; return aList; } }
         private void VisualizateData(SimulationProfile smProfile, int numberOfWave)
         {
             if (!smProfile.checkedSmProfValidation())
@@ -291,30 +303,64 @@ namespace WpfApp2
                 Debug.WriteLine(e.Message);
             }
         }
-        private GenerateSignalData mCurrentProfile;
+        private GenerateSignalData mCurrentProfile, mRunningProfile;
         private void AutoDrawing(object sender, EventArgs e)
         {
             mCurrentProfile = new GenerateSignalData(mWave, mFreq, mAmpl, mRate, mDuration);
             SimulationProfile currentSignal = mCurrentProfile.getSimulationProfile();
             VisualizateData(currentSignal, 4);
             //Console.WriteLine(mSelectedTargetOnDB);
+            //Console.WriteLine(mCurrentProfile.ToString());
+            //Console.WriteLine(mSelectedRowOnDataGrid == null ? "Not yet selected" : $"{mSelectedRowOnDataGrid.mTargetOnDB}");
         }
-        private bool _pressed;
+        private bool _singleShotPressed, _multipleShotPressed;
         private void btnSimulate_Click(object sender, RoutedEventArgs e)
         {
-            mCurrentDatabase = new MyDBEntity(mSettingTab);
-            mCurrentProfile.setMyDB(mCurrentDatabase);
-            mCurrentProfile.setTargetOnDB(mSelectedTargetOnDB);
-            _pressed = !_pressed;
-            if (_pressed)
+            if (mSelectedTargetOnDB == null)
             {
-                btnSimulate.Content = "Stop";
-                mCurrentProfile.StartWriteToDB();
+                mErrorMessage = "Pls choose Target first";
+                return;
+            }
+            if (_multipleShotPressed)
+            {
+                mErrorMessage = "Multiple Shot is running!!";
+                return;
+
+            }
+            mErrorMessage = String.Empty;
+            //mCurrentDatabase = new MyDBEntity(mSettingTab);
+
+            _singleShotPressed = !_singleShotPressed;
+            if (_singleShotPressed)
+            {
+                try
+                {
+                    if (!mSettingTab.CheckConnection())
+                    {
+                        mErrorMessage = "Connection Test is fail";
+                        return;
+                    }
+                    mCurrentDatabase = mSettingTab.getCheckedDatabase();
+                    mCurrentProfile.setMyDB(mCurrentDatabase);
+                    mCurrentProfile.setTargetOnDB(mSelectedTargetOnDB);
+
+                    mRunningProfile = mCurrentProfile;
+                    btnSimulate.Content = "Stop";
+                    ChangeColorHelper(sender);
+                    mRunningProfile.StartWriteToDB();
+                }
+                catch (Exception ex)
+                {
+                    mErrorMessage = ex.Message;
+                }
+
             }
             else
             {
-                mCurrentProfile.Stop();
-                btnSimulate.Content = "Start Saving";
+                mRunningProfile.Stop();
+                btnSimulate.Content = "Start Sending";
+                mRunningProfile = null;
+                RevertColorHelper(sender);
             }
 
         }
@@ -330,10 +376,58 @@ namespace WpfApp2
             exportingIsFinished = true;
         }
 
+
+        private void btnMSimuToDB_Click(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("I'm in, Don't worry");
+            if (_singleShotPressed)
+            {
+                mErrorMessage = "Single Shot is running!!";
+                return;
+            }
+            if (mMultipleShotList.Count < 1)
+                return;
+            mErrorMessage = String.Empty;
+
+            _multipleShotPressed = !_multipleShotPressed;
+
+            if (_multipleShotPressed)
+            {
+                if (!mSettingTab.CheckConnection())
+                {
+                    mErrorMessage = "Connection Test is fail";
+                    return;
+                }
+                mCurrentDatabase = mSettingTab.getCheckedDatabase();
+                foreach (GenerateSignalData item in mMultipleShotList)
+                {
+
+                    if (item.checkSendToDB())
+                    {
+                        mRunningProfile = item;
+                        mRunningProfile.setMyDB(mCurrentDatabase);
+                        btnMSimuToDB.Content = "Stop";
+                        ChangeColorHelper(sender);
+                        mRunningProfile.StartWriteToDB();
+                    }
+                }
+            }
+            else
+            {
+                mRunningProfile.Stop();
+                btnMSimuToDB.Content = "Send All to DB";
+                RevertColorHelper(sender);
+                mRunningProfile = null;
+
+            }
+        }
         private void btnMSimulateToJson_Click(object sender, RoutedEventArgs e)
         {
             if (mMultipleShotList.Count < 1)
                 return;
+            mErrorMessage = String.Empty;
+
+
             List<GenerateSignalData> sendList = new List<GenerateSignalData>();
             foreach (GenerateSignalData item in mMultipleShotList)
                 if (item.checkSendToDB())
@@ -355,6 +449,8 @@ namespace WpfApp2
             using (StreamWriter writer = File.CreateText(filePath)) { serializer.Serialize(writer, sendList); }
 
         }
+
+
         public void MenuItemDel_Click(object sender, RoutedEventArgs e)
         {
             if (MultiShot.SelectedItem == null || mMultipleShotList.Count == 0) return;  //safety first
@@ -392,8 +488,8 @@ namespace WpfApp2
         private async void btnTestConn_Click(object sender, RoutedEventArgs e)
         {
             bool result = await Task.Run(() => mSettingTab.CheckConnection());
-            if (result) 
-            { 
+            if (result)
+            {
                 //mUriImage = new Uri("/Images/icons8-ok-48.png", UriKind.Relative);
                 mUriImage = new Uri("pack://application:,,,/WpfApp2;component/Images/icons8-ok-48.png", UriKind.Absolute);
                 mCurrentDatabase = mSettingTab.getCheckedDatabase();
@@ -424,25 +520,86 @@ namespace WpfApp2
 
         private void btnInsertProfile_Click(object sender, RoutedEventArgs e)
         {
-            mMultipleShotList.Add(new GenerateSignalData(mWave, mFreq, mAmpl, mRate, mDuration));
+            if (mSelectedTargetOnDB == null)
+            {
+                mErrorMessage = "Pls select Target first";
+                return;
+            }
+            mErrorMessage = String.Empty;
+            mMultipleShotList.Add(new GenerateSignalData(mWave, mFreq, mAmpl, mRate, mDuration, targetOnDb: mSelectedTargetOnDB));
         }
         private DBViewWindows mMyDBView;
-       
-
+        private GenerateSignalData _selectedRowOnDataGrid;
+        public GenerateSignalData mSelectedRowOnDataGrid
+        {
+            get { return _selectedRowOnDataGrid; }
+            set
+            {
+                if (_selectedRowOnDataGrid != value)
+                { _selectedRowOnDataGrid = value; OnPropertyChanged("mSelectedRowOnDataGrid"); }
+            }
+        }
         //Under Testing
+        private MySqlConnection conn;
         private void btnViewDatabase_Click(object sender, RoutedEventArgs e)
         {
-            MySqlConnection conn = null;
+
             if (conn != null)
                 conn.Close();
-            conn = new MySqlConnection();
 
-            if (mMyDBView == null)
-                mMyDBView = new DBViewWindows();
-            mMyDBView.Show();
-            mMyDBView.Focus();
+            string connStr = String.Format("server={0};user id={1}; password={2}; database={3}; pooling=false",
+               mSettingTab.mServer, mSettingTab.mUserId, mSettingTab.mPassword, mSettingTab.mDatabaseName);
+            string cmdStr = "select * from plc_data.plc_data order by id desc limit 100;";
+            int windowsWidth = 1000;
+
+            if (mSelectedRowOnDataGrid != null)
+            {
+                cmdStr = String.Format("select id, TimeStamp, {0} from plc_data.plc_data order by id desc limit 100;", mSelectedRowOnDataGrid.mTargetOnDB);
+                windowsWidth = 450;
+            }
+
+            conn = new MySqlConnection(connStr);
+
+            using (MySqlCommand cmd = new MySqlCommand(cmdStr, conn))
+            {
+                try
+                {
+                    conn.Open();
+                    DataTable dataTable = new DataTable();
+                    dataTable.Load(cmd.ExecuteReader());
+                    conn.Close();
+
+                    mMyDBView = new DBViewWindows();
+                    mMyDBView.myDBGrid.DataContext = dataTable;
+                    mMyDBView.Width = windowsWidth;
+                    mMyDBView.Show();
+
+                    mMyDBView.Focus();
+                }
+                catch (MySqlException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+
+
+            }
+
+            mSelectedRowOnDataGrid = null;
+
         }
 
+        private void ChangeColorHelper(object sender)
+        {
+            mErrorMessage = "Running...";
+            (sender as Button).Background = System.Windows.Media.Brushes.LightSalmon;
+            (sender as Button).Foreground = System.Windows.Media.Brushes.White;
+        }
+        private void RevertColorHelper(object sender)
+        {
+            mErrorMessage = String.Empty;
+            (sender as Button).Background = System.Windows.Media.Brushes.LightGreen;
+            (sender as Button).Foreground = System.Windows.Media.Brushes.Black;
+        }
 
         #endregion
 
@@ -474,10 +631,6 @@ namespace WpfApp2
             }
         }
 
-        private void btnLoadSetting_Click(object sender, RoutedEventArgs e)
-        {
-            mSettingTab.LoadInfoFromFile();
-        }
     }
 
     #endregion

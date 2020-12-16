@@ -72,7 +72,7 @@
     </Window.Resources>
 
     <Grid>
-        <TabControl Name="myTabControl" Padding="0" SelectedIndex="0">
+        <TabControl Name="myTabControl" Padding="0" SelectedIndex="1">
             <TabControl.Resources>
                 <Style TargetType="{x:Type Grid}">
                     <Setter Property="Background" Value="#FFEEFAFF"></Setter>
@@ -92,7 +92,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="20"/>
                         <RowDefinition Height="*"/>
-                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="20"/>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="20"/>
@@ -116,17 +116,17 @@
                         <ComboBox ItemsSource="{Binding Path = mMyTargetOnDB}" Margin = "5,0,5,0" MinWidth="120"
                                   SelectedItem ="{Binding Path = mSelectedTargetOnDB, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
-                        <Label Name ="lblError" VerticalAlignment="Bottom" Foreground="Red" FontStyle="Italic" Margin="0,20,0,0" MaxWidth="140" HorizontalAlignment="Left">
-                            <Label.Content>
-                                <AccessText TextWrapping="Wrap" Text="{Binding Path= mErrorMessage, UpdateSourceTrigger=PropertyChanged}"/>
-                            </Label.Content>
-                        </Label>
-
                     </StackPanel>
+
+                    <Label Name ="lblError" Grid.Column="2" Grid.Row="2" Grid.RowSpan="2" VerticalAlignment="Top" Foreground="Red" FontStyle="Italic" Margin="0,0,0,0"  HorizontalAlignment="Center">
+                        <Label.Content>
+                            <AccessText TextWrapping="Wrap" Text="{Binding Path= mErrorMessage, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Label.Content>
+                    </Label>
 
                     <StackPanel Orientation="Vertical" Grid.Column ="4" Grid.Row="3" VerticalAlignment="Center" Margin="0,9,0,10" >
 
-                        <Button x:Name="btnInsertProfile" Content="Insert this Profile" 
+                        <Button x:Name="btnInsertProfile" Content="Insert this Profile" Background="LightPink"
                                 Style="{StaticResource myButtonStyle}" Margin="5" FontWeight="DemiBold" Height="22" 
                                 BorderThickness="0.5" Click="btnInsertProfile_Click"/>
 
@@ -142,7 +142,8 @@
                         </Button>
                     </StackPanel>
                     <DockPanel VerticalAlignment="Center" Grid.Column="4" Grid.Row="4" Margin="0,24,0,25">
-                        <Button Name="btnSimulate" Click="btnSimulate_Click" Content="Save To DB" Margin="5" FontWeight="SemiBold" Height="22">
+                        <Button Name="btnSimulate" Click="btnSimulate_Click" Content="Send to DB" Margin="5" FontWeight="SemiBold" Height="22"
+                                Background="LightGreen">
                             <Button.Resources>
                                 <Style TargetType="{x:Type Border}">
                                     <Setter Property="CornerRadius" Value="2"/>
@@ -234,16 +235,22 @@
                     <!--<Image Name="resultImg" Width ="30" Grid.Column="4" Grid.Row="2" VerticalAlignment="Top" Source="{Binding Path = mUriImage,UpdateSourceTrigger=PropertyChanged}"/>-->
 
 
-                    <Label Content="Test" Grid.Column="1" Grid.Row="1"/>
+                    <Label Content="SIMULATION PROFILE MANAGEMENT" Grid.Column="1" Grid.Row="1" FontSize="13" FontWeight="DemiBold" Foreground="Blue"/>
+                    <Label Name ="lblErrorOnMTab" Grid.Column="2" Grid.Row="1" Foreground="Red" FontStyle="Italic" Margin="0,0,0,0"  HorizontalAlignment="Center">
+                        <Label.Content>
+                            <AccessText TextWrapping="Wrap" Text="{Binding Path= mErrorMessage, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Label.Content>
+                    </Label>
                     <StackPanel Orientation="Vertical" Grid.Column ="4" Grid.Row="2" VerticalAlignment="Bottom" Height="99" >
 
-                        <Button x:Name="btnViewDatabase" Content="View Database"  Margin="5,0,5,10" Click="btnViewDatabase_Click"
+                        <Button x:Name="btnViewDatabase" Content="View Database"  Margin="5,0,5,10" Click="btnViewDatabase_Click" Background="LightPink"
                                 BorderThickness="0.5" Height="22" FontWeight="Bold" VerticalAlignment="Top" Style="{StaticResource myButtonStyle}" />
 
-                        <Button x:Name="btnMSimuToJson" Content="M.Simulate to Json" Click="btnMSimulateToJson_Click" Margin="5,0,5,10" 
+                        <Button x:Name="btnMSimuToJson" Content="Save all to Json" Click="btnMSimulateToJson_Click" Margin="5,0,5,10" 
                                 BorderThickness="0.5" Height="22" FontWeight="Bold" Style="{StaticResource myButtonStyle}"/>
 
-                        <Button x:Name="btMSimuToDB" Content="M.Simulate to DB" Click="btnSimulate_Click" Margin="5,0,5,10" FontWeight="Bold" Height="22">
+                        <Button x:Name="btnMSimuToDB" Content="Send all to DB"  Margin="5,0,5,10" FontWeight="Bold" Height="22" 
+                                Click="btnMSimuToDB_Click" Background="LightGreen" >
                             <Button.Resources>
                                 <Style TargetType="{x:Type Border}">
                                     <Setter Property="CornerRadius" Value="2"/>
@@ -259,7 +266,8 @@
                     <DataGrid x:Name ="MultiShot" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2" AlternatingRowBackground="LightGreen"
                               CanUserAddRows="True" CanUserDeleteRows="True" AutoGenerateColumns="False" RowHeight="20"
                               EnableRowVirtualization="True"
-                              ItemsSource="{Binding Source={StaticResource myCollectionView}}">
+                              ItemsSource="{Binding Source={StaticResource myCollectionView}}"
+                              SelectedItem="{Binding mSelectedRowOnDataGrid, UpdateSourceTrigger=PropertyChanged}">
                         <DataGrid.ColumnHeaderStyle>
                             <Style TargetType="{x:Type DataGridColumnHeader}">
                                 <Setter Property="FontWeight" Value="DemiBold"/>
@@ -450,10 +458,6 @@
                     </ComboBox>
 
 
-                    <Button x:Name="btnLoadSetting" Content="Load Setting" Grid.Column="4" Grid.Row="11" IsEnabled="{Binding mElementEnable}" 
-                            Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170" Height="25"
-                            HorizontalAlignment="Center"  Margin="12,0,12,0" BorderThickness="1" Click="btnLoadSetting_Click" />
-                    
                     <Button x:Name="btnEnableEdit" Content="Enable Edit" Grid.Column="4" Grid.Row="9"
                             Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170"
                             HorizontalAlignment="Center"  Margin="12,4,12,4" BorderThickness="0.5" Click="btnEnableEdit_Click"/>
@@ -463,7 +467,7 @@
                             HorizontalAlignment="Center" Margin="12,4,12,4" BorderThickness="0.5" Click="btnCancel_Click"/>
 
                     <Button x:Name="btnSave" Content="Save Setting" Grid.Column="4" Grid.Row="12" IsEnabled="{Binding mElementEnable}" 
-                            Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170" Height="25"
+                            Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170" Height="25" Background="LightGreen"
                             HorizontalAlignment="Center"  Margin="12,17,12,17" BorderThickness="1" Click="btnSave_Click"/>
 
                 </Grid>
