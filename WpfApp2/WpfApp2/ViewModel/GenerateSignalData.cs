@@ -25,7 +25,7 @@ namespace WpfApp2.ViewModel
         [JsonProperty("Ampl", Order = 3)]
         public double mAmpl { get; set; }
         [JsonProperty("SampleRate", Order = 4)]
-        public long mRate { get; set; }
+        public double mRate { get; set; }
         [JsonProperty("Duration", Order = 5)]
         public double mDuration { get; set; }
 
@@ -92,7 +92,7 @@ namespace WpfApp2.ViewModel
             if (autoTriggerData)
             { GenerateData(); }
         }
-        public GenerateSignalData(WaveForm wave = 0, double freq = 0.1, double ampl = 7, long rate = 2, double duration = 0, bool autoTriggerData = false, bool sendToDb = false, string targetOnDb = "Inputs_TestVarLReal", string name = "Default", MyDBEntity myDB = null)
+        public GenerateSignalData(WaveForm wave = 0, double freq = 0.1, double ampl = 7, double rate = 2, double duration = 0, bool autoTriggerData = false, bool sendToDb = false, string targetOnDb = "Inputs_TestVarLReal", string name = "Default", MyDBEntity myDB = null)
         {
             mProfile = new SignalProfile(wave, freq, ampl, rate);
             mSmProfile = new SimulationProfile(mProfile, duration);
@@ -139,7 +139,7 @@ namespace WpfApp2.ViewModel
             return mFreq;
         }
 
-        public long getRate()
+        public double getRate()
         {
             return mRate;
         }
@@ -191,7 +191,7 @@ namespace WpfApp2.ViewModel
                 return;
 
             // A Time-Step in Ticks
-            aTimeStep = (long)Math.Round(1e7m / mRate, 0);
+            aTimeStep = (long)Math.Round(1e7/ mRate, 0);
             long start = DateTime.Now.Ticks;
 
             for (long i = 0; i < mENumber; i++)
@@ -203,7 +203,8 @@ namespace WpfApp2.ViewModel
         }
 
 
-        private CancellationTokenSource _canceller;
+        //private CancellationTokenSource _canceller;
+        private bool _cancel;
         public async void StartWriteToDB()
         {
             mNo.Clear();
@@ -212,21 +213,24 @@ namespace WpfApp2.ViewModel
 
             if (!mSmProfile.checkedSmProfValidation() && mDuration > 0)
                 return;
-            _canceller = new CancellationTokenSource();
+            //_canceller = new CancellationTokenSource();
+            _cancel = false;
             int waitingTime = (int)(1000 / mRate);
             mMyDB.InsertInTargetColumn(mTargetOnDB);
             long now;
             if (mDuration == 0)
             {
-                int i = 0;
+
                 await Task.Run(() =>
                 {
-                while (!_canceller.Token.IsCancellationRequested)
-                {
+                    int i = 0;
+                    while (!_cancel)
+                    //while (!_canceller.Token.IsCancellationRequested)
+                    {
                     now = DateTime.Now.Ticks;
                     mNo.Add(i);
                     mTimeStampArray.Add(now);
-                    mAmplArray.Add(getWaveValue(mTimeStampArray[i]));
+                    mAmplArray.Add(Math.Round(getWaveValue(mTimeStampArray[i]),3));
                     mMyDB.Insert(mAmplArray[i]);
                     Console.WriteLine("{0}  -  {1}", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), mAmplArray[i]);  //For Debug Only
                     i++;
@@ -241,7 +245,8 @@ namespace WpfApp2.ViewModel
                 {
                     for (int i = 0; i < mENumber; i++)
                     {
-                        if (_canceller.Token.IsCancellationRequested)
+                        //if (_canceller.Token.IsCancellationRequested)
+                        if(_cancel)
                             return;
                         now = DateTime.Now.Ticks;
                         mNo.Add(i);
@@ -254,20 +259,21 @@ namespace WpfApp2.ViewModel
                 });
             }
             Console.WriteLine("Finished Writing");
-            _canceller.Dispose();
+            //_canceller.Dispose();
 
         }
 
         public void Stop()
         {
-            try 
-            {
-                _canceller.Cancel();
-            }
-            catch (ObjectDisposedException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            //try
+            //{
+            //    _canceller.Cancel();
+            //}
+            //catch (ObjectDisposedException ex)
+            //{
+            //    Console.WriteLine(ex.Message);
+            //}
+            _cancel = true;
         }
 
         private void InitiateData()

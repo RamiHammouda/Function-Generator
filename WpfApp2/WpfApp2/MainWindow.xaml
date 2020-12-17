@@ -113,12 +113,12 @@
                         <RadioButton Name="rdoRandDigi" GroupName="waveForm" Content="Random Digital" Margin="5" IsChecked="{Binding Path=mWave, Mode =TwoWay,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static myenum:WaveForm.RandomDigital}}"/>
 
                         <TextBlock Text="Target On Database" FontWeight="Bold" Margin="5"/>
-                        <ComboBox ItemsSource="{Binding Path = mMyTargetOnDB}" Margin = "5,0,5,0" MinWidth="120"
+                        <ComboBox x:Name="cbbTargetOnDB" x:FieldModifier="public"  ItemsSource="{Binding Path = mMyTargetOnDB,UpdateSourceTrigger=PropertyChanged}" Margin = "5,0,5,0" MinWidth="120"
                                   SelectedItem ="{Binding Path = mSelectedTargetOnDB, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
                     </StackPanel>
 
-                    <Label Name ="lblError" Grid.Column="2" Grid.Row="2" Grid.RowSpan="2" VerticalAlignment="Top" Foreground="Red" FontStyle="Italic" Margin="0,0,0,0"  HorizontalAlignment="Center">
+                    <Label x:Name ="lblError" x:FieldModifier="public"  Grid.Column="2" Grid.Row="2" Grid.RowSpan="2" VerticalAlignment="Top" Foreground="Red" FontStyle="Italic" Margin="0,0,0,0"  HorizontalAlignment="Center">
                         <Label.Content>
                             <AccessText TextWrapping="Wrap" Text="{Binding Path= mErrorMessage, UpdateSourceTrigger=PropertyChanged}"/>
                         </Label.Content>
@@ -235,7 +235,7 @@
                     <!--<Image Name="resultImg" Width ="30" Grid.Column="4" Grid.Row="2" VerticalAlignment="Top" Source="{Binding Path = mUriImage,UpdateSourceTrigger=PropertyChanged}"/>-->
 
 
-                    <Label Content="SIMULATION PROFILE MANAGEMENT" Grid.Column="1" Grid.Row="1" FontSize="13" FontWeight="DemiBold" Foreground="Blue"/>
+                    <Label x:Name="lblwelcome" x:FieldModifier="public" Content="SIMULATION PROFILE MANAGEMENT" Grid.Column="1" Grid.Row="1" FontSize="13" FontWeight="DemiBold" Foreground="Blue"/>
                     <Label Name ="lblErrorOnMTab" Grid.Column="2" Grid.Row="1" Foreground="Red" FontStyle="Italic" Margin="0,0,0,0"  HorizontalAlignment="Center">
                         <Label.Content>
                             <AccessText TextWrapping="Wrap" Text="{Binding Path= mErrorMessage, UpdateSourceTrigger=PropertyChanged}"/>
@@ -296,7 +296,7 @@
                             <DataGridTemplateColumn Header="WaveForm" Width="90" CanUserSort="True" SortMemberPath="mWave">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Path=mWave}" />
+                                        <TextBlock Text="{Binding Path=mWave,UpdateSourceTrigger=PropertyChanged}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                                 <DataGridTemplateColumn.CellEditingTemplate>

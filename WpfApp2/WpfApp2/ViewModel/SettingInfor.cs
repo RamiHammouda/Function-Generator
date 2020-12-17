@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using WpfApp2.Model;
 
+
 namespace WpfApp2.ViewModel
 {
     public class SettingInfor : INotifyPropertyChanged
@@ -110,6 +111,7 @@ namespace WpfApp2.ViewModel
             mBeautifulJson = beauty;
             //PropertyChanged += PrintSomeInfo;
             //OnPropertyChanged("Test");
+
         }
         private void LoadSetting(SettingInfor aSetting)
         {
@@ -143,7 +145,7 @@ namespace WpfApp2.ViewModel
             if (conn != null)
                 conn.Close();
 
-            string connStr = String.Format("server={0};user id={1}; password={2}; database={3}; port={4}; pooling=false",
+            string connStr = String.Format("server={0};user id={1}; password={2}; database={3}; port={4}; pooling=true",
                 mServer, mUserId, mPassword, mDatabaseName, mPort);
 
             try
@@ -158,10 +160,10 @@ namespace WpfApp2.ViewModel
                 mConnectionTest = false;
                 return false;
             }
-            //conn.Close();
+            conn.Close();
             mErrorServer = String.Empty;
 
-            mConnectionTest = mElementEnable ? true: false;
+            mConnectionTest = mElementEnable ? true : false;
             return true;
         }
 
@@ -175,8 +177,8 @@ namespace WpfApp2.ViewModel
         {
             mSelectableTargetList = new List<ColumnDBSelectableHelper>();
 
-            foreach (string column in mCheckedDB.GetColumns()) 
-            { 
+            foreach (string column in mCheckedDB.GetColumns())
+            {
                 mSelectableTargetList.Add(new ColumnDBSelectableHelper(true, column));
             }
 
@@ -184,8 +186,6 @@ namespace WpfApp2.ViewModel
         }
         [JsonProperty("FinalTargetList", Order = 7)]
         public List<string> mFinalTargetList { get; set; }
-
-
         public List<string> LoadFinalTargetList()
         {
             if (!File.Exists(mFilePath))
@@ -202,9 +202,6 @@ namespace WpfApp2.ViewModel
                 var atest = serializer.Deserialize(reader, typeof(SettingInfor)) as SettingInfor;
                 mFinalTargetList = atest.mFinalTargetList;
             }
-            Console.WriteLine("CurrentPrint:");
-            this.PrintInfo();
-            this.PrintListInfor();
             return mFinalTargetList;
         }
         public List<string> LoadFinalTargetListFromComboBox()
@@ -214,9 +211,6 @@ namespace WpfApp2.ViewModel
             {
                 if (target.mIsSelected) mFinalTargetList.Add(target.mColumnName);
             }
-
-            //foreach (string str in mFinalTargetList)
-            //    Console.WriteLine(str); 
             return mFinalTargetList;
         }
 
@@ -248,11 +242,24 @@ namespace WpfApp2.ViewModel
             mElementEnable = !mElementEnable;
             return mElementEnable;
         }
+        private void ForceChangeToMainWindows()
+        {
+            //foreach (Window window in Application.Current.Windows)
+            //{
+            //    if (window.GetType() == typeof(MainWindow))
+            //    {
+            //        (window as MainWindow).lblwelcome.Content = "I changed it from another window";
+            //    }
+            //}
 
+            var targetWindow = Application.Current.Windows.Cast<Window>().FirstOrDefault(window => window is MainWindow) as MainWindow;
+            //targetWindow.lblwelcome.Content = "Tesst";
+            targetWindow.mMyTargetOnDB = mFinalTargetList;
+        }
         public void SaveInfoToFile()
         {
             LoadFinalTargetListFromComboBox();
-
+            ForceChangeToMainWindows();
             //OK
             if (!CheckConnection())
                 return;
@@ -267,9 +274,10 @@ namespace WpfApp2.ViewModel
             CreateDatabase();
         }
 
-        public void PrintListInfor()
+        public void PrintListInfor(List<string> alist)
         {
-            foreach (string str in mFinalTargetList)
+            Console.WriteLine(alist.ToString());
+            foreach (string str in alist)
                 Console.WriteLine(str);
         }
         public void LoadInfoToSetting()

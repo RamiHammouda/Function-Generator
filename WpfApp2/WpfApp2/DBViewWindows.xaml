@@ -18,7 +18,7 @@
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Latest 100 value on database" Grid.Column="1" Grid.Row="0" FontSize="18" FontFamily="Verdana"
+        <TextBlock Name="txtDbViewWindows" Text="Latest 200 value on database" Grid.Column="1" Grid.Row="0" FontSize="18" FontFamily="Verdana"
                    VerticalAlignment="Bottom" HorizontalAlignment="Left" />
         <DataGrid x:Name="myDBGrid" ItemsSource="{Binding}" Grid.Column="1" Grid.Row="1">
             

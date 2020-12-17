@@ -17,7 +17,7 @@ using System.Windows.Controls;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using System.Data;
-
+using System.Threading;
 
 namespace WpfApp2
 {
@@ -63,8 +63,8 @@ namespace WpfApp2
             }
         }
 
-        [Range(1, 4, ErrorMessage = "Sending Data Rate to Database is limitted to maximum 4 : 4 times/s")]
-        public long mRate;
+        [Range(0.00001, 4, ErrorMessage = "Sending Data Rate to Database is limitted to maximum 4 : 4 times/s")]
+        public double mRate;
         public long mDuration;
         public double mOffsetAmpl;
         public double mOffsetFreq { get; set; }
@@ -125,8 +125,16 @@ namespace WpfApp2
                 { _multipleShotList = value; OnPropertyChanged("_multipleShotList"); }
             }
         }
-
-        public List<string> mMyTargetOnDB { get; set; }
+        private List<string> _mytargetOnDB;
+        public List<string> mMyTargetOnDB
+        {
+            get { return _mytargetOnDB; }
+            set
+            {
+                if (_mytargetOnDB != value)
+                { _mytargetOnDB = value; OnPropertyChanged("mMyTargetOnDB"); }
+            }
+        }
 
         private string _selectedTargetOnDB;
         public string mSelectedTargetOnDB
@@ -215,9 +223,9 @@ namespace WpfApp2
         {
             this.DataContext = this;
 
-            mFreq = 0.2;
+            mFreq = 0.1;
             mAmpl = 5;
-            mRate = 4;
+            mRate = 2;
             mDuration = 0;
             mWave = WaveForm.Sine;
             mValidInput = false;
@@ -227,9 +235,9 @@ namespace WpfApp2
 
             _multipleShotList = new ObservableCollection<GenerateSignalData>()
             { new GenerateSignalData(),
-              new GenerateSignalData(0,2,7,4,2,sendToDb:true),
+              new GenerateSignalData(0,2,7,1,0,sendToDb:true),
               new GenerateSignalData(WaveForm.Random,targetOnDb:"Inputs_Entschlammung1_Status"),
-              new GenerateSignalData(WaveForm.Sawtooth,sendToDb:true,targetOnDb:"Inputs_TestVarLReal")
+              new GenerateSignalData(WaveForm.Sawtooth,sendToDb:true,targetOnDb:"Inputs_TestVarReal")
             };
 
             this.mSettingTab = SettingInfor.Instance;
@@ -388,7 +396,8 @@ namespace WpfApp2
             if (mMultipleShotList.Count < 1)
                 return;
             mErrorMessage = String.Empty;
-
+            mSelectedRowOnDataGrid = null;
+            mSelectedTargetOnDB = null;
             _multipleShotPressed = !_multipleShotPressed;
 
             if (_multipleShotPressed)
@@ -404,21 +413,49 @@ namespace WpfApp2
 
                     if (item.checkSendToDB())
                     {
-                        mRunningProfile = item;
-                        mRunningProfile.setMyDB(mCurrentDatabase);
+                        Console.WriteLine("come in");
                         btnMSimuToDB.Content = "Stop";
                         ChangeColorHelper(sender);
-                        mRunningProfile.StartWriteToDB();
+
+                        //mRunningProfile = item;
+                        //mRunningProfile.setMyDB(mCurrentDatabase);
+                        //mRunningProfile.StartWriteToDB();
+                        item.setMyDB(new MyDBEntity(mSettingTab));
+                        item.StartWriteToDB();
+                        Console.WriteLine("go out");
                     }
+
                 }
+
+                //for (int i = 0; i < mMultipleShotList.Count(); i++)
+                //{
+                //    if (mMultipleShotList[i].checkSendToDB())
+                //    {
+                //        Console.WriteLine("StarWriting No: " + i);
+                //        btnMSimuToDB.Content = "Stop";
+                //        ChangeColorHelper(sender);
+                //        mMultipleShotList[i].setMyDB(new MyDBEntity(mSettingTab));
+                //        await Task.Run(() =>
+                //        {
+                //            mMultipleShotList[i].StartWriteToDB();
+                //        });
+                //        Console.WriteLine("Go out of No: " + i);
+                //    }
+                //    Thread.Sleep(250);
+                //}
             }
             else
             {
-                mRunningProfile.Stop();
+                //mRunningProfile.Stop();
+                //mRunningProfile = null;
+
+                foreach (GenerateSignalData item in mMultipleShotList)
+                {
+                    item.Stop();
+                }
+
                 btnMSimuToDB.Content = "Send All to DB";
                 RevertColorHelper(sender);
-                mRunningProfile = null;
-
             }
         }
         private void btnMSimulateToJson_Click(object sender, RoutedEventArgs e)
@@ -426,7 +463,6 @@ namespace WpfApp2
             if (mMultipleShotList.Count < 1)
                 return;
             mErrorMessage = String.Empty;
-
 
             List<GenerateSignalData> sendList = new List<GenerateSignalData>();
             foreach (GenerateSignalData item in mMultipleShotList)
@@ -449,7 +485,6 @@ namespace WpfApp2
             using (StreamWriter writer = File.CreateText(filePath)) { serializer.Serialize(writer, sendList); }
 
         }
-
 
         public void MenuItemDel_Click(object sender, RoutedEventArgs e)
         {
@@ -549,13 +584,16 @@ namespace WpfApp2
 
             string connStr = String.Format("server={0};user id={1}; password={2}; database={3}; pooling=false",
                mSettingTab.mServer, mSettingTab.mUserId, mSettingTab.mPassword, mSettingTab.mDatabaseName);
-            string cmdStr = "select * from plc_data.plc_data order by id desc limit 100;";
+            string cmdStr = $"select * from {mSettingTab.mDatabaseName}.{mSettingTab.mTabName} order by id desc limit 200;";
+            string showText = "Lastest 200 value on database";
             int windowsWidth = 1000;
 
             if (mSelectedRowOnDataGrid != null)
             {
-                cmdStr = String.Format("select id, TimeStamp, {0} from plc_data.plc_data order by id desc limit 100;", mSelectedRowOnDataGrid.mTargetOnDB);
+                cmdStr = String.Format("select id, TimeStamp, {0} from {1}.{2} where {0} is not null order by id desc limit 100;", mSelectedRowOnDataGrid.mTargetOnDB, mSettingTab.mDatabaseName, mSettingTab.mTabName);
                 windowsWidth = 450;
+                showText = "Lastest 100 value without Null on database";
+
             }
 
             conn = new MySqlConnection(connStr);
@@ -572,6 +610,7 @@ namespace WpfApp2
                     mMyDBView = new DBViewWindows();
                     mMyDBView.myDBGrid.DataContext = dataTable;
                     mMyDBView.Width = windowsWidth;
+                    mMyDBView.txtDbViewWindows.Text = showText;
                     mMyDBView.Show();
 
                     mMyDBView.Focus();
@@ -581,11 +620,9 @@ namespace WpfApp2
                     MessageBox.Show(ex.Message);
                 }
 
-
             }
 
             mSelectedRowOnDataGrid = null;
-
         }
 
         private void ChangeColorHelper(object sender)
