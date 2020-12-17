@@ -24,7 +24,7 @@ namespace WpfApp2.SingleShot
             //Act
             testingWindow.btnReset_Click(sender,e);
             //Assert
-            Assert.AreEqual(true, ((testingWindow.mFreq == 0.2) && (testingWindow.mAmpl == 5) && (testingWindow.mRate == 4) && (testingWindow.mDuration == 0) && (testingWindow.mWave == Model.WaveForm.Sine)));
+            Assert.AreEqual(true, ((testingWindow.mFreq == 0.1) && (testingWindow.mAmpl == 5) && (testingWindow.mRate == 2) && (testingWindow.mDuration == 0) && (testingWindow.mWave == Model.WaveForm.Sine)));
         }
 
     }
