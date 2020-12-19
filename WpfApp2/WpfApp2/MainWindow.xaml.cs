@@ -628,14 +628,16 @@ namespace WpfApp2
         private void ChangeColorHelper(object sender)
         {
             mErrorMessage = "Running...";
-            (sender as Button).Background = System.Windows.Media.Brushes.LightSalmon;
-            (sender as Button).Foreground = System.Windows.Media.Brushes.White;
+            System.Windows.Media.BrushConverter bc = new System.Windows.Media.BrushConverter();
+            (sender as Button).Background = (System.Windows.Media.Brush)bc.ConvertFrom("#a6b1e1");
+            (sender as Button).Foreground = System.Windows.Media.Brushes.Black;
         }
         private void RevertColorHelper(object sender)
         {
             mErrorMessage = String.Empty;
-            (sender as Button).Background = System.Windows.Media.Brushes.LightGreen;
-            (sender as Button).Foreground = System.Windows.Media.Brushes.Black;
+            System.Windows.Media.BrushConverter bc = new System.Windows.Media.BrushConverter();
+            (sender as Button).Background = (System.Windows.Media.Brush)bc.ConvertFrom("#424874");
+            (sender as Button).Foreground = System.Windows.Media.Brushes.White;
         }
 
         #endregion
