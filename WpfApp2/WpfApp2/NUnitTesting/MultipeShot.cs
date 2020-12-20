@@ -38,5 +38,66 @@ namespace WpfApp2.MultipleShot
             //Assert
             Assert.AreEqual(true, testingWindow.ItemDeleted);
         }
+        //[Test]
+        public static void NoItemsAdded_SaveToFileClicked_ErrorMessage()
+        {
+            //Arrange
+            var testingWindow = new MainWindow();
+            object sender = null;
+            RoutedEventArgs e = null;
+            //Act
+            testingWindow.btnMSimulateToJson_Click(sender, e);
+            //Assert
+            Assert.AreEqual(true, testingWindow.NotEnouhItems);
+        }
+        [Test]
+        public static void CanSaveAllItemsTojson_SaveToFileClicked_ItemsSaved()
+        {
+            //Arrange
+            var testingWindow = new MainWindow();
+            object sender = null;
+            RoutedEventArgs e = null;
+            //Act
+            testingWindow.btnMSimulateToJson_Click(sender, e);
+            //Assert
+            Assert.AreEqual(true, testingWindow.ItemsAreSaved);
+        }
+        //[Test]
+        public static void CanGetConnectionToDBFailedError_SaveToDBClicked_ErrorMessage()
+        {
+            //Arrange
+            var testingWindow = new MainWindow();
+            object sender = null;
+            RoutedEventArgs e = null;
+            //Act
+            testingWindow.mSettingTab.CheckConnection();
+            testingWindow.btnMSimuToDB_Click(sender, e);
+            //Assert
+            Assert.AreEqual(true, testingWindow.ConnectionToDBError);
+        }
+        //[Test]
+        public static void CanSaveAllItemsToDB_SaveToDBClicked_ItemsSaved()
+        {
+            //Arrange
+            var testingWindow = new MainWindow();
+            object sender = null;
+            RoutedEventArgs e = null;
+            //Act
+            testingWindow.btnMSimuToDB_Click(sender, e);
+            //Assert
+            Assert.AreEqual(true, testingWindow.ItemsAreSavedToDB);
+        }
+        [Test]
+        public static void CanViewDataBase_ViewAllDataBaseClicked_NewWindowopened()
+        {
+            //Arrange
+            var testingWindow = new MainWindow();
+            object sender = null;
+            RoutedEventArgs e = null;
+            //Act
+            testingWindow.btnViewDatabase_Click(sender, e);
+            //Assert
+            Assert.AreEqual(true, testingWindow.DataBaseWindowOpened);
+        }
     }
 }

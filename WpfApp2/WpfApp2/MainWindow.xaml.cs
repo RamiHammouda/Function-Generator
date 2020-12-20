@@ -46,6 +46,16 @@ namespace WpfApp2
         public bool ItemAdded = false;
         public bool ItemDeleted = false;
         public bool ValidInput = false;
+        public bool CannotInsertEmptyProfile = false;
+        public bool AddedToMultipleShotList = false;
+        public bool NotEnouhItems = false;
+        public bool ItemsAreSaved = false;
+        public bool ConnectionToDBError = false;
+        public bool ItemsAreSavedToDB = false;
+        public bool DataBaseWindowOpened = false;
+        public bool EditIsEnabled = false;
+        public bool ConnectionTested = false;
+        public bool InfosSaved = false;
         public int n;
         public bool mValidInput { get; set; }
         #endregion
@@ -115,7 +125,7 @@ namespace WpfApp2
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private ObservableCollection<GenerateSignalData> _multipleShotList;
+        public ObservableCollection<GenerateSignalData> _multipleShotList;
         public ObservableCollection<GenerateSignalData> mMultipleShotList
         {
             get { return _multipleShotList; }
@@ -385,7 +395,7 @@ namespace WpfApp2
         }
 
 
-        private void btnMSimuToDB_Click(object sender, RoutedEventArgs e)
+        public void btnMSimuToDB_Click(object sender, RoutedEventArgs e)
         {
             Console.WriteLine("I'm in, Don't worry");
             if (_singleShotPressed)
@@ -405,6 +415,7 @@ namespace WpfApp2
                 if (!mSettingTab.CheckConnection())
                 {
                     mErrorMessage = "Connection Test is fail";
+                    ConnectionToDBError = true;
                     return;
                 }
                 mCurrentDatabase = mSettingTab.getCheckedDatabase();
@@ -426,6 +437,7 @@ namespace WpfApp2
                     }
 
                 }
+                ItemsAreSavedToDB = true;
 
                 //for (int i = 0; i < mMultipleShotList.Count(); i++)
                 //{
@@ -458,10 +470,14 @@ namespace WpfApp2
                 RevertColorHelper(sender);
             }
         }
-        private void btnMSimulateToJson_Click(object sender, RoutedEventArgs e)
+        public void btnMSimulateToJson_Click(object sender, RoutedEventArgs e)
         {
             if (mMultipleShotList.Count < 1)
                 return;
+            if (mMultipleShotList.Count < 1)
+            {
+                NotEnouhItems = true;
+            }
             mErrorMessage = String.Empty;
 
             List<GenerateSignalData> sendList = new List<GenerateSignalData>();
@@ -483,6 +499,7 @@ namespace WpfApp2
             else
                 serializer = new JsonSerializer { TypeNameHandling = TypeNameHandling.Auto };
             using (StreamWriter writer = File.CreateText(filePath)) { serializer.Serialize(writer, sendList); }
+            ItemsAreSaved = true;
 
         }
 
@@ -520,8 +537,9 @@ namespace WpfApp2
 
         private MyDBEntity mCurrentDatabase;
 
-        private async void btnTestConn_Click(object sender, RoutedEventArgs e)
+        public async void btnTestConn_Click(object sender, RoutedEventArgs e)
         {
+            ConnectionTested = true;
             bool result = await Task.Run(() => mSettingTab.CheckConnection());
             if (result)
             {
@@ -533,13 +551,15 @@ namespace WpfApp2
                 //mUriImage = new Uri(@"/Images/icons8-cancel-48.png", UriKind.Relative);
                 mUriImage = new Uri("pack://application:,,,/WpfApp2;component/Images/icons8-cancel-48.png", UriKind.Absolute);
             //resultImg.DataContext = this;
-            //resultImg.Source = new BitmapImage(mUriImage);
+            //resultImg.Source = new BitmapImage(mUriImage);  
+            
         }
-        private void btnEnableEdit_Click(object sender, RoutedEventArgs e)
+        public void btnEnableEdit_Click(object sender, RoutedEventArgs e)
         {
             if (!mSettingTab.ReverseEditMode())
                 btnEnableEdit.Content = "Enable Edit";
             else btnEnableEdit.Content = "Disable Edit";
+            EditIsEnabled = true;
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
@@ -547,21 +567,24 @@ namespace WpfApp2
             myTabControl.SelectedIndex = 0;
         }
 
-        private void btnSave_Click(object sender, RoutedEventArgs e)
+        public void btnSave_Click(object sender, RoutedEventArgs e)
         {
             mSettingTab.PrintInfo();
             mSettingTab.SaveInfoToFile();
+            InfosSaved = true;
         }
 
-        private void btnInsertProfile_Click(object sender, RoutedEventArgs e)
+        public void btnInsertProfile_Click(object sender, RoutedEventArgs e)
         {
             if (mSelectedTargetOnDB == null)
             {
                 mErrorMessage = "Pls select Target first";
+                CannotInsertEmptyProfile = true;
                 return;
             }
             mErrorMessage = String.Empty;
             mMultipleShotList.Add(new GenerateSignalData(mWave, mFreq, mAmpl, mRate, mDuration, targetOnDb: mSelectedTargetOnDB));
+            AddedToMultipleShotList = true;
         }
         private DBViewWindows mMyDBView;
         private GenerateSignalData _selectedRowOnDataGrid;
@@ -576,7 +599,7 @@ namespace WpfApp2
         }
         //Under Testing
         private MySqlConnection conn;
-        private void btnViewDatabase_Click(object sender, RoutedEventArgs e)
+        public void btnViewDatabase_Click(object sender, RoutedEventArgs e)
         {
 
             if (conn != null)
@@ -621,6 +644,7 @@ namespace WpfApp2
                 }
 
             }
+            DataBaseWindowOpened = true;
 
             mSelectedRowOnDataGrid = null;
         }

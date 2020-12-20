@@ -1,0 +1,28 @@
+[
+  {
+    "WritingIsFinished": false,
+    "Remark": "Default",
+    "Wave": 0,
+    "Freq": 2.0,
+    "Ampl": 7.0,
+    "SampleRate": 1.0,
+    "Duration": 0.0,
+    "TargetOnDB": "Inputs_TestVarLReal",
+    "No": [],
+    "TimeStamp": [],
+    "AmplValue": []
+  },
+  {
+    "WritingIsFinished": false,
+    "Remark": "Default",
+    "Wave": 1,
+    "Freq": 0.1,
+    "Ampl": 7.0,
+    "SampleRate": 2.0,
+    "Duration": 0.0,
+    "TargetOnDB": "Inputs_TestVarReal",
+    "No": [],
+    "TimeStamp": [],
+    "AmplValue": []
+  }
+]
