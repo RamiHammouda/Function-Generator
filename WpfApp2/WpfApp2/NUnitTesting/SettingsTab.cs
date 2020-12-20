@@ -15,6 +15,10 @@ namespace WpfApp2.SettingsTab
     [Apartment(ApartmentState.STA)]
     class SettingsTab
     {
+        //TestName_Scenario_ExpectedBehavior
+        /// <EnableChangesToDataBaseSettings>
+        /// A new application window will be created. The "Enable Edit" Button will be clicked and then it will be verified if the user can input new data.
+        /// </EnableChangesToDataBaseSettings>
         [Test]
         public static void CanEditDataBaseConnectionSettings_EnableEditClicked_CanEdit()
         {
@@ -27,6 +31,11 @@ namespace WpfApp2.SettingsTab
             //Assert
             Assert.AreEqual(true, testingWindow.EditIsEnabled);
         }
+
+        //TestName_Scenario_ExpectedBehavior
+        /// <ConnectionToDBTest>
+        /// A new application window will be created. The "Test Conenction" Button will be clicked and then it will be verified if a connection to the DB is possible.
+        /// </ConnectionToDBTest>
         [Test]
         public static void CanTestConnectionToDB_TestConnectionClicked_Returnstrue()
         {
@@ -40,6 +49,7 @@ namespace WpfApp2.SettingsTab
             Assert.AreEqual(true, testingWindow.ConnectionTested);
 
         }
+
         //under Testing
         //[Test]
         public static void CanSaveNewProfileSettings_SaveSettingsClicked_ReturnsSettings()

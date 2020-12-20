@@ -14,6 +14,10 @@ namespace WpfApp2.SingleShot
     [Apartment(ApartmentState.STA)]
     class AmplitudeTesting
     {
+        //TestName_Scenario_ExpectedBehavior
+        /// <AmplitudeInputTest>
+        /// A new application window will be created. The amplitude input box will get the value of "50" then it will be verified if this value will be accepted as a valid input.
+        /// </AmplitudeInputTest>
         [Test]
         public static void CanInputAmplitude_InputIsCorrect_ReturnsTrue()
         {
@@ -24,6 +28,10 @@ namespace WpfApp2.SingleShot
             //Assert
             Assert.AreEqual(false, testingWindow.ValidInput);
         }
+
+        /// <AmplitudeInputTest>
+        /// A new application window will be created. The amplitude input box will get the value of "-50" then it will be verified if this value will be rejected as it should.
+        /// </AmplitudeInputTest>
         [Test]
         public static void CanotInputNegativeAmplitude_InputIsOutOfBoundaries_ReturnsFalse()
         {
@@ -34,6 +42,10 @@ namespace WpfApp2.SingleShot
             //Assert
             Assert.AreEqual(false, testingWindow.mValidInput);
         }
+
+        /// <AmplitudeInputTest>
+        /// A new application window will be created. The amplitude input box will get a value of the type string then it will be verified if this value will be rejected as it should.
+        /// </AmplitudeInputTest>
         [Test]
         public static void CannotOtherTypeThenDoubleAmplitude_InputTypeIsWrong_ReturnsFalse()
         {
@@ -44,6 +56,10 @@ namespace WpfApp2.SingleShot
             //Assert
             Assert.AreEqual(false, testingWindow.mValidInput);
         }
+
+        /// <OffsetTest>
+        /// A new application window will be created. The "ArrowUp" Button responsible for the amplitude offset will be clicked and then it will be verified if the value of amplitude will increase.
+        /// </OffsetTest>
         [Test]
         public static void CanIncreaseAmplitudeyWithOffset_PlusButtonPressed_ReturnsBiggerValue()
         {
@@ -56,6 +72,10 @@ namespace WpfApp2.SingleShot
             //Assert
             Assert.AreEqual(true, testingWindow.offsetAmpValueIncreased);
         }
+
+        /// <OffsetTest>
+        /// A new application window will be created. The "ArrowDown" Button responsible for the amplitude offset will be clicked and then it will be verified if the value of amplitude will decrease.
+        /// </OffsetTest>
         [Test]
         public static void CanDecreaseFrequencyWithOffset_MinusButtonPressed_ReturnsLowerValue()
         {

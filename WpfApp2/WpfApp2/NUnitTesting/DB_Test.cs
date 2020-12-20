@@ -16,7 +16,11 @@ namespace WpfApp2.DBTesting
     [Apartment(ApartmentState.STA)]
     class DB_Test
     {
-        //[Test]
+        //TestName_Scenario_ExpectedBehavior
+        /// <WriteToDBTest>
+        /// This Test will verify if it is possible to start writing in the DB.
+        /// </WriteToDBTest>
+        [Test]
         public static void CanStartWriteToDB_ConnectionIsTrue_FinishedWriting() //brauche ein connectionstring and query stgring bs
         {
             //Arrange
@@ -26,31 +30,35 @@ namespace WpfApp2.DBTesting
             //Assert
             Assert.AreEqual(true, SignalClassExemple.WritingIsFinished);
         }
+
+        // Under Testing
         //[Test]
-        //public static void CanChooseDBTarget_ChooseBetweenTargets_TargetChosen() //brauche ein connectionstring and query stgring bs
-        //{
-        //    //Arrange            
-        //    var testingWindow = new MainWindow();
-        //    object sender = null;
-        //    RoutedEventArgs e = null;
-        //    testingWindow.mSelectedTargetOnDB = "stringInputExemple";
-        //    //Act
-        //    testingWindow.btnInsertProfile_Click(sender, e);
-        //    //Assert
-        //    Assert.AreEqual(true, testingWindow.AddedToMultipleShotList);
-        //}
+        public static void CanChooseDBTarget_ChooseBetweenTargets_TargetChosen() //brauche ein connectionstring and query stgring bs
+        {
+            //Arrange            
+            var testingWindow = new MainWindow();
+            object sender = null;
+            RoutedEventArgs e = null;
+            testingWindow.mSelectedTargetOnDB = "stringInputExemple";
+            //Act
+            testingWindow.btnInsertProfile_Click(sender, e);
+            //Assert
+            Assert.AreEqual(true, testingWindow.AddedToMultipleShotList);
+        }
+
+        // Under Testing
         //[Test]
-        //public static void CanGetNoTargetChoseError_ChooseBetweenTargets_NoTargetChosen() //brauche ein connectionstring and query stgring bs
-        //{
-        //    //Arrange            
-        //    var testingWindow = new MainWindow();
-        //    object sender = null;
-        //    RoutedEventArgs e = null;
-        //    testingWindow.mSelectedTargetOnDB = "stringInputExemple";
-        //    //Act
-        //    testingWindow.btnInsertProfile_Click(sender, e);
-        //    //Assert
-        //    Assert.AreEqual(true, testingWindow.AddedToMultipleShotList);
-        //}    
+        public static void CanGetNoTargetChoseError_ChooseBetweenTargets_NoTargetChosen() //brauche ein connectionstring and query stgring bs
+        {
+            //Arrange            
+            var testingWindow = new MainWindow();
+            object sender = null;
+            RoutedEventArgs e = null;
+            testingWindow.mSelectedTargetOnDB = "stringInputExemple";
+            //Act
+            testingWindow.btnInsertProfile_Click(sender, e);
+            //Assert
+            Assert.AreEqual(true, testingWindow.AddedToMultipleShotList);
+        }
     }
 }
