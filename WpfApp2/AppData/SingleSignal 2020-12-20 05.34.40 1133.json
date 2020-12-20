@@ -1,0 +1,13 @@
+{
+  "WritingIsFinished": false,
+  "Remark": "Default",
+  "Wave": 0,
+  "Freq": 0.1,
+  "Ampl": 5.0,
+  "SampleRate": 2.0,
+  "Duration": 0.0,
+  "TargetOnDB": "Inputs_TestVarLReal",
+  "No": [],
+  "TimeStamp": [],
+  "AmplValue": []
+}

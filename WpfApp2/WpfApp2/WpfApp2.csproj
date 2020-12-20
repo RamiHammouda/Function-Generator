@@ -131,6 +131,8 @@
     <Compile Include="NUnitTesting\AmplitudeTesting.cs" />
     <Compile Include="Model\SignalProfile.cs" />
     <Compile Include="Model\SimulationProfile.cs" />
+    <Compile Include="NUnitTesting\CRUD_Test.cs" />
+    <Compile Include="NUnitTesting\DB_Test.cs" />
     <Compile Include="NUnitTesting\FrequencyTesting.cs" />
     <Compile Include="NUnitTesting\JsonTesting.cs" />
     <Compile Include="NUnitTesting\MultipeShot.cs" />

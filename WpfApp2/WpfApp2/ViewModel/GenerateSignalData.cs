@@ -54,6 +54,7 @@ namespace WpfApp2.ViewModel
         private GetWaveValue getWaveValue;
         [JsonIgnore]
         public bool mSendToDB { get; set; }
+        public bool WritingIsFinished = false;
 
         private MyDBEntity mMyDB;
 
@@ -259,6 +260,7 @@ namespace WpfApp2.ViewModel
                 });
             }
             Console.WriteLine("Finished Writing");
+            WritingIsFinished = true;
             //_canceller.Dispose();
 
         }

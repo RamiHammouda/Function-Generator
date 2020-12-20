@@ -18,6 +18,13 @@ namespace WpfApp2.Model
         private string database;
         private string tableName;
         private string tar;
+        public bool CanConnectToDB = false;
+        public bool CanReadInDB = false;
+        public bool NewIntIsInserted = false;
+        public bool NewDoubleIsInserted = false;
+        public bool NewuShortIsInserted = false;
+        public bool NewsByteIsInserted = false;
+        public bool NewLongIsInserted = true;
         #endregion
 
         #region Properties
@@ -64,7 +71,7 @@ namespace WpfApp2.Model
         /// </summary>
         /// <param name="ConnectionString">Collection of Informations, including FQDN, User/PW, Portnumber, TargetDatabase</param>
         /// <param name="queryString"></param>
-        private void Connect(string ConnectionString, string queryString)
+        public void Connect(string ConnectionString, string queryString)
         {
             using (MySqlConnection cn = new MySqlConnection(ConnectionString))
             {
@@ -74,6 +81,7 @@ namespace WpfApp2.Model
                 {
                     command.Connection.Open();                              // Establish Connection to DB
                     command.ExecuteNonQuery();
+                    CanConnectToDB = true;
                 }
                 catch (MySqlException e)
                 {
@@ -87,7 +95,7 @@ namespace WpfApp2.Model
         /// </summary>
         /// <param name="ConnectionString">ConnectionString delivered by ConnectionString Var</param>
         /// <param name="queryString">QueryString delivered by function Callin Reader</param>
-        private List<string> Reader(string ConnectionString, string queryString)
+        public List<string> Reader(string ConnectionString, string queryString)
         {
             List<string> columns = new List<string>();
 
@@ -103,6 +111,7 @@ namespace WpfApp2.Model
                         columns.Add(reader.GetString(0));
                     }
                 }
+                CanReadInDB = true;
             }
             return columns;
         }
@@ -140,6 +149,7 @@ namespace WpfApp2.Model
             string queryString = $"INSERT INTO {database}.{tableName}(TimeStamp, {tar}) VALUES ('{TimeStamp}', '{value}')  ";
 
             Connect(ConnectionString, queryString);
+            NewIntIsInserted = true;
         }
 
         /// <summary>
@@ -151,6 +161,7 @@ namespace WpfApp2.Model
             string queryString = $"INSERT INTO {database}.{tableName}(TimeStamp, {tar}) VALUES ('{TimeStamp}', '{value}')  ";
 
             Connect(ConnectionString, queryString);
+            NewDoubleIsInserted = true;
         }
 
         /// <summary>
@@ -162,6 +173,7 @@ namespace WpfApp2.Model
             string queryString = $"INSERT INTO {database}.{tableName}(TimeStamp, {tar}) VALUES ('{TimeStamp}', '{value}')  ";
 
             Connect(ConnectionString, queryString);
+            NewLongIsInserted = true;
         }
 
         /// <summary>
@@ -173,6 +185,7 @@ namespace WpfApp2.Model
             string queryString = $"INSERT INTO {database}.{tableName}(TimeStamp, {tar}) VALUES ('{TimeStamp}', '{value}')  ";
 
             Connect(ConnectionString, queryString);
+            NewuShortIsInserted = true;
         }
 
         /// <summary>
@@ -184,6 +197,7 @@ namespace WpfApp2.Model
             string queryString = $"INSERT INTO {database}.{tableName}(TimeStamp, {tar}) VALUES ('{TimeStamp}', '{value}')  ";
 
             Connect(ConnectionString, queryString);
+            NewsByteIsInserted = true;
         }
         #endregion
     }
