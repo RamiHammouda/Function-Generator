@@ -20,7 +20,7 @@ namespace WpfApp2.CRUDTesting
         /// <ConnectionTest>
         /// A new class will be created. This test will verify if the connection is possible.
         /// </ConnectionTest>
-        [Test]
+        //[Test]
         public static void CanConnect_Connected_ConnectionBuilt() //brauche ein connectionstring and query stgring bs
         {
             //Arrange
@@ -37,7 +37,7 @@ namespace WpfApp2.CRUDTesting
         /// <ReadingTest>
         /// A new class will be created. This test will verify if the user can read from the DB.
         /// </ReadingTest>
-        [Test]
+        //[Test]
         public static void CanRead_ReaderIsTrue_ReadingInTheDB() //brauche ein connectionstring and query stgring bs
         {
             //Arrange
@@ -54,7 +54,7 @@ namespace WpfApp2.CRUDTesting
         /// <GetColumnsTest>
         /// A new class will be created. This test will verify if get the shown columns.
         /// </GetColumnsTest>
-        [Test]
+        //[Test]
         public static void CanGetColumnsFromDB_ConnectionIsTrue_ColumnsObtained() //brauche ein connectionstring and query stgring bs
         {
             //Arrange
@@ -69,7 +69,7 @@ namespace WpfApp2.CRUDTesting
         /// <IntInsertionTest>
         /// A new class will be created. This test will verify if get a new Input of the type int is possible.
         /// </IntInsertionTest>
-        [Test]
+        //[Test]
         public static void CanInsertIntInDB_InsertIsPossibleInput_InsertingInTheDB() //brauche ein connectionstring and query stgring bs
         {
             //Arrange
@@ -85,7 +85,7 @@ namespace WpfApp2.CRUDTesting
         /// <DoubleInsertionTest>
         /// A new class will be created. This test will verify if get a new Input of the type double is possible.
         /// </DoubleInsertionTest>
-        [Test]
+        //[Test]
         public static void CanInsertDoubleInDB_DoubleIsPossibleInput_InsertingInTheDB() //brauche ein connectionstring and query stgring bs
         {
             //Arrange
@@ -101,7 +101,7 @@ namespace WpfApp2.CRUDTesting
         /// <LongInsertionTest>
         /// A new class will be created. This test will verify if get a new Input of the type long is possible.
         /// </LongInsertionTest>
-        [Test]
+        //[Test]
         public static void CanInsertLongInDB_LongIsPossibleInput_InsertingInTheDB() //brauche ein connectionstring and query stgring bs
         {
             //Arrange
@@ -117,7 +117,7 @@ namespace WpfApp2.CRUDTesting
         /// <uShortInsertionTest>
         /// A new class will be created. This test will verify if get a new Input of the type uShort is possible.
         /// </uShortInsertionTest>
-        [Test]
+        //[Test]
         public static void CanuShortLongInDB_uShortIsPossibleInput_InsertingInTheDB() //brauche ein connectionstring and query stgring bs
         {
             //Arrange
@@ -133,7 +133,7 @@ namespace WpfApp2.CRUDTesting
         /// <sByteInsertionTest>
         /// A new class will be created. This test will verify if get a new Input of the type sByte is possible.
         /// </sByteInsertionTest>
-        [Test]
+        //[Test]
         public static void CanInsertsByteInDB_sByteIsPossibleInput_InsertingInTheDB() //brauche ein connectionstring and query stgring bs
         {
             //Arrange

@@ -80,32 +80,32 @@ namespace WpfApp2.MultipleShot
 
         // Under Testing
         //[Test]
-        public static void CanGetConnectionToDBFailedError_SaveToDBClicked_ErrorMessage()
-        {
-            //Arrange
-            var testingWindow = new MainWindow();
-            object sender = null;
-            RoutedEventArgs e = null;
-            //Act
-            testingWindow.mSettingTab.CheckConnection();
-            testingWindow.btnMSimuToDB_Click(sender, e);
-            //Assert
-            Assert.AreEqual(true, testingWindow.ConnectionToDBError);
-        }
+        //public static void CanGetConnectionToDBFailedError_SaveToDBClicked_ErrorMessage()
+        //{
+        //    //Arrange
+        //    var testingWindow = new MainWindow();
+        //    object sender = null;
+        //    RoutedEventArgs e = null;
+        //    //Act
+        //    testingWindow.mSettingTab.CheckConnection();
+        //    testingWindow.btnMSimuToDB_Click(sender, e);
+        //    //Assert
+        //    Assert.AreEqual(true, testingWindow.ConnectionToDBError);
+        //}
 
         // Under Testing
         //[Test]
-        public static void CanSaveAllItemsToDB_SaveToDBClicked_ItemsSaved()
-        {
-            //Arrange
-            var testingWindow = new MainWindow();
-            object sender = null;
-            RoutedEventArgs e = null;
-            //Act
-            testingWindow.btnMSimuToDB_Click(sender, e);
-            //Assert
-            Assert.AreEqual(true, testingWindow.ItemsAreSavedToDB);
-        }
+        //public static void CanSaveAllItemsToDB_SaveToDBClicked_ItemsSaved()
+        //{
+        //    //Arrange
+        //    var testingWindow = new MainWindow();
+        //    object sender = null;
+        //    RoutedEventArgs e = null;
+        //    //Act
+        //    testingWindow.btnMSimuToDB_Click(sender, e);
+        //    //Assert
+        //    Assert.AreEqual(true, testingWindow.ItemsAreSavedToDB);
+        //}
 
         /// <ViewingDataBase>
         /// A new application window will be created. The "View All Database" Button will be clicked and then it will be verified if the user can view the database.

@@ -44,17 +44,16 @@ namespace WpfApp2.ViewModel
 
 
 
+        
+        public bool WritingIsFinished = false;
+
         //For quick access and control;
-
-
-
         private long aTimeStep;
         private long mENumber;
-        private delegate double GetWaveValue(long inputTime);
-        private GetWaveValue getWaveValue;
+        public delegate double GetWaveValue(long inputTime);
+        public GetWaveValue getWaveValue;
         [JsonIgnore]
         public bool mSendToDB { get; set; }
-        public bool WritingIsFinished = false;
 
         private MyDBEntity mMyDB;
 
@@ -163,6 +162,10 @@ namespace WpfApp2.ViewModel
         {
             mTargetOnDB = target;
         }
+        public string getTargetOnDB()
+        {
+            return mTargetOnDB;
+        }
 
         public bool checkSendToDB()
         {
@@ -192,7 +195,7 @@ namespace WpfApp2.ViewModel
                 return;
 
             // A Time-Step in Ticks
-            aTimeStep = (long)Math.Round(1e7/ mRate, 0);
+            aTimeStep = (long)Math.Round(1e7 / mRate, 0);
             long start = DateTime.Now.Ticks;
 
             for (long i = 0; i < mENumber; i++)
@@ -228,14 +231,14 @@ namespace WpfApp2.ViewModel
                     while (!_cancel)
                     //while (!_canceller.Token.IsCancellationRequested)
                     {
-                    now = DateTime.Now.Ticks;
-                    mNo.Add(i);
-                    mTimeStampArray.Add(now);
-                    mAmplArray.Add(Math.Round(getWaveValue(mTimeStampArray[i]),3));
-                    mMyDB.Insert(mAmplArray[i]);
-                    Console.WriteLine("{0}  -  {1}", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), mAmplArray[i]);  //For Debug Only
-                    i++;
-                    Thread.Sleep(waitingTime);
+                        now = DateTime.Now.Ticks;
+                        mNo.Add(i);
+                        mTimeStampArray.Add(now);
+                        mAmplArray.Add(Math.Round(getWaveValue(mTimeStampArray[i]), 3));
+                        mMyDB.Insert(mAmplArray[i]);
+                        Console.WriteLine("{0}  -  {1}", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), mAmplArray[i]);  //For Debug Only
+                        i++;
+                        Thread.Sleep(waitingTime);
                     }
                 });
 
@@ -247,7 +250,7 @@ namespace WpfApp2.ViewModel
                     for (int i = 0; i < mENumber; i++)
                     {
                         //if (_canceller.Token.IsCancellationRequested)
-                        if(_cancel)
+                        if (_cancel)
                             return;
                         now = DateTime.Now.Ticks;
                         mNo.Add(i);
@@ -260,7 +263,6 @@ namespace WpfApp2.ViewModel
                 });
             }
             Console.WriteLine("Finished Writing");
-            WritingIsFinished = true;
             //_canceller.Dispose();
 
         }

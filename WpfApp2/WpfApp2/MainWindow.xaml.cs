@@ -72,9 +72,16 @@ namespace WpfApp2
                 { _errorMessage = value; OnPropertyChanged("mErrorMessage"); }
             }
         }
-
+        private double _freq, _rate;
         [Range(0.00001, 4, ErrorMessage = "Sending Data Rate to Database is limitted to maximum 4 : 4 times/s")]
-        public double mRate;
+        public double mRate {
+            get { return _rate; }
+            set
+            {
+                if (_rate != value)
+                { _rate = value; OnPropertyChanged("mRate"); }
+            }
+        }
         public long mDuration;
         public double mOffsetAmpl;
         public double mOffsetFreq { get; set; }
@@ -90,7 +97,7 @@ namespace WpfApp2
             }
         }
 
-        private double _freq;
+        
         [Range(0.0001, 4, ErrorMessage = "Frequency must from {1} to {2}")]
         [Required(ErrorMessage = "Frequency is required")]
         public double mFreq
@@ -233,6 +240,8 @@ namespace WpfApp2
         {
             this.DataContext = this;
 
+            txtSampleRate.DataContext = this;
+
             mFreq = 0.1;
             mAmpl = 5;
             mRate = 2;
@@ -363,7 +372,6 @@ namespace WpfApp2
                     mCurrentProfile.setTargetOnDB(mSelectedTargetOnDB);
 
                     mRunningProfile = mCurrentProfile;
-                    btnSimulate.Content = "Stop";
                     ChangeColorHelper(sender);
                     mRunningProfile.StartWriteToDB();
                 }
@@ -376,7 +384,6 @@ namespace WpfApp2
             else
             {
                 mRunningProfile.Stop();
-                btnSimulate.Content = "Start Sending";
                 mRunningProfile = null;
                 RevertColorHelper(sender);
             }
@@ -394,8 +401,9 @@ namespace WpfApp2
             exportingIsFinished = true;
         }
 
-
-        public void btnMSimuToDB_Click(object sender, RoutedEventArgs e)
+        private Dictionary<string, string> myDataDict;
+        private bool _Stop = false;
+        public async void btnMSimuToDB_Click(object sender, RoutedEventArgs e)
         {
             Console.WriteLine("I'm in, Don't worry");
             if (_singleShotPressed)
@@ -415,58 +423,173 @@ namespace WpfApp2
                 if (!mSettingTab.CheckConnection())
                 {
                     mErrorMessage = "Connection Test is fail";
-                    ConnectionToDBError = true;
                     return;
                 }
-                mCurrentDatabase = mSettingTab.getCheckedDatabase();
-                foreach (GenerateSignalData item in mMultipleShotList)
+                //For sequently writing (V1)
+                // mCurrentDatabase = mSettingTab.getCheckedDatabase();
+                
+                ChangeColorHelper(sender);
+
+                //Move this to DBClass
+                 myDataDict = new Dictionary<string, string>();
+
+                //1- Get Dictionary Data from DB Class
+                //Move/merge this to DBClass
+                //Get Real data:
+                //Frame
+                if (conn != null)
+                    conn.Close();
+
+                string connStr = String.Format("server={0};user id={1}; password={2}; database={3}; pooling=true",
+                   mSettingTab.mServer, mSettingTab.mUserId, mSettingTab.mPassword, mSettingTab.mDatabaseName);
+                string cmdStr = $"select * from plc_data.plc_data order by id limit 1"; //Fix, do not change this, no ID will not get the lastest record
+                Console.WriteLine(cmdStr);
+
+                conn = new MySqlConnection(connStr);
+
+                string result = "", temp = "";
+                using (MySqlCommand cmd = new MySqlCommand(cmdStr, conn))
                 {
 
-                    if (item.checkSendToDB())
+                    try
                     {
-                        Console.WriteLine("come in");
-                        btnMSimuToDB.Content = "Stop";
-                        ChangeColorHelper(sender);
+                        conn.Open();
+                        MySqlDataReader reader = cmd.ExecuteReader();
 
-                        //mRunningProfile = item;
-                        //mRunningProfile.setMyDB(mCurrentDatabase);
-                        //mRunningProfile.StartWriteToDB();
-                        item.setMyDB(new MyDBEntity(mSettingTab));
-                        item.StartWriteToDB();
-                        Console.WriteLine("go out");
+                        Console.WriteLine(mMyTargetOnDB[25]);
+                        while (reader.Read())
+                        {
+                            foreach (string col in mMyTargetOnDB)
+                            {
+                                result += $"{reader[col]} :";
+                                myDataDict.Add(col, reader[col].ToString());
+                            }
+
+                        }
+
+                        Console.WriteLine(result);
+
+                        conn.Close();
+                    }
+                    catch (MySqlException ex)
+                    {
+                        MessageBox.Show(ex.Message);
                     }
 
                 }
-                ItemsAreSavedToDB = true;
 
-                //for (int i = 0; i < mMultipleShotList.Count(); i++)
-                //{
-                //    if (mMultipleShotList[i].checkSendToDB())
-                //    {
-                //        Console.WriteLine("StarWriting No: " + i);
-                //        btnMSimuToDB.Content = "Stop";
-                //        ChangeColorHelper(sender);
-                //        mMultipleShotList[i].setMyDB(new MyDBEntity(mSettingTab));
-                //        await Task.Run(() =>
-                //        {
-                //            mMultipleShotList[i].StartWriteToDB();
-                //        });
-                //        Console.WriteLine("Go out of No: " + i);
-                //    }
-                //    Thread.Sleep(250);
-                //}
+                Console.WriteLine("Finished Getting");
+
+
+                //To check result
+                Console.WriteLine("Before:::::::::::::::");
+                foreach (KeyValuePair<string, string> kvp in myDataDict)
+                {
+                    Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
+                }
+
+
+
+                //2- Start create data and insert to Dictionary then send to DB this dictionnay
+
+                long now;
+
+                while (!_Stop)
+                {
+                    foreach (GenerateSignalData item in mMultipleShotList)
+                    {
+                        now = DateTime.Now.Ticks;
+
+                        if (item.checkSendToDB())
+                        {
+                            myDataDict[item.getTargetOnDB()] = Convert.ToString(item.getWaveValue(now));
+
+                            //For parallel wrinting (V2)
+                            //item.setMyDB(new MyDBEntity(mSettingTab));
+                            //item.StartWriteToDB();
+
+                            //For sequent writing (V1)
+                            //mRunningProfile = item;
+                            //mRunningProfile.setMyDB(mCurrentDatabase);
+                            //mRunningProfile.StartWriteToDB();
+                        }
+
+                        //Thread.Sleep((int)(1000 / mRate));
+
+                    }
+
+                    Console.WriteLine("After:::::::::::::::");
+                    foreach (KeyValuePair<string, string> kvp in myDataDict)
+                    {
+                        Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
+                    }
+
+
+
+                    //string test = string.Join(",", myDataDict.Keys.ToArray());
+                    //Console.WriteLine(test);
+
+                    //string TimeStamp = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+                    //string cmdQuery = $"INSERT INTO plc_data.plc_data (TimeStamp, {string.Join(",", myDataDict.Keys.ToArray())}) VALUES ('{TimeStamp}','20.5',{string.Join(",",myDataDict.Values.ToArray())})";
+                    //Console.WriteLine(cmdQuery);
+
+
+                    //3 - DB Class send dictionary to DB
+                    //Move to DB Class
+                    //Inset To DB
+                    //Frame
+                    if (conn != null)
+                        conn.Close();
+
+                    //string connStr = String.Format("server={0};user id={1}; password={2}; database={3}; pooling=true",
+                    //mSettingTab.mServer, mSettingTab.mUserId, mSettingTab.mPassword, mSettingTab.mDatabaseName);
+
+                    string TimeStamp = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+                    //string cmdStr = $"INSERT INTO plc_data.plc_data (TimeStamp, Inputs_TestVarLReal,Inputs_TestVarReal) VALUES ('{TimeStamp}','20.5','10.2')";
+                    //string cmdStr = $"INSERT INTO plc_data.plc_data (TimeStamp, Inputs_TestVarLReal,Inputs_TestVarReal) VALUES ('{TimeStamp}',20.5,10.2)";
+                    string commandstr = $"INSERT INTO plc_data.plc_data (TimeStamp, {string.Join(",", myDataDict.Keys.ToArray())}) VALUES ('{TimeStamp}',{string.Join(",", myDataDict.Values.ToArray())})";
+                    conn = new MySqlConnection(connStr);
+
+                    using (MySqlCommand cmd = new MySqlCommand(commandstr, conn))
+                    {
+                        try
+                        {
+                            conn.Open();
+
+                            await Task.Run(() => cmd.ExecuteNonQuery());
+                            conn.Close();
+
+                        }
+                        catch (MySqlException ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+
+                    }
+
+                    Console.WriteLine("Finished Inserting");
+
+
+
+                }
+
+
             }
             else
             {
+                //For sequently writing (V1)
                 //mRunningProfile.Stop();
                 //mRunningProfile = null;
 
-                foreach (GenerateSignalData item in mMultipleShotList)
-                {
-                    item.Stop();
-                }
 
-                btnMSimuToDB.Content = "Send All to DB";
+                ////Fore parallel writing (V2)
+                //foreach (GenerateSignalData item in mMultipleShotList)
+                //{
+                //    item.Stop();
+                //}
+
+                _Stop = true;
+
                 RevertColorHelper(sender);
             }
         }
@@ -652,16 +775,19 @@ namespace WpfApp2
         private void ChangeColorHelper(object sender)
         {
             mErrorMessage = "Running...";
-            System.Windows.Media.BrushConverter bc = new System.Windows.Media.BrushConverter();
-            (sender as Button).Background = (System.Windows.Media.Brush)bc.ConvertFrom("#a6b1e1");
-            (sender as Button).Foreground = System.Windows.Media.Brushes.Black;
+            Button thisButton = sender as Button;
+            thisButton.Content = "Stop";
+            thisButton.Background = System.Windows.Media.Brushes.LightSalmon;
+            thisButton.Foreground = System.Windows.Media.Brushes.White;
         }
         private void RevertColorHelper(object sender)
         {
             mErrorMessage = String.Empty;
+            Button thisButton = sender as Button;
+            thisButton.Content = "Start Sending";
             System.Windows.Media.BrushConverter bc = new System.Windows.Media.BrushConverter();
-            (sender as Button).Background = (System.Windows.Media.Brush)bc.ConvertFrom("#424874");
-            (sender as Button).Foreground = System.Windows.Media.Brushes.White;
+            thisButton.Background = (System.Windows.Media.Brush)bc.ConvertFrom("#b2fcff");
+            thisButton.Foreground = System.Windows.Media.Brushes.Black;
         }
 
         #endregion

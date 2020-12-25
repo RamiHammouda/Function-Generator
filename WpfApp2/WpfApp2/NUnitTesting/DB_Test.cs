@@ -20,7 +20,7 @@ namespace WpfApp2.DBTesting
         /// <WriteToDBTest>
         /// This Test will verify if it is possible to start writing in the DB.
         /// </WriteToDBTest>
-        [Test]
+        //[Test]
         public static void CanStartWriteToDB_ConnectionIsTrue_FinishedWriting() //brauche ein connectionstring and query stgring bs
         {
             //Arrange

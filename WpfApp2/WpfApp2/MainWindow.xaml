@@ -75,7 +75,7 @@
         <TabControl Name="myTabControl" Padding="0" SelectedIndex="1">
             <TabControl.Resources>
                 <Style TargetType="{x:Type Grid}">
-                    <Setter Property="Background" Value="#eff8ff"></Setter>
+                    <Setter Property="Background" Value="#FFEEFAFF"></Setter>
                 </Style>
             </TabControl.Resources>
 
@@ -84,8 +84,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="20"/>
                         <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="37*"/>
-                        <ColumnDefinition Width="282*"/>
+                        <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="15"/>
                         <ColumnDefinition Width="160"/>
                         <ColumnDefinition Width="20"/>
@@ -99,9 +98,9 @@
                         <RowDefinition Height="20"/>
                     </Grid.RowDefinitions>
 
-                    <WpfPlot Name="myWpfPlot" Grid.Column="1" Grid.ColumnSpan="5" Grid.Row="1" Grid.RowSpan="1" Margin="0,0,159.667,0"/>
+                    <WpfPlot Name="myWpfPlot" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" Grid.RowSpan="1"/>
 
-                    <StackPanel Grid.Column="5" Grid.Row="1" Orientation="Vertical"  Grid.RowSpan="1" MinWidth="150" Margin="0.333,0,19.667,0" Grid.ColumnSpan="2">
+                    <StackPanel Grid.Column="4" Grid.Row="1" Orientation="Vertical"  Grid.RowSpan="1" MinWidth="150" Margin="0">
                         <StackPanel.Resources>
                             <w:ComparisonConverter x:Key="ComparisonConverter" />
                         </StackPanel.Resources>
@@ -119,22 +118,22 @@
 
                     </StackPanel>
 
-                    <Label x:Name ="lblError" x:FieldModifier="public"  Grid.Column="3" Grid.Row="2" Grid.RowSpan="2" VerticalAlignment="Top" Foreground="Red" FontStyle="Italic" Margin="239.667,0,314.333,0"  HorizontalAlignment="Center">
+                    <Label x:Name ="lblError" x:FieldModifier="public"  Grid.Column="2" Grid.Row="2" Grid.RowSpan="2" VerticalAlignment="Top" Foreground="Red" FontStyle="Italic" Margin="0,0,0,0"  HorizontalAlignment="Center">
                         <Label.Content>
                             <AccessText TextWrapping="Wrap" Text="{Binding Path= mErrorMessage, UpdateSourceTrigger=PropertyChanged}"/>
                         </Label.Content>
                     </Label>
 
-                    <StackPanel Orientation="Vertical" Grid.Column ="5" Grid.Row="3" VerticalAlignment="Center" Margin="0.333,9,19.667,9.667" Grid.ColumnSpan="2" >
+                    <StackPanel Orientation="Vertical" Grid.Column ="4" Grid.Row="3" VerticalAlignment="Center" Margin="0,9,0,10" >
 
-                        <Button x:Name="btnInsertProfile" Content="Insert this Profile" Background="#dcd6f7"
+                        <Button x:Name="btnInsertProfile" Content="Insert this Profile" Background="#fae0df"
                                 Style="{StaticResource myButtonStyle}" Margin="5" FontWeight="DemiBold" Height="22" 
                                 BorderThickness="0.5" Click="btnInsertProfile_Click"/>
 
-                        <Button x:Name="btnReset" Content="Reset" Click="btnReset_Click" Margin="5" Background="#dcd6f7"
+                        <Button x:Name="btnReset" Content="Reset" Click="btnReset_Click" Margin="5"
                                 BorderThickness="0" Height="20" Style="{StaticResource myButtonStyle}"/>
 
-                        <Button x:Name="btnSaveToJson" Content="Save to File" Click="btnSimulateToJson_Click" Margin="5" Background="#dcd6f7" FontWeight="DemiBold" Height="22" BorderThickness="0.5">
+                        <Button x:Name="btnSaveToJson" Content="Save to File" Click="btnSimulateToJson_Click" Margin="5" FontWeight="DemiBold" Height="22" BorderThickness="0.5">
                             <Button.Resources>
                                 <Style TargetType="{x:Type Border}">
                                     <Setter Property="CornerRadius" Value="2"/>
@@ -142,9 +141,9 @@
                             </Button.Resources>
                         </Button>
                     </StackPanel>
-                    <DockPanel VerticalAlignment="Center" Grid.Column="5" Grid.Row="4" Margin="0.333,24.333,19.667,25" Grid.ColumnSpan="2">
+                    <DockPanel VerticalAlignment="Center" Grid.Column="4" Grid.Row="4" Margin="0,24,0,25">
                         <Button Name="btnSimulate" Click="btnSimulate_Click" Content="Send to DB" Margin="5" FontWeight="SemiBold" Height="22"
-                                Background="#424874" Foreground="White">
+                                Background="#b2fcff">
                             <Button.Resources>
                                 <Style TargetType="{x:Type Border}">
                                     <Setter Property="CornerRadius" Value="2"/>
@@ -153,7 +152,7 @@
                         </Button>
                     </DockPanel>
 
-                    <StackPanel Grid.Column="1" Grid.Row="3" Orientation="Vertical" Margin="0,0,0.333,81" Grid.RowSpan="2">
+                    <StackPanel Grid.Column="1" Grid.Row="3" Orientation="Vertical">
                         <Label Content="Frequency (Hz)" FontWeight="Bold"/>
                         <StackPanel Orientation="Horizontal">
                             <TextBox x:Name="txtFreq" Width ="120" Margin="0,0" Height="19" VerticalAlignment="Center" PreviewTextInput="DoubleValidation"
@@ -167,11 +166,11 @@
                                 <Button x:Name="btnFreqMinus" Click="btnFreqMinus_Click" Content="&#9660;" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
                             </StackPanel>
                         </StackPanel>
-                        <TextBlock Text="{Binding (Validation.Errors)[0].ErrorContent, ElementName=txtFreq}" Foreground="Red" FontSize="9" VerticalAlignment="Bottom"/>
+                        <TextBlock Text="{Binding (Validation.Errors)[0].ErrorContent, ElementName=txtFreq,FallbackValue=''}" Foreground="Red" FontSize="9" VerticalAlignment="Bottom"/>
 
                     </StackPanel>
 
-                    <StackPanel Grid.Column="2" Grid.ColumnSpan="4" Grid.Row="3" Margin="9.667,0,159.667,81" Grid.RowSpan="2">
+                    <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="3" Margin="10,0,0,0">
                         <Label Content="Offset (mHz)" VerticalAlignment="Bottom" Margin="0,10,0,0"/>
                         <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                             <Slider x:Name="sldFreq" Minimum="0" Maximum="200" TickFrequency="5"
@@ -184,7 +183,7 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <StackPanel Grid.Column="1" Grid.Row="4" Orientation="Vertical" Margin="0,0.333,0.333,0">
+                    <StackPanel Grid.Column="1" Grid.Row="4" Orientation="Vertical">
                         <Label Content="Amplitude (V)" FontWeight="Bold" VerticalAlignment="Center"/>
                         <StackPanel Orientation="Horizontal">
                             <TextBox x:Name="txtAmp" Width ="120" Margin="0,0" Height="19" VerticalAlignment="Center" PreviewTextInput="DoubleValidation" 
@@ -197,10 +196,10 @@
                                 <Button x:Name="btnAmplMinus" Click="btnAmplMinus_Click" Content="&#9660;" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
                             </StackPanel>
                         </StackPanel>
-                        <TextBlock Text="{Binding (Validation.Errors)[0].ErrorContent, ElementName=txtAmp}" Foreground="Red" FontSize="9" VerticalAlignment="Bottom"/>
+                        <TextBlock Text="{Binding (Validation.Errors)[0].ErrorContent, ElementName=txtAmp,FallbackValue=''}" Foreground="Red" FontSize="9" VerticalAlignment="Bottom"/>
                     </StackPanel>
 
-                    <StackPanel Grid.Column="2" Grid.ColumnSpan="4" Grid.Row="4" Margin="9.667,0.333,159.667,0">
+                    <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="4" Margin="10,0,0,0">
                         <Label Content="Offset (mV)" VerticalAlignment="Bottom" Margin="0,10,0,0"/>
                         <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                             <Slider x:Name="sldAmp" Minimum="0" Maximum="500" TickFrequency="50"
@@ -219,8 +218,7 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="232"/>
+                        <ColumnDefinition Width="auto"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="15"/>
                         <ColumnDefinition Width="160"/>
@@ -237,22 +235,22 @@
                     <!--<Image Name="resultImg" Width ="30" Grid.Column="4" Grid.Row="2" VerticalAlignment="Top" Source="{Binding Path = mUriImage,UpdateSourceTrigger=PropertyChanged}"/>-->
 
 
-                    <Label x:Name="lblwelcome" x:FieldModifier="public" Content="SIMULATION PROFILE MANAGEMENT" Grid.Column="1" Grid.Row="1" FontSize="13" FontWeight="DemiBold" Foreground="Black" Grid.ColumnSpan="2"/>
-                    <Label Name ="lblErrorOnMTab" Grid.Column="3" Grid.Row="1" Foreground="Red" FontStyle="Italic" Margin="242,0,241.333,0"  HorizontalAlignment="Center">
+                    <Label x:Name="lblwelcome" x:FieldModifier="public" Content="SIMULATION PROFILE MANAGEMENT" Grid.Column="1" Grid.Row="1" FontSize="13" FontWeight="DemiBold" Foreground="Blue"/>
+                    <Label Name ="lblErrorOnMTab" Grid.Column="2" Grid.Row="1" Foreground="Red" FontStyle="Italic" Margin="0,0,0,0"  HorizontalAlignment="Center">
                         <Label.Content>
                             <AccessText TextWrapping="Wrap" Text="{Binding Path= mErrorMessage, UpdateSourceTrigger=PropertyChanged}"/>
                         </Label.Content>
                     </Label>
-                    <StackPanel Orientation="Vertical" Grid.Column ="5" Grid.Row="2" VerticalAlignment="Bottom" Height="99" Grid.ColumnSpan="2" Margin="0.333,0,19.667,0" >
+                    <StackPanel Orientation="Vertical" Grid.Column ="4" Grid.Row="2" VerticalAlignment="Bottom" Height="99" >
 
-                        <Button x:Name="btnViewDatabase" Content="View Database"  Margin="5,0,5,10" Click="btnViewDatabase_Click" Background="#dcd6f7"
+                        <Button x:Name="btnViewDatabase" Content="View Database"  Margin="5,0,5,10" Click="btnViewDatabase_Click" Background="#fae0df"
                                 BorderThickness="0.5" Height="22" FontWeight="Bold" VerticalAlignment="Top" Style="{StaticResource myButtonStyle}" />
 
                         <Button x:Name="btnMSimuToJson" Content="Save all to Json" Click="btnMSimulateToJson_Click" Margin="5,0,5,10" 
-                                Background="#dcd6f7" BorderThickness="0.5" Height="22" FontWeight="Bold" Style="{StaticResource myButtonStyle}"/>
+                                BorderThickness="0.5" Height="22" FontWeight="Bold" Style="{StaticResource myButtonStyle}"/>
 
                         <Button x:Name="btnMSimuToDB" Content="Send all to DB"  Margin="5,0,5,10" FontWeight="Bold" Height="22" 
-                                Click="btnMSimuToDB_Click" Background="#424874" Foreground="White" >
+                                Click="btnMSimuToDB_Click" Background="#b2fcff" >
                             <Button.Resources>
                                 <Style TargetType="{x:Type Border}">
                                     <Setter Property="CornerRadius" Value="2"/>
@@ -265,11 +263,11 @@
                               ItemsSource="{Binding Path=mMultipleShotList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     </DataGrid>-->
 
-                    <DataGrid x:Name ="MultiShot" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="2" AlternatingRowBackground="#f4eeff"
+                    <DataGrid x:Name ="MultiShot" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2" AlternatingRowBackground="LightGreen"
                               CanUserAddRows="True" CanUserDeleteRows="True" AutoGenerateColumns="False" RowHeight="20"
                               EnableRowVirtualization="True"
                               ItemsSource="{Binding Source={StaticResource myCollectionView}}"
-                              SelectedItem="{Binding mSelectedRowOnDataGrid, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0.333,0">
+                              SelectedItem="{Binding mSelectedRowOnDataGrid, UpdateSourceTrigger=PropertyChanged}">
                         <DataGrid.ColumnHeaderStyle>
                             <Style TargetType="{x:Type DataGridColumnHeader}">
                                 <Setter Property="FontWeight" Value="DemiBold"/>
@@ -338,26 +336,22 @@
             <TabItem Header="Setting" DataContext="{Binding Path = mSettingTab}" Height="20" Width="150">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="66"/>
-                        <ColumnDefinition Width="134"/>
-                        <ColumnDefinition Width="27.333"/>
-                        <ColumnDefinition Width="17.333"/>
-                        <ColumnDefinition Width="45.333"/>
-                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="150"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="150"/>
                         <ColumnDefinition Width="200"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="50"/>
-                        <RowDefinition Height="5*"/>
+                        <RowDefinition Height="30"/>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="30"/>
 
-                        <RowDefinition Height="11*"/>
+                        <RowDefinition Height="*"/>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="30"/>
@@ -366,40 +360,40 @@
                         <RowDefinition Height="20"/>
                     </Grid.RowDefinitions>
 
-                    <TextBlock Text="DATABASE CONNECTION SETTING" Grid.Column="6" Grid.ColumnSpan="2"
-                               VerticalAlignment="Bottom" Margin="72.001,0,79.666,1" HorizontalAlignment="Center"
+                    <TextBlock Text="DATABASE CONNECTION SETTING" Grid.Column="2" Grid.ColumnSpan="2"
+                               VerticalAlignment="Bottom" Margin="1,0,10,4" HorizontalAlignment="Center"
                                FontSize="15" FontWeight="SemiBold"/>
-                    <Label Content="Server(/Server IP)" Grid.Column="2" Grid.Row="1" FontWeight="DemiBold" 
-                           HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,3" Grid.ColumnSpan="4"/>
+                    <Label Content="Server(/Server IP)" Grid.Column="1" Grid.Row="1" FontWeight="DemiBold" 
+                           HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,2"/>
 
-                    <Label Content="User ID" Grid.Column="2" Grid.Row="2" FontWeight="DemiBold" 
-                           HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,3" Grid.ColumnSpan="3"/>
-                    <Label Content="Password" Grid.Column="2" Grid.Row="3" FontWeight="DemiBold" 
-                           HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,3" Grid.ColumnSpan="3"/>
-                    <Label Content="Database Name" Grid.Column="2" Grid.Row="4" FontWeight="DemiBold" 
-                           HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,3" Grid.ColumnSpan="4"/>
-                    <Label Content="Table Name" Grid.Column="2" Grid.Row="5" FontWeight="DemiBold" 
-                           HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,3" Grid.ColumnSpan="3"/>
+                    <Label Content="User ID" Grid.Column="1" Grid.Row="2" FontWeight="DemiBold" 
+                           HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,2"/>
+                    <Label Content="Password" Grid.Column="1" Grid.Row="3" FontWeight="DemiBold" 
+                           HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,2"/>
+                    <Label Content="Database Name" Grid.Column="1" Grid.Row="4" FontWeight="DemiBold" 
+                           HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,2"/>
+                    <Label Content="Table Name" Grid.Column="1" Grid.Row="5" FontWeight="DemiBold" 
+                           HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,2"/>
 
-                    <StackPanel Orientation="Horizontal" Grid.Column="7" Grid.Row="1" Grid.ColumnSpan="2" Margin="0.334,0,199.666,0"  >
+                    <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="1"  >
                         <Label Content="Port" FontWeight="DemiBold"  VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10,0,5,0" />
                         <TextBox x:Name="txtPort" Text="{Binding mPort,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" MinWidth="87" MinHeight="20"  Margin="5" IsEnabled="{Binding mElementEnable}" Padding="2"/>
 
                     </StackPanel>
 
-                    <TextBox x:Name="txtServer" Grid.Column="6" Grid.Row="1" Text="{Binding Path=mServer}"
-                             Margin="5.001,5,4.666,5" IsEnabled="{Binding mElementEnable}" Padding="2"  MinHeight="20" />
+                    <TextBox x:Name="txtServer" Grid.Column="2" Grid.Row="1" Text="{Binding Path=mServer}"
+                             Margin="5,5,5,5" IsEnabled="{Binding mElementEnable}" Padding="2"  MinHeight="20" />
 
-                    <TextBox x:Name="txtUser" Text="{Binding mUserId}" Grid.Column="6" Grid.Row="2" TextWrapping="Wrap" 
-                             MinHeight="20" Margin="5.001,5,4.666,5" MinWidth="200" IsEnabled="{Binding mElementEnable}" Padding="2" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="txtUser" Text="{Binding mUserId}" Grid.Column="2" Grid.Row="2" TextWrapping="Wrap" 
+                             MinHeight="20" Margin="5" MinWidth="200" IsEnabled="{Binding mElementEnable}" Padding="2" Grid.ColumnSpan="2"/>
                     <!--<PasswordBox x:Name="txtPass" Password="cannotbinding" Grid.Column="2" Grid.Row="3" 
                              MinHeight="20" Margin="5" MinWidth="200" IsEnabled="True" Padding="2" Grid.ColumnSpan="2"/>-->
-                    <PasswordBox x:Name ="txtPass" w:PasswordHelper.Attach ="True" w:PasswordHelper.Password="{Binding Path = mPassword, Mode=TwoWay}"  Grid.Column="6" Grid.Row="3" 
-                             MinHeight="20" Margin="5.001,5,4.666,5" MinWidth="200" IsEnabled="{Binding mElementEnable}" Padding="2" Grid.ColumnSpan="2"/>
-                    <TextBox x:Name="txtDbName" Text="{Binding mDatabaseName}" Grid.Column="6" Grid.Row="4" TextWrapping="Wrap" 
-                             MinHeight="20" Margin="5.001,5,4.666,5" MinWidth="200" IsEnabled="{Binding mElementEnable}" Padding="2" Grid.ColumnSpan="2"/>
-                    <TextBox x:Name="txtTabName" Text="{Binding mTabName}" Grid.Column="6" Grid.Row="5" TextWrapping="Wrap" 
-                             MinHeight="20" Margin="5.001,5,4.666,5" MinWidth="200" IsEnabled="{Binding mElementEnable}" Padding="2" Grid.ColumnSpan="2"/>
+                    <PasswordBox x:Name ="txtPass" w:PasswordHelper.Attach ="True" w:PasswordHelper.Password="{Binding Path = mPassword, Mode=TwoWay}"  Grid.Column="2" Grid.Row="3" 
+                             MinHeight="20" Margin="5" MinWidth="200" IsEnabled="{Binding mElementEnable}" Padding="2" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="txtDbName" Text="{Binding mDatabaseName}" Grid.Column="2" Grid.Row="4" TextWrapping="Wrap" 
+                             MinHeight="20" Margin="5" MinWidth="200" IsEnabled="{Binding mElementEnable}" Padding="2" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="txtTabName" Text="{Binding mTabName}" Grid.Column="2" Grid.Row="5" TextWrapping="Wrap" 
+                             MinHeight="20" Margin="5" MinWidth="200" IsEnabled="{Binding mElementEnable}" Padding="2" Grid.ColumnSpan="2"/>
 
                     <!--<Image Name="resultImg" Width ="25" Grid.Column="2" Grid.Row="6" HorizontalAlignment="Right" Margin="0,0,5,0"
                            Source="/Images/icons8-ok-48.png"/>-->
@@ -407,7 +401,7 @@
                     <!--<Image Name="resultImg" Width ="25" Grid.Column="2" Grid.Row="6" HorizontalAlignment="Right" Margin="0,0,5,0"
                            Source="{Binding Path = mUriImage,UpdateSourceTrigger=PropertyChanged, Converter={StaticResource nullImageConverter}}"/>-->
 
-                    <Image Name="resultImg" Width ="25" Grid.Column="6" Grid.Row="6" HorizontalAlignment="Right" Margin="0,0,4.666,0">
+                    <Image Name="resultImg" Width ="25" Grid.Column="2" Grid.Row="6" HorizontalAlignment="Right" Margin="0,0,5,0">
                         <Image.Source>
                             <Binding Path="mUriImage" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.TargetNullValue>
@@ -417,31 +411,30 @@
                             </Binding>
                         </Image.Source>
                     </Image>
-                    <Button x:Name="btnTestConn" Content="Test Connection" Grid.Column="7" Grid.Row="6" IsEnabled="{Binding mElementEnable}" Foreground="White"
-                            Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Background="#424874" Margin="0.334,4,4.666,4" BorderThickness="0.5" Click="btnTestConn_Click" />
+                    <Button x:Name="btnTestConn" Content="Test Connection" Grid.Column="3" Grid.Row="6" IsEnabled="{Binding mElementEnable}" Background="#fae0df"
+                            Style="{StaticResource myButtonStyle}" FontWeight="SemiBold"  Margin="0,4,5,4" BorderThickness="0.5" Click="btnTestConn_Click" />
 
-                    <TextBlock Text ="{Binding Path = mErrorServer, UpdateSourceTrigger=PropertyChanged}" Grid.Column="6" Grid.Row="7" 
-                           Foreground="Red" FontStyle="Italic" TextWrapping="Wrap" HorizontalAlignment="Center" 
-                           VerticalAlignment="Top" Margin="145.001,0,145.666,0"/>
+                    <TextBlock Text ="{Binding Path = mErrorServer, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" Grid.Row="7" 
+                           Foreground="Red" FontStyle="Italic" Grid.ColumnSpan="5" TextWrapping="Wrap" HorizontalAlignment="Center" 
+                           VerticalAlignment="Top" Margin="50,0,50,0"/>
 
 
-                    <TextBlock Text="LOCAL SAVING FILE SETTING" Grid.Column="6" Grid.Row="7" Grid.ColumnSpan="2" 
-                               VerticalAlignment="Bottom" Margin="91.001,0,100.666,1" HorizontalAlignment="Center"
+                    <TextBlock Text="LOCAL SAVING FILE SETTING" Grid.Column="2" Grid.Row="7" Grid.ColumnSpan="2" 
+                               VerticalAlignment="Bottom" Margin="21,0,30,4" HorizontalAlignment="Center"
                                FontSize="15" FontWeight="SemiBold" />
-                    <Label Content="Json File Format" Grid.Column="2" Grid.Row="8" FontWeight="DemiBold" 
-                           HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,3" Grid.ColumnSpan="4"/>
-                    <ComboBox Name="cbbFormat" Grid.Column="6" Grid.Row="8" IsEnabled="{Binding mElementEnable}" Width="150" HorizontalAlignment="Left" Margin="5.001,4,0,4">
+                    <Label Content="Json File Format" Grid.Column="1" Grid.Row="8" FontWeight="DemiBold" 
+                           HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,3"/>
+                    <ComboBox Name="cbbFormat" Grid.Column="2" Grid.Row="8" IsEnabled="{Binding mElementEnable}" Width="150" HorizontalAlignment="Left" Margin="5,4,0,4">
                         <ComboBoxItem Content="Beautiful Format" IsSelected="{Binding mBeautifulJson, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         <ComboBoxItem Content="Compact Format" />
                     </ComboBox>
 
 
-                    <TextBlock Name ="txtCombobox" Text="Pls choose Targets on DB" Grid.Column="8" Grid.Row="0" VerticalAlignment="Bottom" Margin="15.334,0,-0.334,0"
-                               Visibility="{Binding Path = mConnectionTest, Converter={StaticResource MyBoolToVis}}"
-                               >
+                    <TextBlock Name ="txtCombobox" Text="Pls choose Targets on DB" Grid.Column="4" Grid.Row="0" VerticalAlignment="Bottom" Margin="15,0,0,0"
+                               Visibility="{Binding Path = mConnectionTest, Converter={StaticResource MyBoolToVis}}">
                     </TextBlock>
 
-                    <ComboBox Name="cbbTargetList" Grid.Column="8" Grid.Row="1" Width="170" Margin="15.334,4,14.666,4" IsEnabled="{Binding mElementEnable}">
+                    <ComboBox Name="cbbTargetList" Grid.Column="4" Grid.Row="1" Width="170" Margin="12,4,12,4" IsEnabled="{Binding mElementEnable}">
                         <ComboBox.Style>
                             <Style TargetType="{x:Type ComboBox}">
                                 <Setter Property="Visibility" Value="Hidden" />
@@ -464,17 +457,26 @@
                     </ComboBox>
 
 
-                    <Button x:Name="btnEnableEdit" Content="Enable Edit" Grid.Column="8" Grid.Row="9" Background="#dcd6f7"
+                    <TextBlock Name ="txtRate" Text="Record to DB per second" Grid.Column="4" Grid.Row="2" VerticalAlignment="Bottom" Margin="15,0,0,0"
+                               Visibility="{Binding Path = mConnectionTest, Converter={StaticResource MyBoolToVis}}">
+                    </TextBlock>
+
+                    <TextBox x:Name="txtSampleRate" Text="{Binding Path=mRate,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Column="4" Grid.Row="3" TextWrapping="Wrap" 
+                             Margin="15,5,15,5"  IsEnabled="{Binding Path = mSettingTab.mElementEnable}" Visibility="{Binding Path = mSettingTab.mConnectionTest, Converter={StaticResource MyBoolToVis}}" Padding="2" Grid.ColumnSpan="2"/>
+
+
+
+                    <Button x:Name="btnEnableEdit" Content="Enable Edit" Grid.Column="4" Grid.Row="9"
                             Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170"
-                            HorizontalAlignment="Center"  Margin="15.334,4,14.666,4" BorderThickness="0.5" Click="btnEnableEdit_Click"/>
+                            HorizontalAlignment="Center"  Margin="12,4,12,4" BorderThickness="0.5" Click="btnEnableEdit_Click"/>
 
-                    <Button x:Name="btnCancel" Content="Cancel" Grid.Column="8" Grid.Row="10" IsEnabled="{Binding mElementEnable}" 
-                            Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170" Background="#dcd6f7"
-                            HorizontalAlignment="Center" Margin="15.334,4,14.666,4" BorderThickness="0.5" Click="btnCancel_Click"/>
+                    <Button x:Name="btnCancel" Content="Cancel" Grid.Column="4" Grid.Row="10" IsEnabled="{Binding mElementEnable}" 
+                            Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170"
+                            HorizontalAlignment="Center" Margin="12,4,12,4" BorderThickness="0.5" Click="btnCancel_Click"/>
 
-                    <Button x:Name="btnSave" Content="Save Setting" Grid.Column="8" Grid.Row="12" IsEnabled="{Binding mElementEnable}" 
-                            Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170" Height="25" Background="#424874"
-                            HorizontalAlignment="Center" Foreground="White" Margin="15.334,18,14.666,17" BorderThickness="1" Click="btnSave_Click"/>
+                    <Button x:Name="btnSave" Content="Save Setting" Grid.Column="4" Grid.Row="12" IsEnabled="{Binding mElementEnable}" 
+                            Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170" Height="25" Background="#b2fcff"
+                            HorizontalAlignment="Center"  Margin="12,5,12,5" BorderThickness="1" Click="btnSave_Click"/>
 
                 </Grid>
             </TabItem>
