@@ -479,7 +479,7 @@ namespace WpfApp2
                         conn.Open();
                         MySqlDataReader reader = cmd.ExecuteReader();
 
-                        Console.WriteLine(mMyTargetOnDB[25]);
+                        //Console.WriteLine(mMyTargetOnDB[25]);
                         while (reader.Read())
                         {
                             foreach (string col in mMyTargetOnDB)
@@ -537,7 +537,7 @@ namespace WpfApp2
                             //mRunningProfile.StartWriteToDB();
                         }
 
-                        
+
 
                     }
                     Thread.Sleep((int)(1000 / mRate));
@@ -565,22 +565,25 @@ namespace WpfApp2
                     string commandstr = $"INSERT INTO plc_data.plc_data (TimeStamp, {string.Join(",", myDataDict.Keys.ToArray())}) VALUES ('{TimeStamp}',{string.Join(",", myDataDict.Values.ToArray())})";
                     conn = new MySqlConnection(connStr);
 
-                    using (MySqlCommand cmd = new MySqlCommand(commandstr, conn))
+                    await Task.Run(() =>
                     {
-                        try
+                        using (MySqlCommand cmd = new MySqlCommand(commandstr, conn))
                         {
-                            conn.Open();
+                            try
+                            {
+                                conn.Open();
 
-                            await Task.Run(() => cmd.ExecuteNonQuery());
-                            conn.Close();
+                                cmd.ExecuteNonQuery();
+                                conn.Close();
+
+                            }
+                            catch (MySqlException ex)
+                            {
+                                MessageBox.Show(ex.Message);
+                            }
 
                         }
-                        catch (MySqlException ex)
-                        {
-                            MessageBox.Show(ex.Message);
-                        }
-
-                    }
+                    });
 
 
                 }
