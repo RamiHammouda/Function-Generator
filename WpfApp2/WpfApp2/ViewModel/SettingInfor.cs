@@ -37,6 +37,17 @@ namespace WpfApp2.ViewModel
         [JsonProperty("TableName", Order = 5)]
         public string mTabName { get; set; }
 
+        private double _sampleRate;
+        [JsonProperty("SampleRate", Order = 6)]
+        public double mRate
+        {
+            get { return _sampleRate; }
+            set
+            {
+                if (_sampleRate != value)
+                { _sampleRate = value; OnPropertyChanged("mRate"); }
+            }
+        }
         private MyDBEntity mCheckedDB;
 
         private bool _beautifulJson, _elementEnable;
@@ -51,7 +62,7 @@ namespace WpfApp2.ViewModel
                 { _elementEnable = value; OnPropertyChanged("mElementEnable"); }
             }
         }
-        [JsonProperty("BeautyFormat", Order = 6)]
+        [JsonProperty("BeautyFormat", Order = 7)]
         public bool mBeautifulJson
         {
             get { return _beautifulJson; }
@@ -99,7 +110,7 @@ namespace WpfApp2.ViewModel
                 return _instance;
             }
         }
-        public void SetSetting(string server = "fgdb-f2-htw.selfhost.co", string port = "3306", string user = "hoale", string pword = "TestPW123!456", string dbname = "plc_data", string tabname = "plc_data", bool enable = false, bool beauty = true)
+        public void SetSetting(string server = "fgdb-f2-htw.selfhost.co", string port = "3306", string user = "hoale", string pword = "TestPW123!456", string dbname = "plc_data", string tabname = "plc_data", double rate = 4, bool enable = false, bool beauty = true)
         {
             mServer = server;
             mPort = port;
@@ -107,6 +118,7 @@ namespace WpfApp2.ViewModel
             mPassword = pword;
             mDatabaseName = dbname;
             mTabName = tabname;
+            mRate = 4;
             mElementEnable = enable;
             mBeautifulJson = beauty;
             //PropertyChanged += PrintSomeInfo;
@@ -121,6 +133,7 @@ namespace WpfApp2.ViewModel
             mPassword = aSetting.mPassword;
             mDatabaseName = aSetting.mDatabaseName;
             mTabName = aSetting.mTabName;
+            mRate = aSetting.mRate;
             mBeautifulJson = aSetting.mBeautifulJson;
             mFinalTargetList = aSetting.mFinalTargetList;
         }
@@ -179,9 +192,13 @@ namespace WpfApp2.ViewModel
 
             foreach (string column in mCheckedDB.GetColumns())
             {
-                mSelectableTargetList.Add(new ColumnDBSelectableHelper(true, column));
+                if ((column.ToLower() == "id") || (column.ToLower() == "timestamp"))
+                    mSelectableTargetList.Add(new ColumnDBSelectableHelper(false, column));
+                else
+                    mSelectableTargetList.Add(new ColumnDBSelectableHelper(true, column));
             }
 
+            
             return mSelectableTargetList;
         }
         [JsonProperty("FinalTargetList", Order = 7)]
@@ -255,6 +272,7 @@ namespace WpfApp2.ViewModel
             var targetWindow = Application.Current.Windows.Cast<Window>().FirstOrDefault(window => window is MainWindow) as MainWindow;
             //targetWindow.lblwelcome.Content = "Tesst";
             targetWindow.mMyTargetOnDB = mFinalTargetList;
+            targetWindow.mRate = mRate;
         }
         public void SaveInfoToFile()
         {

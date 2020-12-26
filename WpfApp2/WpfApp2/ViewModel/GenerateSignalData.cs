@@ -18,44 +18,66 @@ namespace WpfApp2.ViewModel
         [JsonIgnore]
         private SimulationProfile mSmProfile;
 
-        [JsonProperty("Wave", Order = 1)]
+        [JsonProperty("Wave", Order = 0)]
         public WaveForm mWave { get; set; }
-        [JsonProperty("Freq", Order = 2)]
+        [JsonProperty("Freq", Order = 1)]
         public double mFreq { get; set; }
-        [JsonProperty("Ampl", Order = 3)]
+        [JsonProperty("Ampl", Order = 2)]
         public double mAmpl { get; set; }
-        [JsonProperty("SampleRate", Order = 4)]
+        [JsonProperty("SampleRate", Order = 3)]
         public double mRate { get; set; }
-        [JsonProperty("Duration", Order = 5)]
+        [JsonProperty("Duration", Order = 4)]
         public double mDuration { get; set; }
+
+        [JsonProperty("SendToDB", Order = 5)]
+        public bool mSendToDB { get; set; }
 
         [JsonProperty("TargetOnDB", Order = 6)]
         public string mTargetOnDB { get; set; }
 
-        [JsonProperty("Remark", Order = 0)]
+        [JsonProperty("Remark", Order = 7)]
         public string mRemark { get; set; }
+        [JsonIgnore]
+        public static string mFilePath => Directory.GetCurrentDirectory() + "\\AppSetting\\SignalProfiles.json";
 
-        [JsonProperty("No", Order = 7)]
+        //[JsonProperty("No", Order = 7)]
         private List<long> mNo;
-        [JsonProperty("TimeStamp", Order = 8)]
+        //[JsonProperty("TimeStamp", Order = 8)]
         private List<long> mTimeStampArray;
-        [JsonProperty("AmplValue", Order = 9)]
+        //[JsonProperty("AmplValue", Order = 9)]
         private List<double> mAmplArray;
 
 
 
-        
+        [JsonIgnore]
         public bool WritingIsFinished = false;
 
         //For quick access and control;
         private long aTimeStep;
         private long mENumber;
+
         public delegate double GetWaveValue(long inputTime);
-        public GetWaveValue getWaveValue;
         [JsonIgnore]
-        public bool mSendToDB { get; set; }
+        public GetWaveValue getWaveValue;
+        
 
         private MyDBEntity mMyDB;
+        //Either parameterless Contructor or Keyword JsonContructor for Json Deserialize
+        [JsonConstructor]
+        public GenerateSignalData(WaveForm wave = 0, double freq = 0.1, double ampl = 7, double rate = 2, double duration = 0, bool sendToDb = false, string targetOnDb = "Inputs_TestVarLReal", string name = "Default")
+        {
+            mProfile = new SignalProfile(wave, freq, ampl, rate);
+            mSmProfile = new SimulationProfile(mProfile, duration);
+            mWave = wave;
+            mFreq = freq;
+            mAmpl = ampl;
+            mRate = rate;
+            mDuration = duration;
+            mSendToDB = sendToDb;
+            mTargetOnDB = targetOnDb;
+            mRemark = name;
+            InitiateData();
+        }
 
         public GenerateSignalData(SignalProfile aProfile, double duration = 0, bool autoTriggerData = false, bool sendToDb = false, string targetOnDb = "Inputs_TestVarLReal", string name = "Default", MyDBEntity myDB = null)
         {
@@ -92,23 +114,7 @@ namespace WpfApp2.ViewModel
             if (autoTriggerData)
             { GenerateData(); }
         }
-        public GenerateSignalData(WaveForm wave = 0, double freq = 0.1, double ampl = 7, double rate = 2, double duration = 0, bool autoTriggerData = false, bool sendToDb = false, string targetOnDb = "Inputs_TestVarLReal", string name = "Default", MyDBEntity myDB = null)
-        {
-            mProfile = new SignalProfile(wave, freq, ampl, rate);
-            mSmProfile = new SimulationProfile(mProfile, duration);
-            mWave = wave;
-            mFreq = freq;
-            mAmpl = ampl;
-            mRate = rate;
-            mDuration = duration;
-            mSendToDB = sendToDb;
-            mTargetOnDB = targetOnDb;
-            mRemark = name;
-            mMyDB = myDB;
-            InitiateData();
-            if (autoTriggerData)
-            { GenerateData(); }
-        }
+        
 
         public List<long> getTimeStamp()
         {
@@ -172,7 +178,7 @@ namespace WpfApp2.ViewModel
             return mSendToDB;
         }
 
-        public void ExportToJson(bool beaufiful = true)
+        public void ExportToJson(bool beautiful = true)
         {
             //string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             string basePath = Directory.GetCurrentDirectory() + "\\AppData";
@@ -181,14 +187,30 @@ namespace WpfApp2.ViewModel
             string filePath = basePath + "\\" + fileName + ".json";
 
             JsonSerializer serializer;
-            if (beaufiful)
+            if (beautiful)
                 serializer = new JsonSerializer { Formatting = Formatting.Indented, TypeNameHandling = TypeNameHandling.Auto };
             else
                 serializer = new JsonSerializer { TypeNameHandling = TypeNameHandling.Auto };
 
             using (StreamWriter writer = File.CreateText(filePath)) { serializer.Serialize(writer, this); }
         }
-        //For Json Only
+
+        public static void ExportProfilesToJson(List<GenerateSignalData> alist, bool beautiful = true)
+        {
+            //string filePath = Directory.GetCurrentDirectory() + "\\AppSetting\\SignalProfiles.json";
+            JsonSerializer serializer = new JsonSerializer { Formatting = Formatting.Indented, TypeNameHandling = TypeNameHandling.Auto };
+            if (!beautiful)
+                serializer = new JsonSerializer { TypeNameHandling = TypeNameHandling.Auto };
+
+            using (StreamWriter writer = File.CreateText(mFilePath)) { serializer.Serialize(writer, alist); }
+        }
+
+        public static List<GenerateSignalData> ImportProfileFromJson()
+        {
+            return JsonConvert.DeserializeObject<List<GenerateSignalData>>(File.ReadAllText(mFilePath));
+        }
+
+        //for reference only: generate Data und save to Json
         public void GenerateData()
         {
             if (!mSmProfile.checkedSmProfValidation())
@@ -209,6 +231,7 @@ namespace WpfApp2.ViewModel
 
         //private CancellationTokenSource _canceller;
         private bool _cancel;
+        //for reference only, insert data to db without filling emty columns
         public async void StartWriteToDB()
         {
             mNo.Clear();
@@ -359,6 +382,11 @@ namespace WpfApp2.ViewModel
             return result;
         }
 
+        public static void PrintProfilesList(List<GenerateSignalData> alist)
+        {
+            foreach (var item in alist)
+                Console.WriteLine(item.ToString());
+        }
 
     }
 }

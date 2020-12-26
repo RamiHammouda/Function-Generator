@@ -337,3 +337,8 @@ ASALocalRun/
 # Local History for Visual Studio
 .localhistory/
 
+
+
+#Ignore Folder for FunktionGenerator Project
+AppData/
+

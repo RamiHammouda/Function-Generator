@@ -246,7 +246,7 @@
                         <Button x:Name="btnViewDatabase" Content="View Database"  Margin="5,0,5,10" Click="btnViewDatabase_Click" Background="#fae0df"
                                 BorderThickness="0.5" Height="22" FontWeight="Bold" VerticalAlignment="Top" Style="{StaticResource myButtonStyle}" />
 
-                        <Button x:Name="btnMSimuToJson" Content="Save all to Json" Click="btnMSimulateToJson_Click" Margin="5,0,5,10" 
+                        <Button x:Name="btnMSimuToJson" Content="Save Profiles" Click="btnSaveProfilesToJson_Click" Margin="5,0,5,10" 
                                 BorderThickness="0.5" Height="22" FontWeight="Bold" Style="{StaticResource myButtonStyle}"/>
 
                         <Button x:Name="btnMSimuToDB" Content="Send all to DB"  Margin="5,0,5,10" FontWeight="Bold" Height="22" 
@@ -461,8 +461,8 @@
                                Visibility="{Binding Path = mConnectionTest, Converter={StaticResource MyBoolToVis}}">
                     </TextBlock>
 
-                    <TextBox x:Name="txtSampleRate" Text="{Binding Path=mRate,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Column="4" Grid.Row="3" TextWrapping="Wrap" 
-                             Margin="15,5,15,5"  IsEnabled="{Binding Path = mSettingTab.mElementEnable}" Visibility="{Binding Path = mSettingTab.mConnectionTest, Converter={StaticResource MyBoolToVis}}" Padding="2" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="txtSampleRate" Text="{Binding Path=mRate,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay,Delay=500}" Grid.Column="4" Grid.Row="3" TextWrapping="Wrap" 
+                             Margin="15,5,15,5"  IsEnabled="{Binding Path = mElementEnable}" Visibility="{Binding Path = mConnectionTest, Converter={StaticResource MyBoolToVis}}" Padding="2" Grid.ColumnSpan="2"/>
 
 
 

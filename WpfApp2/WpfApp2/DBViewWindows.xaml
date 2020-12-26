@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp2"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
-        Title="DBViewWindows" Height="450" Width="450"  Background="#FFEEFAFF">
+        Title="DBViewWindows" Height="550" Width="450"  Background="#FFEEFAFF">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20"/>

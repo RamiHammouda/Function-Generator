@@ -74,7 +74,8 @@ namespace WpfApp2
         }
         private double _freq, _rate;
         [Range(0.00001, 4, ErrorMessage = "Sending Data Rate to Database is limitted to maximum 4 : 4 times/s")]
-        public double mRate {
+        public double mRate
+        {
             get { return _rate; }
             set
             {
@@ -97,7 +98,7 @@ namespace WpfApp2
             }
         }
 
-        
+
         [Range(0.0001, 4, ErrorMessage = "Frequency must from {1} to {2}")]
         [Required(ErrorMessage = "Frequency is required")]
         public double mFreq
@@ -240,7 +241,7 @@ namespace WpfApp2
         {
             this.DataContext = this;
 
-            txtSampleRate.DataContext = this;
+            //txtSampleRate.DataContext = this;
 
             mFreq = 0.1;
             mAmpl = 5;
@@ -252,12 +253,18 @@ namespace WpfApp2
             this.PropertyChanged += AutoDrawing;
             OnPropertyChanged("IamIronMan");
 
-            _multipleShotList = new ObservableCollection<GenerateSignalData>()
-            { new GenerateSignalData(),
-              new GenerateSignalData(0,2,7,1,0,sendToDb:true),
-              new GenerateSignalData(WaveForm.Random,targetOnDb:"Inputs_Entschlammung1_Status"),
-              new GenerateSignalData(WaveForm.Sawtooth,sendToDb:true,targetOnDb:"Inputs_TestVarReal")
-            };
+            if (File.Exists(GenerateSignalData.mFilePath))
+                _multipleShotList = new ObservableCollection<GenerateSignalData>(GenerateSignalData.ImportProfileFromJson());
+            else
+            {
+                _multipleShotList = new ObservableCollection<GenerateSignalData>()
+                {
+                  new GenerateSignalData(),
+                  new GenerateSignalData(0, 2, 7, 1, 0, sendToDb: true),
+                  new GenerateSignalData(WaveForm.Random, targetOnDb: "Inputs_Entschlammung1_Status"),
+                  new GenerateSignalData(WaveForm.Sawtooth, sendToDb: true, targetOnDb: "Inputs_TestVarReal")
+                };
+            }
 
             this.mSettingTab = SettingInfor.Instance;
 
@@ -266,12 +273,17 @@ namespace WpfApp2
             {
                 cbbTargetList.ItemsSource = _offLineTargetList;
                 mMyTargetOnDB = _offLineList;
+
             }
             else
             {
                 cbbTargetList.ItemsSource = mSettingTab.GetSelectableList();
                 mMyTargetOnDB = mSettingTab.LoadFinalTargetList();
+                //mRate = Double.Parse(mSettingTab.mRate);
             }
+
+            mRate = mSettingTab.mRate;
+
 
 
             //Because all elemente of Settingtab already has datacontext to SettingTab (inXml)
@@ -292,6 +304,10 @@ namespace WpfApp2
             //Uri myUri2 = new Uri("/WpfApp2;component/Images/icons8-ok-48.png",UriKind.Relative);
             //resultImg.Source = new BitmapImage(myUri2);
             //mUriImage = myUri;
+
+
+
+
         }
         private List<ColumnDBSelectableHelper> _offLineTargetList { get { List<ColumnDBSelectableHelper> aList = new List<ColumnDBSelectableHelper>() { new ColumnDBSelectableHelper(true, "Offline"), new ColumnDBSelectableHelper(true, "Just Kidding") }; return aList; } }
         private List<string> _offLineList { get { List<string> aList = new List<string>() { "Offline", "Offline only" }; return aList; } }
@@ -401,6 +417,13 @@ namespace WpfApp2
             exportingIsFinished = true;
         }
 
+
+
+        public void btnSaveProfilesToJson_Click(object sender, RoutedEventArgs e)
+        {
+            GenerateSignalData.ExportProfilesToJson(_multipleShotList.ToList());
+        }
+
         private Dictionary<string, string> myDataDict;
         private bool _Stop = false;
         public async void btnMSimuToDB_Click(object sender, RoutedEventArgs e)
@@ -427,11 +450,12 @@ namespace WpfApp2
                 }
                 //For sequently writing (V1)
                 // mCurrentDatabase = mSettingTab.getCheckedDatabase();
-                
+
                 ChangeColorHelper(sender);
 
                 //Move this to DBClass
-                 myDataDict = new Dictionary<string, string>();
+                myDataDict = null;
+                myDataDict = new Dictionary<string, string>();
 
                 //1- Get Dictionary Data from DB Class
                 //Move/merge this to DBClass
@@ -442,8 +466,7 @@ namespace WpfApp2
 
                 string connStr = String.Format("server={0};user id={1}; password={2}; database={3}; pooling=true",
                    mSettingTab.mServer, mSettingTab.mUserId, mSettingTab.mPassword, mSettingTab.mDatabaseName);
-                string cmdStr = $"select * from plc_data.plc_data order by id limit 1"; //Fix, do not change this, no ID will not get the lastest record
-                Console.WriteLine(cmdStr);
+                string cmdStr = $"select * from plc_data.plc_data order by id limit 1"; //Fix, do not change this (*) , no ID will not get the lastest record
 
                 conn = new MySqlConnection(connStr);
 
@@ -488,7 +511,7 @@ namespace WpfApp2
                     Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
                 }
 
-
+                Console.WriteLine("Starting");
 
                 //2- Start create data and insert to Dictionary then send to DB this dictionnay
 
@@ -514,24 +537,16 @@ namespace WpfApp2
                             //mRunningProfile.StartWriteToDB();
                         }
 
-                        //Thread.Sleep((int)(1000 / mRate));
+                        
 
                     }
+                    Thread.Sleep((int)(1000 / mRate));
 
                     Console.WriteLine("After:::::::::::::::");
                     foreach (KeyValuePair<string, string> kvp in myDataDict)
                     {
                         Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
                     }
-
-
-
-                    //string test = string.Join(",", myDataDict.Keys.ToArray());
-                    //Console.WriteLine(test);
-
-                    //string TimeStamp = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
-                    //string cmdQuery = $"INSERT INTO plc_data.plc_data (TimeStamp, {string.Join(",", myDataDict.Keys.ToArray())}) VALUES ('{TimeStamp}','20.5',{string.Join(",",myDataDict.Values.ToArray())})";
-                    //Console.WriteLine(cmdQuery);
 
 
                     //3 - DB Class send dictionary to DB
@@ -567,13 +582,10 @@ namespace WpfApp2
 
                     }
 
-                    Console.WriteLine("Finished Inserting");
-
-
 
                 }
 
-
+                _Stop = false;
             }
             else
             {
@@ -589,7 +601,6 @@ namespace WpfApp2
                 //}
 
                 _Stop = true;
-
                 RevertColorHelper(sender);
             }
         }
@@ -675,7 +686,7 @@ namespace WpfApp2
                 mUriImage = new Uri("pack://application:,,,/WpfApp2;component/Images/icons8-cancel-48.png", UriKind.Absolute);
             //resultImg.DataContext = this;
             //resultImg.Source = new BitmapImage(mUriImage);  
-            
+
         }
         public void btnEnableEdit_Click(object sender, RoutedEventArgs e)
         {
