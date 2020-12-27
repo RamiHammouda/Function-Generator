@@ -15,16 +15,16 @@ namespace WpfApp2.Model
     }
     public class SignalProfile
     {
-        [JsonProperty("Wave")]
+        //[JsonProperty("Wave")]
         public WaveForm mWave { get; set; }
 
-        [JsonProperty("Freq")]
-        public double mFrequency { get; set; }
+        //[JsonProperty("Freq")]
+        private double mFrequency { get; set; }
 
-        [JsonProperty("Ampl")]
+        //[JsonProperty("Ampl")]
         private double mAmplitude;
         //private int mTick;
-        [JsonProperty("Rate")]
+        //[JsonProperty("Rate")]
         private double mRate;
 
         public SignalProfile(WaveForm wave = 0, double freq = 0.3, double ampl = 5, double rate = 4)

@@ -24,7 +24,7 @@ namespace WpfApp2.ViewModel
         public double mFreq { get; set; }
         [JsonProperty("Ampl", Order = 2)]
         public double mAmpl { get; set; }
-        [JsonProperty("SampleRate", Order = 3)]
+        [JsonProperty("Rate", Order = 3)]
         public double mRate { get; set; }
         [JsonProperty("Duration", Order = 4)]
         public double mDuration { get; set; }
@@ -305,7 +305,7 @@ namespace WpfApp2.ViewModel
 
         private void InitiateData()
         {
-            if (!mSmProfile.checkedSmProfValidation())
+            if (!checkValidity())
                 return;
             mENumber = (long)Math.Round(mRate * mDuration, 0);
             mNo = new List<long>();
@@ -388,5 +388,14 @@ namespace WpfApp2.ViewModel
                 Console.WriteLine(item.ToString());
         }
 
+        private bool checkValidity()
+        {
+            if (!((mAmpl > 0) && (mFreq > 0) && (mRate > 0) && (mDuration >= 0)))
+            {
+                Console.WriteLine("Validity checked Fail");
+                return false;
+            }
+            return true;
+        }
     }
 }

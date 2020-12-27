@@ -118,7 +118,7 @@ namespace WpfApp2.ViewModel
             mPassword = pword;
             mDatabaseName = dbname;
             mTabName = tabname;
-            mRate = 4;
+            mRate = rate;
             mElementEnable = enable;
             mBeautifulJson = beauty;
             //PropertyChanged += PrintSomeInfo;

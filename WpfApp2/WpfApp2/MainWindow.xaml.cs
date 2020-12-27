@@ -266,6 +266,7 @@ namespace WpfApp2
                 };
             }
 
+
             this.mSettingTab = SettingInfor.Instance;
 
             mSettingTab.LoadInfoToSetting();
@@ -470,7 +471,7 @@ namespace WpfApp2
 
                 conn = new MySqlConnection(connStr);
 
-                string result = "", temp = "";
+                string result = "";
                 using (MySqlCommand cmd = new MySqlCommand(cmdStr, conn))
                 {
 
@@ -479,7 +480,6 @@ namespace WpfApp2
                         conn.Open();
                         MySqlDataReader reader = cmd.ExecuteReader();
 
-                        //Console.WriteLine(mMyTargetOnDB[25]);
                         while (reader.Read())
                         {
                             foreach (string col in mMyTargetOnDB)
@@ -519,10 +519,9 @@ namespace WpfApp2
 
                 while (!_Stop)
                 {
+                    now = DateTime.Now.Ticks;
                     foreach (GenerateSignalData item in mMultipleShotList)
                     {
-                        now = DateTime.Now.Ticks;
-
                         if (item.checkSendToDB())
                         {
                             myDataDict[item.getTargetOnDB()] = Convert.ToString(item.getWaveValue(now));
@@ -536,8 +535,6 @@ namespace WpfApp2
                             //mRunningProfile.setMyDB(mCurrentDatabase);
                             //mRunningProfile.StartWriteToDB();
                         }
-
-
 
                     }
                     Thread.Sleep((int)(1000 / mRate));
