@@ -120,16 +120,42 @@ namespace WpfApp2.Model
         /// Get all the Columns from DB
         /// </summary>
         /// <returns>List<string> object with all column-names in the DB.</returns>
-        public List<string> GetColumns()
+        public Dictionary<string, string> GetData()
         {
             List<string> columns = new List<string>();
+            List<string> newData = new List<string>();
+            Dictionary<string, string> completeData = new Dictionary<string, string>();
 
-            string queryString = $"SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS`  WHERE `TABLE_SCHEMA`= '{database}' AND `TABLE_NAME`= '{tableName}' ORDER BY table_name, ordinal_position; ";
+            string queryString = $"SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS`  WHERE `TABLE_SCHEMA`= '{database}' AND `TABLE_NAME`= '{tableName}' ORDER BY table_name, ordinal_position;";
+            string value = $"SELECT * FROM {database}.{tableName} ORDER BY id DESC LIMIT 1;";
 
             columns = Reader(ConnectionString, queryString);
+            newData = Reader(ConnectionString, value);
 
-            return columns;
+            //Adding Data to the dictionary
+            foreach(var elem in columns)
+            {
+                foreach(var item in newData)
+                {
+                    completeData.Add(elem, item);
+                }
+            }
+
+            return completeData;
         }
+
+        // Add Whole Row:
+
+        /// <summary>
+        /// Adding the new data from given Dictionary<string, string> .
+        /// </summary>
+        /// <param name="newData">New Data as Dictionary<string, string></param>
+        public void InsertRow(Dictionary<string, string> newData)
+        {
+            // Stringbuilder for INSERT INTO for(int i = 2; i < Dictionary.Count; i++)
+        }
+
+        // Single Input Actions:
 
         /// <summary>
         /// Insert Target Column
