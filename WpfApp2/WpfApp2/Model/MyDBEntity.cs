@@ -36,7 +36,7 @@ namespace WpfApp2.Model
         /// <summary>
         /// Return TimeStamp in MySQL Format
         /// </summary>
-        public string TimeStamp => DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+        public string TimeStamp => DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
 
         #endregion
 
@@ -79,7 +79,7 @@ namespace WpfApp2.Model
 
                 try
                 {
-                    command.Connection.Open();                              // Establish Connection to DB
+                    command.Connection.Open();
                     command.ExecuteNonQuery();
                     CanConnectToDB = true;
                 }
@@ -117,6 +117,21 @@ namespace WpfApp2.Model
         }
 
         /// <summary>
+        /// Get all Coloumn names
+        /// </summary>
+        /// <returns>String List with the names of Coloumns</returns>
+        public List<string> GetColumns()
+        {
+            List<string> columns = new List<string>();
+
+            string queryString = $"SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS`  WHERE `TABLE_SCHEMA`= '{database}' AND `TABLE_NAME`= '{tableName}' ORDER BY table_name, ordinal_position; ";
+
+            columns = Reader(ConnectionString, queryString);
+
+            return columns;
+        }
+
+        /// <summary>
         /// Get all the Columns from DB
         /// </summary>
         /// <returns>List<string> object with all column-names in the DB.</returns>
@@ -133,9 +148,9 @@ namespace WpfApp2.Model
             newData = Reader(ConnectionString, value);
 
             //Adding Data to the dictionary
-            foreach(var elem in columns)
+            foreach (var elem in columns)
             {
-                foreach(var item in newData)
+                foreach (var item in newData)
                 {
                     completeData.Add(elem, item);
                 }
@@ -153,7 +168,9 @@ namespace WpfApp2.Model
         public void InsertRow(Dictionary<string, string> newData)
         {
             // Stringbuilder for INSERT INTO for(int i = 2; i < Dictionary.Count; i++)
+            // string var $"INSERT INTO plc_data.plc_data (TimeStamp, {string.Join(",", myDataDict.Keys.ToArray())}) VALUES ('{TimeStamp}',{string.Join(",", myDataDict.Values.ToArray())})";
         }
+
 
         // Single Input Actions:
 
