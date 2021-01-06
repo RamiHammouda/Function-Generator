@@ -1,6 +1,6 @@
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
-using MySql.Data.MySqlClient;
 
 
 namespace WpfApp2.Model
@@ -132,6 +132,24 @@ namespace WpfApp2.Model
         }
 
         /// <summary>
+        /// Replacing NULL-Values in any given Dictionary<string, string>. For exsample when reading empty DB's with Null Values.
+        /// </summary>
+        /// <param name="keyValuePairs">Dictionary<string, string> required!</param>
+        private void Replacer(ref Dictionary<string, string> keyValuePairs)
+        {
+            // TODO: Check "NULL" replacing
+            Dictionary<string, string>.ValueCollection valueColl = keyValuePairs.Values;
+
+            foreach (var elem in valueColl)
+            {
+                if (elem == "NULL" || elem == "null")
+                {
+                    keyValuePairs[elem] = "0";
+                }
+            }
+        }
+
+        /// <summary>
         /// Get all the Columns from DB
         /// </summary>
         /// <returns>List<string> object with all column-names in the DB.</returns>
@@ -142,10 +160,10 @@ namespace WpfApp2.Model
             Dictionary<string, string> completeData = new Dictionary<string, string>();
 
             string queryString = $"SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS`  WHERE `TABLE_SCHEMA`= '{database}' AND `TABLE_NAME`= '{tableName}' ORDER BY table_name, ordinal_position;";
-            string value = $"SELECT * FROM {database}.{tableName} ORDER BY id DESC LIMIT 1;";
+            string valueString = $"SELECT * FROM {database}.{tableName} ORDER BY id DESC LIMIT 1;";
 
             columns = Reader(ConnectionString, queryString);
-            newData = Reader(ConnectionString, value);
+            newData = Reader(ConnectionString, valueString);
             
             //Adding Data to the dictionary
             foreach (var elem in columns)
@@ -156,7 +174,8 @@ namespace WpfApp2.Model
                 }
             }
 
-            // TODO: Check foreach(var elem in newData){ if(elem == NULL){ elem = "0";} }
+            // Replace Null-Values
+            Replacer(ref completeData);
 
             return completeData;
         }
@@ -170,7 +189,6 @@ namespace WpfApp2.Model
         public void InsertRow(Dictionary<string, string> newData)
         {
             // Cut's out ID and TimeStamp columns
-
             newData.Remove("Id");
             newData.Remove("id");
             newData.Remove("ID");
