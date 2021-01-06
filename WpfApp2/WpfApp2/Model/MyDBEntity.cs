@@ -146,7 +146,7 @@ namespace WpfApp2.Model
 
             columns = Reader(ConnectionString, queryString);
             newData = Reader(ConnectionString, value);
-
+            
             //Adding Data to the dictionary
             foreach (var elem in columns)
             {
@@ -155,6 +155,8 @@ namespace WpfApp2.Model
                     completeData.Add(elem, item);
                 }
             }
+
+            // TODO: Check foreach(var elem in newData){ if(elem == NULL){ elem = "0";} }
 
             return completeData;
         }
@@ -167,8 +169,22 @@ namespace WpfApp2.Model
         /// <param name="newData">New Data as Dictionary<string, string></param>
         public void InsertRow(Dictionary<string, string> newData)
         {
-            // Stringbuilder for INSERT INTO for(int i = 2; i < Dictionary.Count; i++)
-            // string var $"INSERT INTO plc_data.plc_data (TimeStamp, {string.Join(",", myDataDict.Keys.ToArray())}) VALUES ('{TimeStamp}',{string.Join(",", myDataDict.Values.ToArray())})";
+            // Cut's out ID and TimeStamp columns
+
+            newData.Remove("Id");
+            newData.Remove("id");
+            newData.Remove("ID");
+            newData.Remove("iD");
+            newData.Remove("Timestamp");
+            newData.Remove("timeStamp");
+            newData.Remove("TimeStamp");
+            newData.Remove("timestamp");
+
+            // Fullfill the MySQL String to put Values into correct TargetColumns
+            string insertString = $"INSERT INTO {database}.{tableName} (TimeStamp, {string.Join(",", newData.Keys)}) VALUES ('{TimeStamp}',{string.Join(",", newData.Values)})";
+
+            // Connect to DB and submit the Connectionstring with all the juicy values.
+            Connect(ConnectionString, insertString);
         }
 
 
