@@ -18,19 +18,19 @@ namespace WpfApp2.ViewModel
     /// </summary>
     public class SettingInfor : INotifyPropertyChanged
     {
-        private string _port;
+        private string _port, _server, _userId, _password, _databaseName, _tabName;
         [JsonProperty("Server", Order = 0)]
-        public string mServer { get; set; }
+        public string mServer { get { return _server; } set { if (_server != value) { _server = value; OnPropertyChanged("mServer"); } } }
         [JsonProperty("Port", Order = 1)]
         public string mPort { get { return _port; } set { if (_port != value) { _port = value; OnPropertyChanged("mPort"); } } }
         [JsonProperty("UserId", Order = 2)]
-        public string mUserId { get; set; }
+        public string mUserId { get { return _userId; } set { if (_userId != value) { _userId = value; OnPropertyChanged("mUserId"); } } }
         [JsonProperty("Passwrord", Order = 3)]
-        public string mPassword { get; set; }
+        public string mPassword { get { return _password; } set { if (_password != value) { _password = value; OnPropertyChanged("mPassword"); } } }
         [JsonProperty("DatabaseName", Order = 4)]
-        public string mDatabaseName { get; set; }
+        public string mDatabaseName { get { return _databaseName; } set { if (_databaseName != value) { _databaseName = value; OnPropertyChanged("mDatabaseName"); } } }
         [JsonProperty("TableName", Order = 5)]
-        public string mTabName { get; set; }
+        public string mTabName { get { return _tabName; } set { if (_tabName != value) { _tabName = value; OnPropertyChanged("mTabName"); } } }
 
         private double _sampleRate;
         [JsonProperty("SampleRate", Order = 6)]

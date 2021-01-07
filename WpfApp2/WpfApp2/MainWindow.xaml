@@ -364,18 +364,18 @@
 
                     </StackPanel>
 
-                    <TextBox x:Name="txtServer" Grid.Column="2" Grid.Row="1" Text="{Binding mServer}"
+                    <TextBox x:Name="txtServer" Grid.Column="2" Grid.Row="1" Text="{Binding mServer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              Margin="5,5,5,5" IsEnabled="{Binding mElementEnable}" Padding="2"  MinHeight="20" />
 
-                    <TextBox x:Name="txtUser" Text="{Binding mUserId}" Grid.Column="2" Grid.Row="2" TextWrapping="Wrap" 
+                    <TextBox x:Name="txtUser" Text="{Binding mUserId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="2" Grid.Row="2" TextWrapping="Wrap" 
                              MinHeight="20" Margin="5" MinWidth="200" IsEnabled="{Binding mElementEnable}" Padding="2" Grid.ColumnSpan="2"/>
                     <!--<PasswordBox x:Name="txtPass" Password="cannotbinding" Grid.Column="2" Grid.Row="3" 
                              MinHeight="20" Margin="5" MinWidth="200" IsEnabled="True" Padding="2" Grid.ColumnSpan="2"/>-->
-                    <PasswordBox x:Name ="txtPass" w:PasswordHelper.Attach ="True" w:PasswordHelper.Password="{Binding mPassword, Mode=TwoWay}"  Grid.Column="2" Grid.Row="3" 
+                    <PasswordBox x:Name ="txtPass" w:PasswordHelper.Attach ="True" w:PasswordHelper.Password="{Binding mPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Grid.Column="2" Grid.Row="3" 
                              MinHeight="20" Margin="5" MinWidth="200" IsEnabled="{Binding mElementEnable}" Padding="2" Grid.ColumnSpan="2"/>
-                    <TextBox x:Name="txtDbName" Text="{Binding mDatabaseName}" Grid.Column="2" Grid.Row="4" TextWrapping="Wrap" 
+                    <TextBox x:Name="txtDbName" Text="{Binding mDatabaseName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="2" Grid.Row="4" TextWrapping="Wrap" 
                              MinHeight="20" Margin="5" MinWidth="200" IsEnabled="{Binding mElementEnable}" Padding="2" Grid.ColumnSpan="2"/>
-                    <TextBox x:Name="txtTabName" Text="{Binding mTabName}" Grid.Column="2" Grid.Row="5" TextWrapping="Wrap" 
+                    <TextBox x:Name="txtTabName" Text="{Binding mTabName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="2" Grid.Row="5" TextWrapping="Wrap" 
                              MinHeight="20" Margin="5" MinWidth="200" IsEnabled="{Binding mElementEnable}" Padding="2" Grid.ColumnSpan="2"/>
 
                     <Image x:Name="resultImg" Width ="25" Grid.Column="2" Grid.Row="6" HorizontalAlignment="Right" Margin="0,0,5,0">
