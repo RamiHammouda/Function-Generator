@@ -63,66 +63,25 @@ namespace WpfApp2
         #region Properties
 
         private string _errorMessage;
-        public string mErrorMessage
-        {
-            get { return _errorMessage; }
-            set
-            {
-                if (_errorMessage != value)
-                { _errorMessage = value; OnPropertyChanged("mErrorMessage"); }
-            }
-        }
+        public string mErrorMessage { get { return _errorMessage; } set { if (_errorMessage != value) { _errorMessage = value; OnPropertyChanged("mErrorMessage"); } } }
         private double _freq, _rate;
         [Range(0.00001, 4, ErrorMessage = "Sending Data Rate to Database is limitted to maximum 4 : 4 times/s")]
-        public double mRate
-        {
-            get { return _rate; }
-            set
-            {
-                if (_rate != value)
-                { _rate = value; OnPropertyChanged("mRate"); }
-            }
-        }
+        public double mRate { get { return _rate; } set { if (_rate != value) { _rate = value; OnPropertyChanged("mRate"); } } }
         public long mDuration;
         public double mOffsetAmpl;
         public double mOffsetFreq { get; set; }
 
         private WaveForm _wave;
-        public WaveForm mWave
-        {
-            get { return _wave; }
-            set
-            {
-                if (_wave != value)
-                { _wave = value; OnPropertyChanged("mWave"); }
-            }
-        }
-
+        public WaveForm mWave {  get { return _wave; } set { if (_wave != value) { _wave = value; OnPropertyChanged("mWave"); } } }
 
         [Range(0.0001, 4, ErrorMessage = "Frequency must from {1} to {2}")]
         [Required(ErrorMessage = "Frequency is required")]
-        public double mFreq
-        {
-            get { return _freq; }
-            set
-            {
-                if (_freq != value)
-                { _freq = value; OnPropertyChanged("mFreq"); }
-            }
-        }
+        public double mFreq { get { return _freq; } set { if (_freq != value) { _freq = value; OnPropertyChanged("mFreq"); } } }
         private double _ampl;
         //[Range(0.001, Double.PositiveInfinity, ErrorMessage = "The field {0} must be greater than {1}.")]
         [Range(0.001, Double.PositiveInfinity, ErrorMessage = "Amplitude must from {1}")]
         [Required(ErrorMessage = "Amplitude is required")]
-        public double mAmpl
-        {
-            get { return _ampl; }
-            set
-            {
-                if (_ampl != value)
-                { _ampl = value; OnPropertyChanged("mAmpl"); }
-            }
-        }
+        public double mAmpl { get { return _ampl; } set { if (_ampl != value) { _ampl = value; OnPropertyChanged("mAmpl"); } } }
 
         public SettingInfor mSettingTab { get; set; }
 
@@ -134,37 +93,12 @@ namespace WpfApp2
         }
 
         public ObservableCollection<GenerateSignalData> _multipleShotList;
-        public ObservableCollection<GenerateSignalData> mMultipleShotList
-        {
-            get { return _multipleShotList; }
-            set
-            {
-                if (_multipleShotList != value)
-                { _multipleShotList = value; OnPropertyChanged("_multipleShotList"); }
-            }
-        }
+        public ObservableCollection<GenerateSignalData> mMultipleShotList { get { return _multipleShotList; } set { if (_multipleShotList != value) { _multipleShotList = value; OnPropertyChanged("_multipleShotList"); } }}
         private List<string> _mytargetOnDB;
-        public List<string> mMyTargetOnDB
-        {
-            get { return _mytargetOnDB; }
-            set
-            {
-                if (_mytargetOnDB != value)
-                { _mytargetOnDB = value; OnPropertyChanged("mMyTargetOnDB"); }
-            }
-        }
+        public List<string> mMyTargetOnDB { get { return _mytargetOnDB; } set { if (_mytargetOnDB != value) { _mytargetOnDB = value; OnPropertyChanged("mMyTargetOnDB"); } } }
 
         private string _selectedTargetOnDB;
-        public string mSelectedTargetOnDB
-        {
-            get { return _selectedTargetOnDB; }
-            set
-            {
-                if (_selectedTargetOnDB != value)
-                { _selectedTargetOnDB = value; OnPropertyChanged("mSelectedTargetOnDB"); }
-            }
-        }
-
+        public string mSelectedTargetOnDB { get { return _selectedTargetOnDB; } set { if (_selectedTargetOnDB != value) { _selectedTargetOnDB = value; OnPropertyChanged("mSelectedTargetOnDB"); } } }
 
         string IDataErrorInfo.Error => throw new NotImplementedException(); //Part of Annotation
 
@@ -232,16 +166,22 @@ namespace WpfApp2
         #endregion
 
         #region Functions and Buttons
+        /// <summary>
+        /// Reset all parameters of first tab to default
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void btnReset_Click(object sender, RoutedEventArgs e)
         {
             initiateDefaultValue();
         }
 
+        /// <summary>
+        /// Create some default value, or initiate some value, some function, load setting, read information from file...
+        /// </summary>
         public void initiateDefaultValue()
         {
             this.DataContext = this;
-
-            //txtSampleRate.DataContext = this;
 
             mFreq = 0.1;
             mAmpl = 5;
@@ -259,10 +199,10 @@ namespace WpfApp2
             {
                 _multipleShotList = new ObservableCollection<GenerateSignalData>()
                 {
-                  new GenerateSignalData(),
-                  new GenerateSignalData(0, 2, 7, 1, 0, sendToDb: true),
-                  new GenerateSignalData(WaveForm.Random, targetOnDb: "Inputs_Entschlammung1_Status"),
-                  new GenerateSignalData(WaveForm.Sawtooth, sendToDb: true, targetOnDb: "Inputs_TestVarReal")
+                  //new GenerateSignalData(),
+                  //new GenerateSignalData(0, 2, 7, 1, 0, sendToDb: true),
+                  //new GenerateSignalData(WaveForm.Random, targetOnDb: "Inputs_Entschlammung1_Status"),
+                  //new GenerateSignalData(WaveForm.Sawtooth, sendToDb: true, targetOnDb: "Inputs_TestVarReal")
                 };
             }
 
@@ -274,44 +214,28 @@ namespace WpfApp2
             {
                 cbbTargetList.ItemsSource = _offLineTargetList;
                 mMyTargetOnDB = _offLineList;
-
             }
             else
             {
                 cbbTargetList.ItemsSource = mSettingTab.GetSelectableList();
                 mMyTargetOnDB = mSettingTab.LoadFinalTargetList();
-                //mRate = Double.Parse(mSettingTab.mRate);
             }
 
             mRate = mSettingTab.mRate;
 
-
-
-            //Because all elemente of Settingtab already has datacontext to SettingTab (inXml)
-            //so cbb must set Datacontext to return to this class
-            //cbbTargetList.DataContext = this;
-            //txtCombobox.DataContext = this;
-
-            //mMyTargetOnDB = GetTargetOnDB();
-
-
-            //not quite follow Binding Rule, but simple and practical :)
             sldFreq.Value = 0;
             sldAmp.Value = 0;
 
             //only for Image Connection Result
             resultImg.DataContext = this;
-            //Uri myUri = new Uri(@"/Images/icons8-ok-48.png", UriKind.Relative);
-            //Uri myUri2 = new Uri("/WpfApp2;component/Images/icons8-ok-48.png",UriKind.Relative);
-            //resultImg.Source = new BitmapImage(myUri2);
-            //mUriImage = myUri;
-
-
-
-
         }
         private List<ColumnDBSelectableHelper> _offLineTargetList { get { List<ColumnDBSelectableHelper> aList = new List<ColumnDBSelectableHelper>() { new ColumnDBSelectableHelper(true, "Offline"), new ColumnDBSelectableHelper(true, "Just Kidding") }; return aList; } }
         private List<string> _offLineList { get { List<string> aList = new List<string>() { "Offline", "Offline only" }; return aList; } }
+        /// <summary>
+        /// Visualizate the current parameter to wave form
+        /// </summary>
+        /// <param name="smProfile"></param>
+        /// <param name="numberOfWave"></param>
         private void VisualizateData(SimulationProfile smProfile, int numberOfWave)
         {
             if (!smProfile.checkedSmProfValidation())
@@ -330,7 +254,7 @@ namespace WpfApp2
             }
 
             myWpfPlot.plt.Clear();
-            myWpfPlot.plt.PlotScatter(x, y, lineWidth: linewidth, markerSize: marksize, label: text);
+            myWpfPlot.plt.PlotScatter(x, y,color:Color.Blue, lineWidth: linewidth, markerSize: marksize, label: text);
             myWpfPlot.plt.Style(ScottPlot.Style.Light2);
             myWpfPlot.plt.Title("Signal Data", fontName: "Verdana", color: Color.BlueViolet, bold: true);
             myWpfPlot.plt.YLabel("Amplitude", fontSize: 16, color: Color.Green);
@@ -348,16 +272,25 @@ namespace WpfApp2
             }
         }
         private GenerateSignalData mCurrentProfile, mRunningProfile;
+
+        /// <summary>
+        /// This method will be called whenever any parameter changed, It create profile to simulate and call <see cref="VisualizateData"/> funtion to draw
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AutoDrawing(object sender, EventArgs e)
         {
             mCurrentProfile = new GenerateSignalData(mWave, mFreq, mAmpl, mRate, mDuration);
             SimulationProfile currentSignal = mCurrentProfile.getSimulationProfile();
             VisualizateData(currentSignal, 4);
-            //Console.WriteLine(mSelectedTargetOnDB);
-            //Console.WriteLine(mCurrentProfile.ToString());
-            //Console.WriteLine(mSelectedRowOnDataGrid == null ? "Not yet selected" : $"{mSelectedRowOnDataGrid.mTargetOnDB}");
         }
+
         private bool _singleShotPressed, _multipleShotPressed;
+        /// <summary>
+        /// Insert data in only one column
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnSimulate_Click(object sender, RoutedEventArgs e)
         {
             if (mSelectedTargetOnDB == null)
@@ -372,7 +305,6 @@ namespace WpfApp2
 
             }
             mErrorMessage = String.Empty;
-            //mCurrentDatabase = new MyDBEntity(mSettingTab);
 
             _singleShotPressed = !_singleShotPressed;
             if (_singleShotPressed)
@@ -406,7 +338,11 @@ namespace WpfApp2
             }
 
         }
-
+        /// <summary>
+        /// Obsolete
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void btnSimulateToJson_Click(object sender, RoutedEventArgs e)
         {
             SignalProfile sgProfile = new SignalProfile(mWave, mFreq, mAmpl, mRate);
@@ -414,12 +350,14 @@ namespace WpfApp2
             GenerateSignalData myProf = new GenerateSignalData(smProfile, true);
 
             myProf.ExportToJson(mSettingTab.mBeautifulJson);
-            //MessageBox.Show("Finished Exporting", "Quick Infor", MessageBoxButton.OK, MessageBoxImage.Information);
             exportingIsFinished = true;
         }
 
-
-
+        /// <summary>
+        /// Save all Profiles in list to Json file in current exe Directory
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void btnSaveProfilesToJson_Click(object sender, RoutedEventArgs e)
         {
             GenerateSignalData.ExportProfilesToJson(_multipleShotList.ToList());
@@ -427,6 +365,12 @@ namespace WpfApp2
 
         private Dictionary<string, string> myDataDict;
         private bool _Stop = false;
+
+        /// <summary>
+        /// Add multiple values to database
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public async void btnMSimuToDB_Click(object sender, RoutedEventArgs e)
         {
             Console.WriteLine("I'm in, Don't worry");
@@ -449,9 +393,6 @@ namespace WpfApp2
                     mErrorMessage = "Connection Test is fail";
                     return;
                 }
-                //For sequently writing (V1)
-                // mCurrentDatabase = mSettingTab.getCheckedDatabase();
-
                 ChangeColorHelper(sender);
 
                 //Move this to DBClass
@@ -474,7 +415,6 @@ namespace WpfApp2
                 string result = "";
                 using (MySqlCommand cmd = new MySqlCommand(cmdStr, conn))
                 {
-
                     try
                     {
                         conn.Open();
@@ -525,15 +465,6 @@ namespace WpfApp2
                         if (item.checkSendToDB())
                         {
                             myDataDict[item.getTargetOnDB()] = Convert.ToString(item.getWaveValue(now));
-
-                            //For parallel wrinting (V2)
-                            //item.setMyDB(new MyDBEntity(mSettingTab));
-                            //item.StartWriteToDB();
-
-                            //For sequent writing (V1)
-                            //mRunningProfile = item;
-                            //mRunningProfile.setMyDB(mCurrentDatabase);
-                            //mRunningProfile.StartWriteToDB();
                         }
 
                     }
@@ -553,12 +484,7 @@ namespace WpfApp2
                     if (conn != null)
                         conn.Close();
 
-                    //string connStr = String.Format("server={0};user id={1}; password={2}; database={3}; pooling=true",
-                    //mSettingTab.mServer, mSettingTab.mUserId, mSettingTab.mPassword, mSettingTab.mDatabaseName);
-
                     string TimeStamp = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
-                    //string cmdStr = $"INSERT INTO plc_data.plc_data (TimeStamp, Inputs_TestVarLReal,Inputs_TestVarReal) VALUES ('{TimeStamp}','20.5','10.2')";
-                    //string cmdStr = $"INSERT INTO plc_data.plc_data (TimeStamp, Inputs_TestVarLReal,Inputs_TestVarReal) VALUES ('{TimeStamp}',20.5,10.2)";
                     string commandstr = $"INSERT INTO plc_data.plc_data (TimeStamp, {string.Join(",", myDataDict.Keys.ToArray())}) VALUES ('{TimeStamp}',{string.Join(",", myDataDict.Values.ToArray())})";
                     conn = new MySqlConnection(connStr);
 
@@ -589,21 +515,15 @@ namespace WpfApp2
             }
             else
             {
-                //For sequently writing (V1)
-                //mRunningProfile.Stop();
-                //mRunningProfile = null;
-
-
-                ////Fore parallel writing (V2)
-                //foreach (GenerateSignalData item in mMultipleShotList)
-                //{
-                //    item.Stop();
-                //}
-
                 _Stop = true;
                 RevertColorHelper(sender);
             }
         }
+        /// <summary>
+        /// Obsolete
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void btnMSimulateToJson_Click(object sender, RoutedEventArgs e)
         {
             if (mMultipleShotList.Count < 1)
@@ -636,7 +556,11 @@ namespace WpfApp2
             ItemsAreSaved = true;
 
         }
-
+        /// <summary>
+        /// Delete 1 item/row in datagrid in context menu in right click
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void MenuItemDel_Click(object sender, RoutedEventArgs e)
         {
             if (MultiShot.SelectedItem == null || mMultipleShotList.Count == 0) return;  //safety first
@@ -652,6 +576,11 @@ namespace WpfApp2
             }
 
         }
+        /// <summary>
+        /// Add 1 item/row in datagrid in context menu in right click
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void MenuItemAdd_Click(object sender, RoutedEventArgs e)
         {
             mMultipleShotList.Add(new GenerateSignalData());
@@ -659,18 +588,15 @@ namespace WpfApp2
         }
 
         private Uri _uriImage;
-        public Uri mUriImage
-        {
-            get { return _uriImage; }
-            set
-            {
-                if (_uriImage != value)
-                { _uriImage = value; OnPropertyChanged("mUriImage"); }
-            }
-        }
+        public Uri mUriImage { get { return _uriImage; } set { if (_uriImage != value) { _uriImage = value; OnPropertyChanged("mUriImage"); } }}
 
         private MyDBEntity mCurrentDatabase;
 
+        /// <summary>
+        /// Test Connection method in Setting Tab
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public async void btnTestConn_Click(object sender, RoutedEventArgs e)
         {
             ConnectionTested = true;
@@ -684,10 +610,12 @@ namespace WpfApp2
             else
                 //mUriImage = new Uri(@"/Images/icons8-cancel-48.png", UriKind.Relative);
                 mUriImage = new Uri("pack://application:,,,/WpfApp2;component/Images/icons8-cancel-48.png", UriKind.Absolute);
-            //resultImg.DataContext = this;
-            //resultImg.Source = new BitmapImage(mUriImage);  
-
         }
+        /// <summary>
+        /// Enable/disable method in setting tab
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void btnEnableEdit_Click(object sender, RoutedEventArgs e)
         {
             if (!mSettingTab.ReverseEditMode())
@@ -696,18 +624,31 @@ namespace WpfApp2
             EditIsEnabled = true;
         }
 
+        /// <summary>
+        /// cancel button in setting tab
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
             myTabControl.SelectedIndex = 0;
         }
-
+        /// <summary>
+        /// save information in settingtab to json file in current exe folder
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void btnSave_Click(object sender, RoutedEventArgs e)
         {
             mSettingTab.PrintInfo();
             mSettingTab.SaveInfoToFile();
             InfosSaved = true;
         }
-
+        /// <summary>
+        /// Move current profile with chosen parameter to Datagrid in Multiple Shot Tab (2.Tab)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void btnInsertProfile_Click(object sender, RoutedEventArgs e)
         {
             if (mSelectedTargetOnDB == null)
@@ -722,17 +663,15 @@ namespace WpfApp2
         }
         private DBViewWindows mMyDBView;
         private GenerateSignalData _selectedRowOnDataGrid;
-        public GenerateSignalData mSelectedRowOnDataGrid
-        {
-            get { return _selectedRowOnDataGrid; }
-            set
-            {
-                if (_selectedRowOnDataGrid != value)
-                { _selectedRowOnDataGrid = value; OnPropertyChanged("mSelectedRowOnDataGrid"); }
-            }
-        }
+        public GenerateSignalData mSelectedRowOnDataGrid { get { return _selectedRowOnDataGrid; } set { if (_selectedRowOnDataGrid != value) { _selectedRowOnDataGrid = value; OnPropertyChanged("mSelectedRowOnDataGrid");}}}
         //Under Testing
         private MySqlConnection conn;
+        /// <summary>
+        /// Method to view current connected database based on picking column.
+        /// Click none then show all columns on database
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void btnViewDatabase_Click(object sender, RoutedEventArgs e)
         {
 
@@ -782,7 +721,10 @@ namespace WpfApp2
 
             mSelectedRowOnDataGrid = null;
         }
-
+        /// <summary>
+        /// Change color, label of current button to running state
+        /// </summary>
+        /// <param name="sender"></param>
         private void ChangeColorHelper(object sender)
         {
             mErrorMessage = "Running...";
@@ -791,6 +733,10 @@ namespace WpfApp2
             thisButton.Background = System.Windows.Media.Brushes.LightSalmon;
             thisButton.Foreground = System.Windows.Media.Brushes.White;
         }
+        /// <summary>
+        /// Change back color, label of current button to stop/waiting state
+        /// </summary>
+        /// <param name="sender"></param>
         private void RevertColorHelper(object sender)
         {
             mErrorMessage = String.Empty;
@@ -804,7 +750,7 @@ namespace WpfApp2
         #endregion
 
         #region under Drafting
-        //Not yet finished
+        //Obsolete
         public void NumberValidation(object sender, TextCompositionEventArgs e)
         {
             if ((int.TryParse(e.Text, out n)) == true)
@@ -818,7 +764,7 @@ namespace WpfApp2
                 MessageBox.Show("Number Accept Only !");
             }
         }
-        //Not quite
+        //Only for testing
         private void DoubleValidation(object sender, TextCompositionEventArgs e)
         {
             try

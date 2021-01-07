@@ -11,6 +11,9 @@ using WpfApp2.Model;
 
 namespace WpfApp2.ViewModel
 {
+    /// <summary>
+    /// Create a object - which contain boolean along with string column from database for using in comboBox in Setting tab - it means this columns should receive data or not
+    /// </summary>
     public class ColumnDBSelectableHelper
     {
         public bool mIsSelected { get; set; }
@@ -20,12 +23,17 @@ namespace WpfApp2.ViewModel
             mIsSelected = selected;
             mColumnName = columnName;
         }
-
+        /// <summary>
+        /// Create info in this object
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return $"{mIsSelected}  {mColumnName}";
         }
-
+        /// <summary>
+        /// Print the object's information
+        /// </summary>
         public void PrintInfo()
         {
             Console.WriteLine(ToString());
@@ -33,19 +41,11 @@ namespace WpfApp2.ViewModel
     }
 
 
-
+    /// <summary>
+    /// To convert value from Enum to boolean and vice versa
+    /// </summary>
     public class ComparisonConverter : IValueConverter
     {
-        //public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        //{
-        //    return value?.Equals(parameter);
-        //}
-
-        //public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        //{
-        //    return value?.Equals(true) == true ? parameter : Binding.DoNothing;
-        //}
-
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             return ((WaveForm)value).HasFlag((WaveForm)parameter);
@@ -59,16 +59,6 @@ namespace WpfApp2.ViewModel
 
     public class BoolToVisibleConvert : IValueConverter
     {
-        //public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        //{
-        //    return (value is bool && (bool)value) ? Visibility.Visible : Visibility.Collapsed
-        //}
-
-        //public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        //{
-        //    return value is Visibility && (Visibility)value == Visibility.Visible;
-        //}
-
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             bool bValue = false;
@@ -96,7 +86,9 @@ namespace WpfApp2.ViewModel
             }
         }
     }
-
+    /// <summary>
+    /// For Null image converter. But later used blank image instead
+    /// </summary>
     public class NullImageConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -118,7 +110,9 @@ namespace WpfApp2.ViewModel
         }
     }
 
-
+    /// <summary>
+    /// For setting Password only (predefine), because Password is encrypted, so it's not easy to work with like textbox
+    /// </summary>
     //Original:http://wpftutorial.net/PasswordBox.html
     public static class PasswordHelper
     {

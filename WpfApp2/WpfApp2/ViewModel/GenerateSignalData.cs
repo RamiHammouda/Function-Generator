@@ -11,6 +11,9 @@ using WpfApp2.Model;
 
 namespace WpfApp2.ViewModel
 {
+    /// <summary>
+    /// Ultimate Class which controll all data to a sensorsignal, including generate signal method..
+    /// </summary>
     public class GenerateSignalData
     {
         [JsonIgnore]
@@ -114,70 +117,115 @@ namespace WpfApp2.ViewModel
             if (autoTriggerData)
             { GenerateData(); }
         }
-        
 
+        /// <summary>
+        /// Get timeStamp array of  generated simulation profile
+        /// </summary>
+        /// <returns>a long array </returns>
         public List<long> getTimeStamp()
         {
             return mTimeStampArray;
         }
+        /// <summary>
+        /// Get amlitude array of generated simulation profile
+        /// </summary>
+        /// <returns>a double array simulate signal</returns>
         public List<double> getAmplData()
         {
             return mAmplArray;
         }
-
+        /// <summary>
+        /// Get order of signal as series of number
+        /// </summary>
+        /// <returns>a long array</returns>
         public List<long> getNo()
         {
             return mNo;
         }
-
+        /// <summary>
+        /// Get signal profile from inside of generate signal profile object
+        /// </summary>
+        /// <returns>signal profile</returns>
         public SignalProfile getSignalProfile()
         {
             return mProfile;
         }
-
+        /// <summary>
+        /// Get simulation profile which is inside of generate signal profile object
+        /// </summary>
+        /// <returns>simulation profile</returns>
         public SimulationProfile getSimulationProfile()
         {
             return mSmProfile;
         }
-
+        /// <summary>
+        /// Get the Frequency of sensor signal profile
+        /// </summary>
+        /// <returns>a double value</returns>
         public double getFreq()
         {
             return mFreq;
         }
-
+        /// <summary>
+        /// Get the Sample Rate of sensor signal profile (Sample Rate means how many data points are created per second to reproduce wave form)
+        /// </summary>
+        /// <returns>a double value</returns>
         public double getRate()
         {
             return mRate;
         }
-
+        /// <summary>
+        /// Get the WaveForm of signal profile
+        /// </summary>
+        /// <returns></returns>
         public WaveForm getWave()
         {
             return mWave;
         }
+        /// <summary>
+        /// Get the duration of running time for each simulation process. At first purpose it will help GFai fully automate simulation process. But after discussion with GFai, they intend to run simulation process steady, without interrupting anything. So it will be Zero.
+        /// </summary>
+        /// <returns></returns>
         public double getDuration()
         {
             return mDuration;
         }
-
+        /// <summary>
+        /// Get maximal Amplitude of singal profile
+        /// </summary>
+        /// <returns>a double value</returns>
         public double getAmpl()
         {
             return mAmpl;
         }
-
+        /// <summary>
+        /// Set or change target column (fake working as sensor type) on Database. The generated value will be sent to this column on database
+        /// </summary>
+        /// <param name="target">column on database</param>
         public void setTargetOnDB(string target)
         {
             mTargetOnDB = target;
         }
+        /// <summary>
+        /// Get current set up target column on database. To which generated value will be sent
+        /// </summary>
+        /// <returns>a string value as name of column</returns>
         public string getTargetOnDB()
         {
             return mTargetOnDB;
         }
-
+        /// <summary>
+        /// Check whether generated values form current signal profile will be sent to database, or not. (or just a draft profile)
+        /// </summary>
+        /// <returns>boolean value, "true" as yes, I send it, and otherwise</returns>
         public bool checkSendToDB()
         {
             return mSendToDB;
         }
-
+        /// <summary>
+        /// As its name describle, this method will export current GenerateSingnalData object to Json
+        /// </summary>
+        /// <param name="beautiful">format of json with indentation, true as default, yep: beautiful as default :))</param>
         public void ExportToJson(bool beautiful = true)
         {
             //string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -186,31 +234,34 @@ namespace WpfApp2.ViewModel
             string fileName = "SingleSignal " + DateTime.Now.ToString("yyyy-MM-dd HH.mm.ss ffff");
             string filePath = basePath + "\\" + fileName + ".json";
 
-            JsonSerializer serializer;
-            if (beautiful)
-                serializer = new JsonSerializer { Formatting = Formatting.Indented, TypeNameHandling = TypeNameHandling.Auto };
-            else
-                serializer = new JsonSerializer { TypeNameHandling = TypeNameHandling.Auto };
+            JsonSerializer serializer = new JsonSerializer { Formatting = Formatting.Indented, TypeNameHandling = TypeNameHandling.Auto };
+            if (!beautiful) serializer = new JsonSerializer { TypeNameHandling = TypeNameHandling.Auto };
 
             using (StreamWriter writer = File.CreateText(filePath)) { serializer.Serialize(writer, this); }
         }
-
+        /// <summary>
+        /// A static method to export all profiles (from profiles list as input) and saving as json to current directory of program
+        /// </summary>
+        /// <param name="alist">proiles list as input</param>
+        /// <param name="beautiful"> indentation format</param>
         public static void ExportProfilesToJson(List<GenerateSignalData> alist, bool beautiful = true)
         {
-            //string filePath = Directory.GetCurrentDirectory() + "\\AppSetting\\SignalProfiles.json";
             JsonSerializer serializer = new JsonSerializer { Formatting = Formatting.Indented, TypeNameHandling = TypeNameHandling.Auto };
-            if (!beautiful)
-                serializer = new JsonSerializer { TypeNameHandling = TypeNameHandling.Auto };
-
+            if (!beautiful) serializer = new JsonSerializer { TypeNameHandling = TypeNameHandling.Auto };
             using (StreamWriter writer = File.CreateText(mFilePath)) { serializer.Serialize(writer, alist); }
         }
-
+        /// <summary>
+        /// A static method to import alle saved profile from json in default directory.
+        /// </summary>
+        /// <returns>A List of GenerateSignalData</returns>
         public static List<GenerateSignalData> ImportProfileFromJson()
         {
             return JsonConvert.DeserializeObject<List<GenerateSignalData>>(File.ReadAllText(mFilePath));
         }
 
-        //for reference only: generate Data und save to Json
+        /// <summary>
+        /// Generate signal data from current profile
+        /// </summary>
         public void GenerateData()
         {
             if (!mSmProfile.checkedSmProfValidation())
@@ -302,7 +353,9 @@ namespace WpfApp2.ViewModel
             //}
             _cancel = true;
         }
-
+        /// <summary>
+        /// initiate some data/parameter for later using
+        /// </summary>
         private void InitiateData()
         {
             if (!checkValidity())
@@ -323,43 +376,81 @@ namespace WpfApp2.ViewModel
                 default: getWaveValue = GetRandomDigitalValue; break;
             }
         }
-
+        /// <summary>
+        /// Set database to send signal value
+        /// </summary>
+        /// <param name="myDB"></param>
         public void setMyDB(MyDBEntity myDB)
         {
             mMyDB = myDB;
         }
+        /// <summary>
+        /// Get amplitude value at specified time based on sine-wave-form(input time as Ticks format:long)
+        /// </summary>
+        /// <param name="atTimeInTicks"></param>
+        /// <returns>a double value</returns>
         private double GetSineValue(long atTimeInTicks)
         {
             return Math.Round(mAmpl * Math.Sin(2 * Math.PI * mFreq * atTimeInTicks / 1e7), 10);
         }
-
+        /// <summary>
+        /// Get amplitude value at specified time based on sawtooth-wave-form (input time as Ticks format:long)
+        /// </summary>
+        /// <param name="atTimeInTicks"></param>
+        /// <returns>a double value</returns>
         private double GetSawtoothValue(long atTimeInTicks)
         {
             return (2 * mAmpl / Math.PI) * Math.Atan(Math.Tan((atTimeInTicks / 1e7) * Math.PI * mFreq));
         }
+        /// <summary>
+        /// Get amplitude value at specified time based on square-wave-form (input time as Ticks format:long)
+        /// </summary>
+        /// <param name="atTimeInTicks"></param>
+        /// <returns>a double value</returns>
         private double GetSquareValue(long atTimeInTicks)
         {
             return mAmpl * Math.Sign(Math.Sin(2 * Math.PI * atTimeInTicks / 1e7 * mFreq));
         }
+        /// <summary>
+        /// Get amplitude value at specified time based on triangle-wave-form (input time as Ticks format:long)
+        /// </summary>
+        /// <param name="atTimeInTicks"></param>
+        /// <returns>a double value</returns>
         private double GetTriangleValue(long atTimeInTicks)
         {
             return 2 * mAmpl / Math.PI * Math.Asin(Math.Sin(2 * Math.PI * mFreq * atTimeInTicks / 1e7));
         }
 
         private Random rand;
+        /// <summary>
+        /// Get random amplitude value at specified time based within max Amplitude (input time as Ticks format:long)
+        /// </summary>
+        /// <param name="atTimeInTicks"></param>
+        /// <returns>a double value</returns>
         private double GetRandomValue(long atTimeInTicks)
         {
             return (rand.NextDouble() * mAmpl * 2 - mAmpl);
         }
+        /// <summary>
+        /// Get random digital value at specified time (input time as Ticks format:long)
+        /// </summary>
+        /// <param name="atTimeInTicks"></param>
+        /// <returns>a double value 0 or 1</returns>
         private double GetRandomDigitalValue(long atTimeInTicks)
         {
             return (double)rand.Next(0, 2);
         }
-
+        /// <summary>
+        /// ToString Profile
+        /// </summary>
+        /// <returns>a string value</returns>
         public override string ToString()
         {
             return $"{mSmProfile} {mTargetOnDB}";
         }
+        /// <summary>
+        /// For testing-only method, Print all generated data from a profile with condition: duration must differ Zero
+        /// </summary>
         public void PrintData()
         {
             mSmProfile.PrintInfo();
@@ -370,7 +461,11 @@ namespace WpfApp2.ViewModel
             }
             Console.WriteLine(sb);
         }
-
+        /// <summary>
+        /// A static method to convert all inputed values in array to a double array
+        /// </summary>
+        /// <param name="arr"></param>
+        /// <returns>a double array</returns>
         public static double[] ConvertToDouble(long[] arr)
         {
             long length = arr.Length;
@@ -381,13 +476,19 @@ namespace WpfApp2.ViewModel
             }
             return result;
         }
-
+        /// <summary>
+        /// a static method for testing only, print out information of all profiles in list
+        /// </summary>
+        /// <param name="alist"></param>
         public static void PrintProfilesList(List<GenerateSignalData> alist)
         {
             foreach (var item in alist)
                 Console.WriteLine(item.ToString());
         }
-
+        /// <summary>
+        /// Check Validity of input parameter for current profile 
+        /// </summary>
+        /// <returns>boolean value, "true" is validated </returns>
         private bool checkValidity()
         {
             if (!((mAmpl > 0) && (mFreq > 0) && (mRate > 0) && (mDuration >= 0)))

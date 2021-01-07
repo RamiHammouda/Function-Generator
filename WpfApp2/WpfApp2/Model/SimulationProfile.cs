@@ -69,7 +69,10 @@ namespace WpfApp2.Model
         {
             return $"Simulation {mSgProfile}, Duration: {mDuration}";
         }
-
+        /// <summary>
+        /// Check Validation of Simulation Profile object, check if duration bigger than Zero is
+        /// </summary>
+        /// <returns>boolean value, "true" as validate</returns>
         public bool checkedSmProfValidation()
         {
             return mSgProfile.checkedSgProfValidatation() && mDuration >= 0;

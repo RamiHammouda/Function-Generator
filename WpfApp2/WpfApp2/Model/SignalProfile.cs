@@ -78,7 +78,10 @@ namespace WpfApp2.Model
         {
             return $"a Profile Wave:{mWave} Freq:{mFrequency} Hz, Ampl:{mAmplitude} V, Rate:{mRate}";
         }
-
+        /// <summary>
+        /// Check validation of simulation Profile object
+        /// </summary>
+        /// <returns>boolean value, "true" as validate</returns>
         public bool checkedSgProfValidatation()
         {
             return (mAmplitude > 0) && (mFrequency > 0) && (mRate > 0);
