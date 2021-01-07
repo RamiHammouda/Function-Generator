@@ -64,32 +64,48 @@ namespace WpfApp2
 
         private string _errorMessage;
         public string mErrorMessage { get { return _errorMessage; } set { if (_errorMessage != value) { _errorMessage = value; OnPropertyChanged("mErrorMessage"); } } }
-        private double _freq, _rate;
+        private double _freq, _rate, _ampl;
         [Range(0.00001, 4, ErrorMessage = "Sending Data Rate to Database is limitted to maximum 4 : 4 times/s")]
         public double mRate { get { return _rate; } set { if (_rate != value) { _rate = value; OnPropertyChanged("mRate"); } } }
         public long mDuration;
-        public double mOffsetAmpl;
-        public double mOffsetFreq { get; set; }
 
+        private double mOffsetFreq, _offsetAmpl, _maxOffsetFreq, _defaultMaxOffsetFreq, _tickFreqOnSlider, _offSetAmplFromInput;
+        public double mOffsetAmpl { get { return _offsetAmpl; } set { if (_offsetAmpl != value) { _offsetAmpl = value; OnPropertyChanged("mOffsetAmpl"); } } }
+        public double mMaxOffsetFreq { get { return _maxOffsetFreq; } set { if (_maxOffsetFreq != value) { _maxOffsetFreq = value;OnPropertyChanged("mMaxOffsetFreq");}}}
+        public double mTickFrequencyOnSlider { get { return _tickFreqOnSlider; } set { if (_tickFreqOnSlider != value) { _tickFreqOnSlider = value; OnPropertyChanged("mTickFrequencyOnSlider"); } } }
+        public double mOffsetAmptFromInput { get { return _offSetAmplFromInput; } set { if (_offSetAmplFromInput != value) { _offSetAmplFromInput = value; OnPropertyChanged("mOffsetAmptFromInput"); } } }
+        
         private WaveForm _wave;
         public WaveForm mWave {  get { return _wave; } set { if (_wave != value) { _wave = value; OnPropertyChanged("mWave"); } } }
 
         [Range(0.0001, 4, ErrorMessage = "Frequency must from {1} to {2}")]
         [Required(ErrorMessage = "Frequency is required")]
         public double mFreq { get { return _freq; } set { if (_freq != value) { _freq = value; OnPropertyChanged("mFreq"); } } }
-        private double _ampl;
         //[Range(0.001, Double.PositiveInfinity, ErrorMessage = "The field {0} must be greater than {1}.")]
         [Range(0.001, Double.PositiveInfinity, ErrorMessage = "Amplitude must from {1}")]
         [Required(ErrorMessage = "Amplitude is required")]
         public double mAmpl { get { return _ampl; } set { if (_ampl != value) { _ampl = value; OnPropertyChanged("mAmpl"); } } }
 
+        private bool _chkBoxSynFreq;
+        public bool mChkBoxSynFreq { get { return _chkBoxSynFreq; } set { if (_chkBoxSynFreq != value) { _chkBoxSynFreq = value; OnPropertyChanged("mChkBoxSynFreq"); myCheckBoxEvent.Invoke(this, new PropertyChangedEventArgs("egal")); } } }
+
         public SettingInfor mSettingTab { get; set; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged, myCheckBoxEvent;
+
 
         protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected void OnMyCheckboxChange(object sender, EventArgs e)
+        {
+            if (mChkBoxSynFreq) 
+                mMaxOffsetFreq = mFreq;
+            else
+                mMaxOffsetFreq = _defaultMaxOffsetFreq;
+            mTickFrequencyOnSlider = mMaxOffsetFreq / 20;
         }
 
         public ObservableCollection<GenerateSignalData> _multipleShotList;
@@ -131,8 +147,8 @@ namespace WpfApp2
         #region Some Control Element
         private void sldFreq_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-
-            mOffsetFreq = Math.Round((sender as Slider).Value / 1000, 3);
+            //mOffsetFreq = Math.Round((sender as Slider).Value / 1000, 3);
+            mOffsetFreq = Math.Round((sender as Slider).Value,3);
         }
 
         private void sldAmp_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -188,9 +204,20 @@ namespace WpfApp2
             mRate = 2;
             mDuration = 0;
             mWave = WaveForm.Sine;
+
             mValidInput = false;
+            //sldFreq.DataContext = this;
+
+            this.myCheckBoxEvent += OnMyCheckboxChange;
+            _defaultMaxOffsetFreq = 0.2;
+            mMaxOffsetFreq = _defaultMaxOffsetFreq;
+            mTickFrequencyOnSlider = mMaxOffsetFreq / 20;
+            mOffsetAmpl = mOffsetAmptFromInput;
+
+
             mCurrentProfile = new GenerateSignalData(mWave, mFreq, mAmpl, mRate, mDuration);
             this.PropertyChanged += AutoDrawing;
+
             OnPropertyChanged("IamIronMan");
 
             if (File.Exists(GenerateSignalData.mFilePath))

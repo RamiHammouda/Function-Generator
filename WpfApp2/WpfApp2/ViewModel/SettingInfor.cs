@@ -90,7 +90,7 @@ namespace WpfApp2.ViewModel
         /// <param name="rate"></param>
         /// <param name="enable"></param>
         /// <param name="beauty"></param>
-        public void SetSetting(string server = "fgdb-f2-htw.selfhost.co", string port = "3306", string user = "hoale", string pword = "TestPW123!456", string dbname = "plc_data", string tabname = "plc_data", double rate = 4, bool enable = false, bool beauty = true)
+        public void SetSetting(string server = "fgdb-f2-htw.selfhost.co", string port = "3306", string user = "hoale", string pword = "TestPW123!456", string dbname = "plc_data", string tabname = "plc_data", double rate = 2, bool enable = false, bool beauty = true)
         {
             mServer = server;
             mPort = port;

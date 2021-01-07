@@ -41,6 +41,7 @@ namespace WpfApp2.ViewModel
     }
 
 
+
     /// <summary>
     /// To convert value from Enum to boolean and vice versa
     /// </summary>
