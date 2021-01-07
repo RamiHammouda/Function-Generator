@@ -71,16 +71,16 @@ namespace WpfApp2
 
         private double mOffsetFreq, _offsetAmpl, _maxOffsetFreq, _defaultMaxOffsetFreq, _tickFreqOnSlider, _offSetAmplFromInput;
         public double mOffsetAmpl { get { return _offsetAmpl; } set { if (_offsetAmpl != value) { _offsetAmpl = value; OnPropertyChanged("mOffsetAmpl"); } } }
-        public double mMaxOffsetFreq { get { return _maxOffsetFreq; } set { if (_maxOffsetFreq != value) { _maxOffsetFreq = value;OnPropertyChanged("mMaxOffsetFreq");}}}
+        public double mMaxOffsetFreq { get { return _maxOffsetFreq; } set { if (_maxOffsetFreq != value) { _maxOffsetFreq = value; OnPropertyChanged("mMaxOffsetFreq"); } } }
         public double mTickFrequencyOnSlider { get { return _tickFreqOnSlider; } set { if (_tickFreqOnSlider != value) { _tickFreqOnSlider = value; OnPropertyChanged("mTickFrequencyOnSlider"); } } }
         public double mOffsetAmptFromInput { get { return _offSetAmplFromInput; } set { if (_offSetAmplFromInput != value) { _offSetAmplFromInput = value; OnPropertyChanged("mOffsetAmptFromInput"); } } }
-        
+
         private WaveForm _wave;
-        public WaveForm mWave {  get { return _wave; } set { if (_wave != value) { _wave = value; OnPropertyChanged("mWave"); } } }
+        public WaveForm mWave { get { return _wave; } set { if (_wave != value) { _wave = value; OnPropertyChanged("mWave"); } } }
 
         [Range(0.0001, 4, ErrorMessage = "Frequency must from {1} to {2}")]
         [Required(ErrorMessage = "Frequency is required")]
-        public double mFreq { get { return _freq; } set { if (_freq != value) { _freq = value; OnPropertyChanged("mFreq"); } } }
+        public double mFreq { get { return _freq; } set { if (_freq != value) { _freq = value; OnPropertyChanged("mFreq"); myCheckBoxEvent.Invoke(this, new PropertyChangedEventArgs("egal")); } } }
         //[Range(0.001, Double.PositiveInfinity, ErrorMessage = "The field {0} must be greater than {1}.")]
         [Range(0.001, Double.PositiveInfinity, ErrorMessage = "Amplitude must from {1}")]
         [Required(ErrorMessage = "Amplitude is required")]
@@ -101,7 +101,7 @@ namespace WpfApp2
 
         protected void OnMyCheckboxChange(object sender, EventArgs e)
         {
-            if (mChkBoxSynFreq) 
+            if (mChkBoxSynFreq)
                 mMaxOffsetFreq = mFreq;
             else
                 mMaxOffsetFreq = _defaultMaxOffsetFreq;
@@ -109,7 +109,7 @@ namespace WpfApp2
         }
 
         public ObservableCollection<GenerateSignalData> _multipleShotList;
-        public ObservableCollection<GenerateSignalData> mMultipleShotList { get { return _multipleShotList; } set { if (_multipleShotList != value) { _multipleShotList = value; OnPropertyChanged("_multipleShotList"); } }}
+        public ObservableCollection<GenerateSignalData> mMultipleShotList { get { return _multipleShotList; } set { if (_multipleShotList != value) { _multipleShotList = value; OnPropertyChanged("_multipleShotList"); } } }
         private List<string> _mytargetOnDB;
         public List<string> mMyTargetOnDB { get { return _mytargetOnDB; } set { if (_mytargetOnDB != value) { _mytargetOnDB = value; OnPropertyChanged("mMyTargetOnDB"); } } }
 
@@ -148,7 +148,7 @@ namespace WpfApp2
         private void sldFreq_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             //mOffsetFreq = Math.Round((sender as Slider).Value / 1000, 3);
-            mOffsetFreq = Math.Round((sender as Slider).Value,3);
+            mOffsetFreq = Math.Round((sender as Slider).Value, 3);
         }
 
         private void sldAmp_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -199,6 +199,8 @@ namespace WpfApp2
         {
             this.DataContext = this;
 
+            this.myCheckBoxEvent += OnMyCheckboxChange;
+
             mFreq = 0.1;
             mAmpl = 5;
             mRate = 2;
@@ -208,11 +210,11 @@ namespace WpfApp2
             mValidInput = false;
             //sldFreq.DataContext = this;
 
-            this.myCheckBoxEvent += OnMyCheckboxChange;
+            
             _defaultMaxOffsetFreq = 0.2;
             mMaxOffsetFreq = _defaultMaxOffsetFreq;
+            mMaxOffsetFreq = 0.2;
             mTickFrequencyOnSlider = mMaxOffsetFreq / 20;
-            mOffsetAmpl = mOffsetAmptFromInput;
 
 
             mCurrentProfile = new GenerateSignalData(mWave, mFreq, mAmpl, mRate, mDuration);
@@ -226,10 +228,10 @@ namespace WpfApp2
             {
                 _multipleShotList = new ObservableCollection<GenerateSignalData>()
                 {
-                  //new GenerateSignalData(),
-                  //new GenerateSignalData(0, 2, 7, 1, 0, sendToDb: true),
-                  //new GenerateSignalData(WaveForm.Random, targetOnDb: "Inputs_Entschlammung1_Status"),
-                  //new GenerateSignalData(WaveForm.Sawtooth, sendToDb: true, targetOnDb: "Inputs_TestVarReal")
+                    //new GenerateSignalData(),
+                    //new GenerateSignalData(0, 2, 7, 1, 0, sendToDb: true),
+                    //new GenerateSignalData(WaveForm.Random, targetOnDb: "Inputs_Entschlammung1_Status"),
+                    //new GenerateSignalData(WaveForm.Sawtooth, sendToDb: true, targetOnDb: "Inputs_TestVarReal")
                 };
             }
 
@@ -245,7 +247,14 @@ namespace WpfApp2
             else
             {
                 cbbTargetList.ItemsSource = mSettingTab.GetSelectableList();
-                mMyTargetOnDB = mSettingTab.LoadFinalTargetList();
+                try
+                {
+                    mMyTargetOnDB = mSettingTab.LoadFinalTargetList();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
             }
 
             mRate = mSettingTab.mRate;
@@ -281,7 +290,7 @@ namespace WpfApp2
             }
 
             myWpfPlot.plt.Clear();
-            myWpfPlot.plt.PlotScatter(x, y,color:Color.Blue, lineWidth: linewidth, markerSize: marksize, label: text);
+            myWpfPlot.plt.PlotScatter(x, y, color: Color.Blue, lineWidth: linewidth, markerSize: marksize, label: text);
             myWpfPlot.plt.Style(ScottPlot.Style.Light2);
             myWpfPlot.plt.Title("Signal Data", fontName: "Verdana", color: Color.BlueViolet, bold: true);
             myWpfPlot.plt.YLabel("Amplitude", fontSize: 16, color: Color.Green);
@@ -615,7 +624,7 @@ namespace WpfApp2
         }
 
         private Uri _uriImage;
-        public Uri mUriImage { get { return _uriImage; } set { if (_uriImage != value) { _uriImage = value; OnPropertyChanged("mUriImage"); } }}
+        public Uri mUriImage { get { return _uriImage; } set { if (_uriImage != value) { _uriImage = value; OnPropertyChanged("mUriImage"); } } }
 
         private MyDBEntity mCurrentDatabase;
 
@@ -690,7 +699,7 @@ namespace WpfApp2
         }
         private DBViewWindows mMyDBView;
         private GenerateSignalData _selectedRowOnDataGrid;
-        public GenerateSignalData mSelectedRowOnDataGrid { get { return _selectedRowOnDataGrid; } set { if (_selectedRowOnDataGrid != value) { _selectedRowOnDataGrid = value; OnPropertyChanged("mSelectedRowOnDataGrid");}}}
+        public GenerateSignalData mSelectedRowOnDataGrid { get { return _selectedRowOnDataGrid; } set { if (_selectedRowOnDataGrid != value) { _selectedRowOnDataGrid = value; OnPropertyChanged("mSelectedRowOnDataGrid"); } } }
         //Under Testing
         private MySqlConnection conn;
         /// <summary>
