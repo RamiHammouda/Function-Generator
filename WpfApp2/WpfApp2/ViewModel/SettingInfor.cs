@@ -25,7 +25,7 @@ namespace WpfApp2.ViewModel
         public string mPort { get { return _port; } set { if (_port != value) { _port = value; OnPropertyChanged("mPort"); } } }
         [JsonProperty("UserId", Order = 2)]
         public string mUserId { get { return _userId; } set { if (_userId != value) { _userId = value; OnPropertyChanged("mUserId"); } } }
-        [JsonProperty("Passwrord", Order = 3)]
+        [JsonProperty("Password", Order = 3)]
         public string mPassword { get { return _password; } set { if (_password != value) { _password = value; OnPropertyChanged("mPassword"); } } }
         [JsonProperty("DatabaseName", Order = 4)]
         public string mDatabaseName { get { return _databaseName; } set { if (_databaseName != value) { _databaseName = value; OnPropertyChanged("mDatabaseName"); } } }
