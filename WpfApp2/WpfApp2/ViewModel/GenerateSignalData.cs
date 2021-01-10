@@ -41,7 +41,7 @@ namespace WpfApp2.ViewModel
         [JsonProperty("Remark", Order = 7)]
         public string mRemark { get; set; }
         [JsonIgnore]
-        public static string mFilePath => Directory.GetCurrentDirectory() + "\\AppSetting\\SignalProfiles.json";
+        public static string mFilePath => Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\AppSetting") + "\\SignalProfiles.json";
 
         //[JsonProperty("No", Order = 7)]
         private List<long> mNo;
