@@ -294,8 +294,8 @@ namespace WpfApp2
             myWpfPlot.plt.PlotScatter(x, y, color: Color.Blue, lineWidth: linewidth, markerSize: marksize, label: text);
             myWpfPlot.plt.Style(ScottPlot.Style.Light2);
             myWpfPlot.plt.Title("Signal Data", fontName: "Verdana", color: Color.BlueViolet, bold: true);
-            myWpfPlot.plt.YLabel("Amplitude", fontSize: 16, color: Color.Green);
-            myWpfPlot.plt.XLabel("Time(Ticks)", color: Color.Green);
+            myWpfPlot.plt.YLabel("Amplitude", fontSize: 14, color: Color.Green, bold:true);
+            myWpfPlot.plt.XLabel("Time(Ticks)", color: Color.Green, bold:true,fontSize:14);
             myWpfPlot.plt.Style(dataBg: Color.LightYellow);
             myWpfPlot.plt.PlotAnnotation(text, -10, 10, fontSize: 9);
 
@@ -328,7 +328,7 @@ namespace WpfApp2
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnSimulate_Click(object sender, RoutedEventArgs e)
+        private async void btnSimulate_Click(object sender, RoutedEventArgs e)
         {
             if (mSelectedTargetOnDB == null)
             {
@@ -346,31 +346,137 @@ namespace WpfApp2
             _singleShotPressed = !_singleShotPressed;
             if (_singleShotPressed)
             {
-                try
-                {
                     if (!mSettingTab.CheckConnection())
                     {
                         mErrorMessage = "Connection Test is fail";
                         return;
                     }
-                    mCurrentDatabase = mSettingTab.getCheckedDatabase();
-                    mCurrentProfile.setMyDB(mCurrentDatabase);
+                    ChangeColorHelper(sender);
+
+                    //mCurrentDatabase = mSettingTab.getCheckedDatabase();
+                    //mCurrentProfile.setMyDB(mCurrentDatabase);
                     mCurrentProfile.setTargetOnDB(mSelectedTargetOnDB);
 
-                    mRunningProfile = mCurrentProfile;
-                    ChangeColorHelper(sender);
-                    mRunningProfile.StartWriteToDB();
-                }
-                catch (Exception ex)
-                {
-                    mErrorMessage = ex.Message;
-                }
+                    //mRunningProfile = mCurrentProfile;
+
+                    //mRunningProfile.StartWriteToDB();
+
+                    //Move this to DBClass
+                    myDataDict = null;
+                    myDataDict = new Dictionary<string, string>();
+
+                    //1- Get Dictionary Data from DB Class
+                    //Move/merge this to DBClass
+                    //Get Real data:
+                    //Frame
+                    if (conn != null)
+                        conn.Close();
+
+                    string connStr = String.Format("server={0};user id={1}; password={2}; database={3}; pooling=true",
+                       mSettingTab.mServer, mSettingTab.mUserId, mSettingTab.mPassword, mSettingTab.mDatabaseName);
+                    string cmdStr = $"select * from plc_data.plc_data order by id desc limit 1"; //Fix, do not change this (*) , no ID will not get the lastest record
+
+                    conn = new MySqlConnection(connStr);
+
+                    string result = "";
+                    using (MySqlCommand cmd = new MySqlCommand(cmdStr, conn))
+                    {
+                        try
+                        {
+                            conn.Open();
+                            MySqlDataReader reader = cmd.ExecuteReader();
+
+                            while (reader.Read())
+                            {
+                                foreach (string col in mMyTargetOnDB)
+                                {
+                                    result += $"{reader[col]} :";
+                                    myDataDict.Add(col, reader[col].ToString());
+                                }
+
+                            }
+
+                            Console.WriteLine(result);
+
+                            conn.Close();
+                        }
+                        catch (MySqlException ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+
+                    }
+
+                    Console.WriteLine("Finished Getting");
+
+
+                    //To check result
+                    Console.WriteLine("Before:::::::::::::::");
+                    foreach (KeyValuePair<string, string> kvp in myDataDict)
+                    {
+                        Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
+                    }
+
+                    Console.WriteLine("Starting");
+
+                    //2- Start create data and insert to Dictionary then send to DB this dictionnay
+
+                    long now;
+
+                    while (!_Stop)
+                    {
+                        now = DateTime.Now.Ticks;
+
+                        myDataDict[mCurrentProfile.getTargetOnDB()]=Convert.ToString(mCurrentProfile.getWaveValue(now));
+                        Thread.Sleep((int)(1000 / mRate));
+
+                        Console.WriteLine("After:::::::::::::::");
+                        foreach (KeyValuePair<string, string> kvp in myDataDict)
+                        {
+                            Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
+                        }
+
+
+                        //3 - DB Class send dictionary to DB
+                        //Move to DB Class
+                        //Inset To DB
+                        //Frame
+                        if (conn != null)
+                            conn.Close();
+
+                        string TimeStamp = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+                        string commandstr = $"INSERT INTO plc_data.plc_data (TimeStamp, {string.Join(",", myDataDict.Keys.ToArray())}) VALUES ('{TimeStamp}',{string.Join(",", myDataDict.Values.ToArray())})";
+                        conn = new MySqlConnection(connStr);
+
+                        await Task.Run(() =>
+                        {
+                            using (MySqlCommand cmd = new MySqlCommand(commandstr, conn))
+                            {
+                                try
+                                {
+                                    conn.Open();
+
+                                    cmd.ExecuteNonQuery();
+                                    conn.Close();
+
+                                }
+                                catch (MySqlException ex)
+                                {
+                                    MessageBox.Show(ex.Message);
+                                }
+
+                            }
+                        });
+
+                    }
+
+                    _Stop = false;
+                    Console.WriteLine("Finish Writing");
 
             }
             else
             {
-                mRunningProfile.Stop();
-                mRunningProfile = null;
+                _Stop = true;
                 RevertColorHelper(sender);
             }
 
@@ -453,7 +559,7 @@ namespace WpfApp2
 
                 string connStr = String.Format("server={0};user id={1}; password={2}; database={3}; pooling=true",
                    mSettingTab.mServer, mSettingTab.mUserId, mSettingTab.mPassword, mSettingTab.mDatabaseName);
-                string cmdStr = $"select * from plc_data.plc_data order by id limit 1"; //Fix, do not change this (*) , no ID will not get the lastest record
+                string cmdStr = $"select * from plc_data.plc_data order by id desc limit 1"; //Fix, do not change this (*) , no ID will not get the lastest record
 
                 conn = new MySqlConnection(connStr);
 
