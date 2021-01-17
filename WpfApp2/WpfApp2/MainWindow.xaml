@@ -72,7 +72,7 @@
                 </Style>
             </TabControl.Resources>
 
-            <TabItem  Header="Single Shot" Height="20" Width="150">
+            <TabItem  Header="Single Profile" Height="20" Width="150">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="20"/>
@@ -106,7 +106,7 @@
                         <RadioButton x:Name="rdoRandDigi" GroupName="waveForm" Content="Random Digital" Margin="10,5,5,5" IsChecked="{Binding mWave, ConverterParameter={x:Static myenum:WaveForm.RandomDigital}, Converter={StaticResource ComparisonConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <TextBlock Text="Target On Database" FontWeight="Bold" Margin="10,5,5,5"/>
-                        <ComboBox x:Name="cbbTargetOnDB" x:FieldModifier="public" ToolTip="Choose one target to insert to multipleshot" ItemsSource="{Binding mMyTargetOnDB, UpdateSourceTrigger=PropertyChanged}" Margin = "10,0,5,0" MinWidth="120"
+                        <ComboBox x:Name="cbbTargetOnDB" x:FieldModifier="public" ToolTip="Choose one target column from database to insert signal values" ItemsSource="{Binding mMyTargetOnDB, UpdateSourceTrigger=PropertyChanged}" Margin = "10,0,5,0" MinWidth="120"
                                   SelectedItem ="{Binding mSelectedTargetOnDB, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
                     </StackPanel>
@@ -188,7 +188,7 @@
                         <DockPanel>
                             <Label Content="Offset (V)" VerticalAlignment="Bottom" Margin="0,10,0,0" HorizontalAlignment="Left"/>
                             <TextBox Text ="{Binding mOffsetAmpl,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, Delay=1000}" Margin="0,0,5,0"
-                                     HorizontalAlignment="Right" Width="110" Height="20" ToolTip="Input offset for Amplitude" />
+                                     HorizontalAlignment="Right" Width="110" Height="20" ToolTip="Input/Output offset for Amplitude" />
                         </DockPanel>
                         <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                             <Slider x:Name="sldAmp" ToolTip="adjust interval for changing value of amplitude" Minimum="0" Maximum="1000" TickFrequency="100"
@@ -203,7 +203,7 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Multiple Shot" Height="20" Width="150">
+            <TabItem Header="Multiple Profiles" Height="20" Width="150">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="35"/>
@@ -434,8 +434,6 @@
                     <TextBox x:Name="txtSampleRate" Text="{Binding mRate, Delay=500, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="4" Grid.Row="3" TextWrapping="Wrap" 
                              Margin="15,5,15,5"  IsEnabled="{Binding mElementEnable}" Visibility="{Binding mConnectionTest, Converter={StaticResource MyBoolToVis}}" Padding="2" Grid.ColumnSpan="2"/>
 
-
-
                     <Button x:Name="btnEnableEdit" ToolTip="Enable/Disable the connection setting to database" Content="Enable Edit" Grid.Column="4" Grid.Row="9"
                             Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170"
                             HorizontalAlignment="Center"  Margin="12,4,12,4" BorderThickness="0.5" Click="btnEnableEdit_Click"/>
@@ -444,7 +442,7 @@
                             Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170"
                             HorizontalAlignment="Center" Margin="12,4,12,4" BorderThickness="0.5" Click="btnCancel_Click"/>
 
-                    <Button x:Name="btnSave" ToolTip="Save setting for next time" Content="Save Setting" Grid.Column="4" Grid.Row="12" IsEnabled="{Binding mElementEnable}" 
+                    <Button x:Name="btnSave" ToolTip="Save Setting and take the change immediately" Content="Save Setting" Grid.Column="4" Grid.Row="12" IsEnabled="{Binding mElementEnable}" 
                             Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170" Height="22" Background="#b2fcff"
                             HorizontalAlignment="Center"  Margin="12,0,12,0" BorderThickness="0.5" Click="btnSave_Click"/>
 
