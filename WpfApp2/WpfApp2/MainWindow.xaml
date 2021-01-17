@@ -72,7 +72,7 @@
                 </Style>
             </TabControl.Resources>
 
-            <TabItem  Header="Single Shot" Height="20" Width="150">
+            <TabItem  Header="Single Profile" Height="20" Width="150">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="20"/>
@@ -203,7 +203,7 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Multiple Shot" Height="20" Width="150">
+            <TabItem Header="Multiple Profiles" Height="20" Width="150">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="35"/>
