@@ -34,7 +34,7 @@ namespace WpfApp2.MultipleShot
         /// <DeleteItemTest>
         /// A new application window will be created. The "Delete Item" Button will be clicked and then it will be verified if the item was deleted.
         /// </DeleteItemTest>
-        //Under testing
+        //Disabled
         //[Test]
         public static void CanDeleteAnItem_DeleteItemClicked_DeletesItem()
         {
@@ -48,7 +48,7 @@ namespace WpfApp2.MultipleShot
             Assert.AreEqual(true, testingWindow.ItemDeleted);
         }
 
-        //Under Testing
+        //Disabled
         //[Test]
         public static void NoItemsAdded_SaveToFileClicked_ErrorMessage()
         {
@@ -61,24 +61,24 @@ namespace WpfApp2.MultipleShot
             //Assert
             Assert.AreEqual(true, testingWindow.NotEnouhItems);
         }
-
+        //Disabled
         /// <SaveAllItems>
         /// A new application window will be created. The "Save To File" Button will be clicked and then it will be verified if the items can be saved.
         /// </SaveAllItems>
-        [Test]
-        public static void CanSaveAllItemsTojson_SaveToFileClicked_ItemsSaved()
-        {
-            //Arrange
-            var testingWindow = new MainWindow();
-            object sender = null;
-            RoutedEventArgs e = null;
-            //Act
-            testingWindow.btnMSimulateToJson_Click(sender, e);
-            //Assert
-            Assert.AreEqual(true, testingWindow.ItemsAreSaved);
-        }
+        //[Test]
+        //public static void CanSaveAllItemsTojson_SaveToFileClicked_ItemsSaved()
+        //{
+        //    //Arrange
+        //    var testingWindow = new MainWindow();
+        //    object sender = null;
+        //    RoutedEventArgs e = null;
+        //    //Act
+        //    testingWindow.btnMSimulateToJson_Click(sender, e);
+        //    //Assert
+        //    Assert.AreEqual(true, testingWindow.ItemsAreSaved);
+        //}
 
-        // Under Testing
+        // Disable for improving Startup
         //[Test]
         //public static void CanGetConnectionToDBFailedError_SaveToDBClicked_ErrorMessage()
         //{
@@ -93,7 +93,7 @@ namespace WpfApp2.MultipleShot
         //    Assert.AreEqual(true, testingWindow.ConnectionToDBError);
         //}
 
-        // Under Testing
+        // Disable for improving Startup
         //[Test]
         //public static void CanSaveAllItemsToDB_SaveToDBClicked_ItemsSaved()
         //{

@@ -149,7 +149,7 @@ namespace WpfApp2.ViewModel
             conn.Close();
             mErrorServer = String.Empty;
 
-            mConnectionTest = mElementEnable ? true : false;
+            mConnectionTest = mElementEnable;
             return true;
         }
         /// <summary>
@@ -167,15 +167,7 @@ namespace WpfApp2.ViewModel
         /// <returns></returns>
         public List<ColumnDBSelectableHelper> GetSelectableList()
         {
-            mSelectableTargetList = new List<ColumnDBSelectableHelper>();
-
-            foreach (string column in mCheckedDB.GetColumns())
-            {
-                if ((column.ToLower() == "id") || (column.ToLower() == "timestamp"))
-                    mSelectableTargetList.Add(new ColumnDBSelectableHelper(false, column));
-                else
-                    mSelectableTargetList.Add(new ColumnDBSelectableHelper(true, column));
-            }
+            mSelectableTargetList = mCheckedDB.GetColumns().Select(column => new ColumnDBSelectableHelper(!(column.ToLower() == "id" || column.ToLower() == "timestamp"), column)).ToList();
 
             return mSelectableTargetList;
         }
@@ -211,14 +203,11 @@ namespace WpfApp2.ViewModel
         /// <summary>
         /// This method helps to load target columns on databas from combobox
         /// </summary>
-        /// <returns></returns>
+        /// <returns> a List of columns name as List of string</returns>
         public List<string> LoadFinalTargetListFromComboBox()
         {
-            mFinalTargetList = new List<string>();
-            foreach (ColumnDBSelectableHelper target in mSelectableTargetList)
-            {
-                if (target.mIsSelected) mFinalTargetList.Add(target.mColumnName);
-            }
+            mFinalTargetList = mSelectableTargetList.Where(item => item.mIsSelected).Select(item => item.mColumnName).ToList<string>();
+
             return mFinalTargetList;
         }
         /// <summary>
@@ -260,16 +249,7 @@ namespace WpfApp2.ViewModel
         /// </summary>
         private void ForceChangeToMainWindows()
         {
-            //foreach (Window window in Application.Current.Windows)
-            //{
-            //    if (window.GetType() == typeof(MainWindow))
-            //    {
-            //        (window as MainWindow).lblwelcome.Content = "I changed it from another window";
-            //    }
-            //}
-
             var targetWindow = Application.Current.Windows.Cast<Window>().FirstOrDefault(window => window is MainWindow) as MainWindow;
-            //targetWindow.lblwelcome.Content = "Tesst";
             targetWindow.mMyTargetOnDB = mFinalTargetList;
             targetWindow.mRate = mRate;
         }
@@ -299,9 +279,7 @@ namespace WpfApp2.ViewModel
         /// <param name="alist"></param>
         public void PrintListInfor(List<string> alist)
         {
-            Console.WriteLine(alist.ToString());
-            foreach (string str in alist)
-                Console.WriteLine(str);
+            alist.ForEach(Console.WriteLine);
         }
         /// <summary>
         /// Load setting infor to currrent Setting entity. If file exists, then load from file, if not, then create setting information with default values
