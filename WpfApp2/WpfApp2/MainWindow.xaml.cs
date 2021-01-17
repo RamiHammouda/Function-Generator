@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using System.Data;
 using System.Threading;
+using System.Globalization;
 
 namespace WpfApp2
 {
@@ -431,15 +432,23 @@ namespace WpfApp2
                 }
                 ChangeColorHelper(sender);
 
-                //Move this to DBClass
-                myDataDict = null;
+                mCurrentDatabase = new MyDBEntity(mSettingTab);
+
+                // New Dictionary for new values
                 myDataDict = new Dictionary<string, string>();
+
+                // Get Dictionary From DB Class with all Columnnames and the last line
+                myDataDict = mCurrentDatabase.GetData();
+
+                
 
                 //1- Get Dictionary Data from DB Class
                 //Move/merge this to DBClass
                 //Get Real data:
                 //Frame
-                if (conn != null)
+
+                //Hoa's TestCode:
+                /*if (conn != null)
                     conn.Close();
 
                 string connStr = String.Format("server={0};user id={1}; password={2}; database={3}; pooling=true",
@@ -475,7 +484,7 @@ namespace WpfApp2
                         MessageBox.Show(ex.Message);
                     }
 
-                }
+                }*/
 
                 Console.WriteLine("Finished Getting");
 
@@ -500,10 +509,10 @@ namespace WpfApp2
                     {
                         if (item.checkSendToDB())
                         {
-                            myDataDict[item.getTargetOnDB()] = Convert.ToString(item.getWaveValue(now));
+                            myDataDict[item.getTargetOnDB()] = Convert.ToString(item.getWaveValue(now), CultureInfo.InvariantCulture);
                         }
-
                     }
+
                     Thread.Sleep((int)(1000 / mRate));
 
                     Console.WriteLine("After:::::::::::::::");
@@ -512,21 +521,25 @@ namespace WpfApp2
                         Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
                     }
 
-
                     //3 - DB Class send dictionary to DB
                     //Move to DB Class
                     //Inset To DB
-                    //Frame
-                    if (conn != null)
+                    //Frame#
+                    
+                    // Hoa's TestCode:
+                    /*if (conn != null)
                         conn.Close();
 
                     string TimeStamp = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
                     string commandstr = $"INSERT INTO plc_data.plc_data (TimeStamp, {string.Join(",", myDataDict.Keys.ToArray())}) VALUES ('{TimeStamp}',{string.Join(",", myDataDict.Values.ToArray())})";
-                    conn = new MySqlConnection(connStr);
+                    conn = new MySqlConnection(connStr);*/
 
                     await Task.Run(() =>
                     {
-                        using (MySqlCommand cmd = new MySqlCommand(commandstr, conn))
+                        mCurrentDatabase.InsertRow(myDataDict);
+
+                        // Hoa's TestCode:
+                        /*using (MySqlCommand cmd = new MySqlCommand(commandstr, conn))
                         {
                             try
                             {
@@ -541,10 +554,8 @@ namespace WpfApp2
                                 MessageBox.Show(ex.Message);
                             }
 
-                        }
+                        }*/
                     });
-
-
                 }
 
                 _Stop = false;
@@ -555,6 +566,7 @@ namespace WpfApp2
                 RevertColorHelper(sender);
             }
         }
+
         /// <summary>
         /// Obsolete
         /// </summary>

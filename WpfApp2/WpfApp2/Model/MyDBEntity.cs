@@ -1,6 +1,7 @@
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 
 namespace WpfApp2.Model
@@ -36,7 +37,7 @@ namespace WpfApp2.Model
         /// <summary>
         /// Return TimeStamp in MySQL Format
         /// </summary>
-        public string TimeStamp => DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
+        public string TimeStamp => DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
 
         #endregion
 
@@ -97,23 +98,54 @@ namespace WpfApp2.Model
         /// <param name="queryString">QueryString delivered by function Callin Reader</param>
         public List<string> Reader(string ConnectionString, string queryString)
         {
-            List<string> columns = new List<string>();
+            List<string> row = new List<string>();
 
             using (MySqlConnection cn = new MySqlConnection(ConnectionString))
             {
                 MySqlCommand command = new MySqlCommand(queryString, cn);
                 command.Connection.Open();
 
-                using (MySqlDataReader reader = command.ExecuteReader())
+                int l = queryString.Length;
+
+                // TODO: Attention!: string.Length dependancy!!! maybe i'll find another way
+                if (l < 75)
                 {
-                    while (reader.Read())
+                    //string result = "";
+                    List<string> columns = new List<string>();
+
+                    using (MySqlDataReader reader = command.ExecuteReader())
                     {
-                        columns.Add(reader.GetString(0));
+                        while (reader.Read())
+                        {
+                            for(int col = 0; col < reader.FieldCount; col++)
+                            //foreach(string col in columns)
+                            {
+                                if(reader[col].ToString() == string.Empty || reader[col].ToString() == "False")
+                                {
+                                    row.Add("0");
+                                }
+                                else
+                                {
+                                    //result += $"{reader[col]} :";
+                                    row.Add(reader[col].ToString());
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            row.Add(reader.GetString(0));
+                        }
                     }
                 }
                 CanReadInDB = true;
             }
-            return columns;
+            return row;
         }
 
         /// <summary>
@@ -124,7 +156,7 @@ namespace WpfApp2.Model
         {
             List<string> columns = new List<string>();
 
-            string queryString = $"SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS`  WHERE `TABLE_SCHEMA`= '{database}' AND `TABLE_NAME`= '{tableName}' ORDER BY table_name, ordinal_position; ";
+            string queryString = $"SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS`  WHERE `TABLE_SCHEMA`= '{database}' AND `TABLE_NAME`= '{tableName}' ORDER BY table_name, ordinal_position;";
 
             columns = Reader(ConnectionString, queryString);
 
@@ -135,79 +167,76 @@ namespace WpfApp2.Model
         /// Replacing NULL-Values in any given Dictionary<string, string>. For exsample when reading empty DB's with Null Values.
         /// </summary>
         /// <param name="keyValuePairs">Dictionary<string, string> required!</param>
-        private void Replacer(ref Dictionary<string, string> keyValuePairs)
+        /*private void Replacer(ref Dictionary<string, string> keyValuePairs)
         {
             // TODO: Check "NULL" replacing
             Dictionary<string, string>.ValueCollection valueColl = keyValuePairs.Values;
 
-            foreach (var elem in valueColl)
+            foreach (var item in valueColl)
             {
-                if (elem == "NULL" || elem == "null")
+                if (item == null)
                 {
-                    keyValuePairs[elem] = "0";
+                    keyValuePairs[item] = "0";
                 }
             }
-        }
+        }*/
 
         /// <summary>
         /// Get all the Columns from DB
         /// </summary>
-        /// <returns>List<string> object with all column-names in the DB.</returns>
+        /// <returns>List<string> Object with all column-names in the DB.</returns>
         public Dictionary<string, string> GetData()
         {
-            List<string> columns = new List<string>();
-            List<string> newData = new List<string>();
-            Dictionary<string, string> completeData = new Dictionary<string, string>();
-
+            // Query Strings:
             string queryString = $"SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS`  WHERE `TABLE_SCHEMA`= '{database}' AND `TABLE_NAME`= '{tableName}' ORDER BY table_name, ordinal_position;";
             string valueString = $"SELECT * FROM {database}.{tableName} ORDER BY id DESC LIMIT 1;";
 
+            // List Column and last Row
+            List<string> columns = new List<string>();
             columns = Reader(ConnectionString, queryString);
-            newData = Reader(ConnectionString, valueString);
-            
-            //Adding Data to the dictionary
-            foreach (var elem in columns)
+            List<string> oldData = new List<string>();
+            oldData = Reader(ConnectionString, valueString);
+
+            // Removing ID from lists
+            /*columns.RemoveAt(0);
+            oldData.RemoveAt(0);*/
+            columns.RemoveAt(0);
+            oldData.RemoveAt(0);
+
+            // Dictionary to merge Lists
+            Dictionary<string, string> newData = new Dictionary<string, string>();
+
+            // Merging Data from columns-List and newData-List into the dictionary
+            foreach(string item in columns)
             {
-                foreach (var item in newData)
+                foreach(string elem in oldData)
                 {
-                    completeData.Add(elem, item);
+                    newData[item] = elem;
                 }
             }
 
-            // Replace Null-Values
-            Replacer(ref completeData);
-
-            return completeData;
+            // Returns the prepared dictionary
+            return newData;
         }
 
         // Add Whole Row:
-
         /// <summary>
-        /// Adding the new data from given Dictionary<string, string> .
+        /// Adding the new data from given Dictionary<string, string>.
         /// </summary>
         /// <param name="newData">New Data as Dictionary<string, string></param>
         public void InsertRow(Dictionary<string, string> newData)
         {
-            // Cut's out ID and TimeStamp columns
-            newData.Remove("Id");
-            newData.Remove("id");
-            newData.Remove("ID");
-            newData.Remove("iD");
-            newData.Remove("Timestamp");
-            newData.Remove("timeStamp");
-            newData.Remove("TimeStamp");
-            newData.Remove("timestamp");
+            // Set actual TimeStamp
+            newData["TimeStamp"] = "current_timestamp()";
 
             // Fullfill the MySQL String to put Values into correct TargetColumns
-            string insertString = $"INSERT INTO {database}.{tableName} (TimeStamp, {string.Join(",", newData.Keys)}) VALUES ('{TimeStamp}',{string.Join(",", newData.Values)})";
+            string insertString = $"INSERT INTO {database}.{tableName} ({string.Join(", ", newData.Keys)}) VALUES ({string.Join(", ", newData.Values)})";
 
             // Connect to DB and submit the Connectionstring with all the juicy values.
             Connect(ConnectionString, insertString);
         }
 
-
         // Single Input Actions:
-
         /// <summary>
         /// Insert Target Column
         /// </summary>
