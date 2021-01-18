@@ -34,7 +34,7 @@
                 <Trigger Property="IsPressed" Value="False">
                     <Setter Property="Effect">
                         <Setter.Value>
-                            <DropShadowEffect BlurRadius="3" ShadowDepth="3" Color="LightGray"/>
+                            <DropShadowEffect BlurRadius="3" ShadowDepth="4" Color="LightGray"/>
                         </Setter.Value>
                     </Setter>
                 </Trigger>
@@ -118,13 +118,13 @@
                     <StackPanel Orientation="Vertical" Grid.Column ="4" Grid.Row="3" VerticalAlignment="Center" Margin="5,9,0,10" >
 
                         <Button x:Name="btnInsertProfile" ToolTip="Insert the working profile to multiple shot" Content="Insert this Profile" Background="#fae0df" 
-                                Margin="5" FontWeight="DemiBold" Height="22" BorderThickness="0.5" Style="{StaticResource myButtonStyle}"
+                                Margin="5" FontWeight="DemiBold" Height="22" BorderThickness="0.0" Style="{StaticResource myButtonStyle}"
                                  Click="btnInsertProfile_Click"/>
 
-                        <Button x:Name="btnReset" Content="Reset" ToolTip="Reset to the default setting" Click="btnReset_Click" Margin="5" BorderThickness="0.5" 
+                        <Button x:Name="btnReset" Content="Reset" ToolTip="Reset to the default setting" Click="btnReset_Click" Margin="5" BorderThickness="0.0" 
                                  Height="21" Style="{StaticResource myButtonStyle}"/>
 
-                        <Button x:Name="btnSaveToJson" ToolTip="Save this profile to json-file" Content="Save to File" Click="btnSimulateToJson_Click"  BorderThickness="0.5" 
+                        <Button x:Name="btnSaveToJson" ToolTip="Save this profile to json-file" Content="Save to File" Click="btnSimulateToJson_Click"  BorderThickness="0.0" 
                                 Margin="5" FontWeight="DemiBold" Height="22" Style="{StaticResource myButtonStyle}" >
                             <!--<Button.Resources>
                                 <Style TargetType="{x:Type Border}">
@@ -135,7 +135,7 @@
                     </StackPanel>
                     <DockPanel VerticalAlignment="Center" Grid.Column="4" Grid.Row="4" Margin="5,24,0,25">
                         <Button x:Name="btnSimulate" ToolTip="Save the profile to the database" Click="btnSimulate_Click" Content="Send to DB" Margin="5" 
-                                FontWeight="SemiBold" Height="22" Style="{StaticResource myButtonStyle}" BorderThickness="0.5" 
+                                FontWeight="SemiBold" Height="22" Style="{StaticResource myButtonStyle}" BorderThickness="0.0" 
                                 Background="#b2fcff">
                         </Button>
                     </DockPanel>
@@ -228,13 +228,13 @@
                     <StackPanel Orientation="Vertical" Grid.Column ="4" Grid.Row="2" VerticalAlignment="Bottom" Height="99" >
 
                         <Button x:Name="btnViewDatabase" ToolTip="View the current profiles on database" Content="View Database"  Margin="0,0,0,10" Click="btnViewDatabase_Click" Background="#fae0df"
-                                BorderThickness="0.5" Height="22" FontWeight="Bold" VerticalAlignment="Top" Style="{StaticResource myButtonStyle}" />
+                                BorderThickness="0" Height="22" FontWeight="Bold" VerticalAlignment="Top" Style="{StaticResource myButtonStyle}" />
 
                         <Button x:Name="btnMSimuToJson" ToolTip="Save profiles to json file" Content="Save Profiles" Click="btnSaveProfilesToJson_Click" Margin="0,0,0,10" 
-                                BorderThickness="0.5" Height="22" FontWeight="Bold" Style="{StaticResource myButtonStyle}"/>
+                                BorderThickness="0" Height="22" FontWeight="Bold" Style="{StaticResource myButtonStyle}"/>
 
                         <Button x:Name="btnMSimuToDB" ToolTip="Save all profiles to database" Content="Send all to DB"  Margin="0,0,0,10" FontWeight="Bold" Height="22" Style="{StaticResource myButtonStyle}" 
-                                Click="btnMSimuToDB_Click" Background="#b2fcff" BorderThickness="0.5"  >
+                                Click="btnMSimuToDB_Click" Background="#b2fcff" BorderThickness="0"  >
                             <!--<Button.Resources>
                                 <Style TargetType="{x:Type Border}">
                                     <Setter Property="CornerRadius" Value="2"/>
@@ -384,7 +384,7 @@
                         </Image.Source>
                     </Image>
                     <Button x:Name="btnTestConn" ToolTip="Test the connection of inserted setting with database" Content="Test Connection" Grid.Column="3" Grid.Row="6" IsEnabled="{Binding mElementEnable}" Background="#fae0df"
-                            Style="{StaticResource myButtonStyle}" FontWeight="SemiBold"  Margin="0,4,5,4" BorderThickness="0.5" Click="btnTestConn_Click" />
+                            Style="{StaticResource myButtonStyle}" FontWeight="SemiBold"  Margin="0,4,5,4" BorderThickness="0" Click="btnTestConn_Click" />
 
                     <TextBlock Text ="{Binding mErrorServer, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" Grid.Row="7" 
                            Foreground="Red" FontStyle="Italic" Grid.ColumnSpan="5" TextWrapping="Wrap" HorizontalAlignment="Center" 
@@ -436,15 +436,15 @@
 
                     <Button x:Name="btnEnableEdit" ToolTip="Enable/Disable the connection setting to database" Content="Enable Edit" Grid.Column="4" Grid.Row="9"
                             Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170"
-                            HorizontalAlignment="Center"  Margin="12,4,12,4" BorderThickness="0.5" Click="btnEnableEdit_Click"/>
+                            HorizontalAlignment="Center"  Margin="12,4,12,4" BorderThickness="0" Click="btnEnableEdit_Click"/>
 
                     <Button x:Name="btnCancel" Content="Cancel" Grid.Column="4" Grid.Row="10" IsEnabled="{Binding mElementEnable}" 
                             Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170"
-                            HorizontalAlignment="Center" Margin="12,4,12,4" BorderThickness="0.5" Click="btnCancel_Click"/>
+                            HorizontalAlignment="Center" Margin="12,4,12,4" BorderThickness="0" Click="btnCancel_Click"/>
 
                     <Button x:Name="btnSave" ToolTip="Save Setting and take the change immediately" Content="Save Setting" Grid.Column="4" Grid.Row="12" IsEnabled="{Binding mElementEnable}" 
                             Style="{StaticResource myButtonStyle}" FontWeight="SemiBold" Width="170" Height="22" Background="#b2fcff"
-                            HorizontalAlignment="Center"  Margin="12,0,12,0" BorderThickness="0.5" Click="btnSave_Click"/>
+                            HorizontalAlignment="Center"  Margin="12,0,12,0" BorderThickness="0" Click="btnSave_Click"/>
 
                 </Grid>
             </TabItem>
