@@ -211,7 +211,7 @@ namespace WpfApp2
             mValidInput = false;
             //sldFreq.DataContext = this;
 
-            
+
             _defaultMaxOffsetFreq = 0.2;
             mMaxOffsetFreq = _defaultMaxOffsetFreq;
             mMaxOffsetFreq = 0.2;
@@ -294,8 +294,8 @@ namespace WpfApp2
             myWpfPlot.plt.PlotScatter(x, y, color: Color.Blue, lineWidth: linewidth, markerSize: marksize, label: text);
             myWpfPlot.plt.Style(ScottPlot.Style.Light2);
             myWpfPlot.plt.Title("Signal Data", fontName: "Verdana", color: Color.BlueViolet, bold: true);
-            myWpfPlot.plt.YLabel("Amplitude", fontSize: 14, color: Color.Green, bold:true);
-            myWpfPlot.plt.XLabel("Time(Ticks)", color: Color.Green, bold:true,fontSize:14);
+            myWpfPlot.plt.YLabel("Amplitude", fontSize: 14, color: Color.Green, bold: true);
+            myWpfPlot.plt.XLabel("Time(Ticks)", color: Color.Green, bold: true, fontSize: 14);
             myWpfPlot.plt.Style(dataBg: Color.LightYellow);
             myWpfPlot.plt.PlotAnnotation(text, -10, 10, fontSize: 9);
 
@@ -346,132 +346,145 @@ namespace WpfApp2
             _singleShotPressed = !_singleShotPressed;
             if (_singleShotPressed)
             {
-                    if (!mSettingTab.CheckConnection())
+                if (!mSettingTab.CheckConnection())
+                {
+                    mErrorMessage = "Connection Test is fail";
+                    return;
+                }
+                ChangeColorHelper(sender);
+
+                //mCurrentDatabase = mSettingTab.getCheckedDatabase();
+                //mCurrentProfile.setMyDB(mCurrentDatabase);
+                mCurrentProfile.setTargetOnDB(mSelectedTargetOnDB);
+
+                //mRunningProfile = mCurrentProfile;
+
+                //mRunningProfile.StartWriteToDB();
+
+                //Move this to DBClass
+                /*myDataDict = null;
+                myDataDict = new Dictionary<string, string>();*/
+
+                //1- Get Dictionary Data from DB Class
+                //Move/merge this to DBClass
+                //Get Real data:
+                //Frame
+                /*if (conn != null)
+                    conn.Close();
+
+                string connStr = String.Format("server={0};user id={1}; password={2}; database={3}; pooling=true",
+                   mSettingTab.mServer, mSettingTab.mUserId, mSettingTab.mPassword, mSettingTab.mDatabaseName);
+                string cmdStr = $"select * from plc_data.plc_data order by id desc limit 1"; //Fix, do not change this (*) , no ID will not get the lastest record
+
+                conn = new MySqlConnection(connStr);
+
+                string result = "";
+                using (MySqlCommand cmd = new MySqlCommand(cmdStr, conn))
+                {
+                    try
                     {
-                        mErrorMessage = "Connection Test is fail";
-                        return;
-                    }
-                    ChangeColorHelper(sender);
+                        conn.Open();
+                        MySqlDataReader reader = cmd.ExecuteReader();
 
-                    //mCurrentDatabase = mSettingTab.getCheckedDatabase();
-                    //mCurrentProfile.setMyDB(mCurrentDatabase);
-                    mCurrentProfile.setTargetOnDB(mSelectedTargetOnDB);
-
-                    //mRunningProfile = mCurrentProfile;
-
-                    //mRunningProfile.StartWriteToDB();
-
-                    //Move this to DBClass
-                    myDataDict = null;
-                    myDataDict = new Dictionary<string, string>();
-
-                    //1- Get Dictionary Data from DB Class
-                    //Move/merge this to DBClass
-                    //Get Real data:
-                    //Frame
-                    if (conn != null)
-                        conn.Close();
-
-                    string connStr = String.Format("server={0};user id={1}; password={2}; database={3}; pooling=true",
-                       mSettingTab.mServer, mSettingTab.mUserId, mSettingTab.mPassword, mSettingTab.mDatabaseName);
-                    string cmdStr = $"select * from plc_data.plc_data order by id desc limit 1"; //Fix, do not change this (*) , no ID will not get the lastest record
-
-                    conn = new MySqlConnection(connStr);
-
-                    string result = "";
-                    using (MySqlCommand cmd = new MySqlCommand(cmdStr, conn))
-                    {
-                        try
+                        while (reader.Read())
                         {
-                            conn.Open();
-                            MySqlDataReader reader = cmd.ExecuteReader();
-
-                            while (reader.Read())
+                            foreach (string col in mMyTargetOnDB)
                             {
-                                foreach (string col in mMyTargetOnDB)
-                                {
-                                    result += $"{reader[col]} :";
-                                    myDataDict.Add(col, reader[col].ToString());
-                                }
-
+                                result += $"{reader[col]} :";
+                                myDataDict.Add(col, reader[col].ToString());
                             }
 
-                            Console.WriteLine(result);
-
-                            conn.Close();
-                        }
-                        catch (MySqlException ex)
-                        {
-                            MessageBox.Show(ex.Message);
                         }
 
+                        Console.WriteLine(result);
+
+                        conn.Close();
+                    }
+                    catch (MySqlException ex)
+                    {
+                        MessageBox.Show(ex.Message);
                     }
 
-                    Console.WriteLine("Finished Getting");
+                }*/
+
+                //-----------------------------------
+                mCurrentDatabase = new MyDBEntity(mSettingTab);
+
+                // New Dictionary for new values
+                myDataDict = new Dictionary<string, string>();
+
+                // Get Dictionary From DB Class with all Columnnames and the last line
+                myDataDict = mCurrentDatabase.GetData();
 
 
-                    //To check result
-                    Console.WriteLine("Before:::::::::::::::");
+                Console.WriteLine("Finished Getting");
+
+
+                //To check result
+                Console.WriteLine("Before:::::::::::::::");
+                foreach (KeyValuePair<string, string> kvp in myDataDict)
+                {
+                    Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
+                }
+
+                Console.WriteLine("Starting");
+
+                //2- Start create data and insert to Dictionary then send to DB this dictionnay
+
+                long now;
+
+                while (!_Stop)
+                {
+                    now = DateTime.Now.Ticks;
+
+                    myDataDict[mCurrentProfile.getTargetOnDB()] = Convert.ToString(mCurrentProfile.getWaveValue(now), CultureInfo.InvariantCulture);
+                    Thread.Sleep((int)(1000 / mRate));
+
+                    Console.WriteLine("After:::::::::::::::");
                     foreach (KeyValuePair<string, string> kvp in myDataDict)
                     {
                         Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
                     }
 
-                    Console.WriteLine("Starting");
 
-                    //2- Start create data and insert to Dictionary then send to DB this dictionnay
+                    //3 - DB Class send dictionary to DB
+                    //Move to DB Class
+                    //Inset To DB
+                    //Frame
+                    /*if (conn != null)
+                        conn.Close();
 
-                    long now;
+                    string TimeStamp = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+                    string commandstr = $"INSERT INTO plc_data.plc_data (TimeStamp, {string.Join(",", myDataDict.Keys.ToArray())}) VALUES ('{TimeStamp}',{string.Join(",", myDataDict.Values.ToArray())})";
+                    conn = new MySqlConnection(connStr);
 
-                    while (!_Stop)
+                    await Task.Run(() =>
                     {
-                        now = DateTime.Now.Ticks;
-
-                        myDataDict[mCurrentProfile.getTargetOnDB()]=Convert.ToString(mCurrentProfile.getWaveValue(now));
-                        Thread.Sleep((int)(1000 / mRate));
-
-                        Console.WriteLine("After:::::::::::::::");
-                        foreach (KeyValuePair<string, string> kvp in myDataDict)
+                        using (MySqlCommand cmd = new MySqlCommand(commandstr, conn))
                         {
-                            Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
-                        }
-
-
-                        //3 - DB Class send dictionary to DB
-                        //Move to DB Class
-                        //Inset To DB
-                        //Frame
-                        if (conn != null)
-                            conn.Close();
-
-                        string TimeStamp = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
-                        string commandstr = $"INSERT INTO plc_data.plc_data (TimeStamp, {string.Join(",", myDataDict.Keys.ToArray())}) VALUES ('{TimeStamp}',{string.Join(",", myDataDict.Values.ToArray())})";
-                        conn = new MySqlConnection(connStr);
-
-                        await Task.Run(() =>
-                        {
-                            using (MySqlCommand cmd = new MySqlCommand(commandstr, conn))
+                            try
                             {
-                                try
-                                {
-                                    conn.Open();
+                                conn.Open();
 
-                                    cmd.ExecuteNonQuery();
-                                    conn.Close();
-
-                                }
-                                catch (MySqlException ex)
-                                {
-                                    MessageBox.Show(ex.Message);
-                                }
+                                cmd.ExecuteNonQuery();
+                                conn.Close();
 
                             }
-                        });
+                            catch (MySqlException ex)
+                            {
+                                MessageBox.Show(ex.Message);
+                            }
 
-                    }
+                        }
+                    });*/
+                    await Task.Run(() =>
+                    {
+                        mCurrentDatabase.InsertRow(myDataDict);
+                    });
+                }
 
-                    _Stop = false;
-                    Console.WriteLine("Finish Writing");
+                _Stop = false;
+                Console.WriteLine("Finish Writing");
 
             }
             else
@@ -538,16 +551,6 @@ namespace WpfApp2
                 }
                 ChangeColorHelper(sender);
 
-                mCurrentDatabase = new MyDBEntity(mSettingTab);
-
-                // New Dictionary for new values
-                myDataDict = new Dictionary<string, string>();
-
-                // Get Dictionary From DB Class with all Columnnames and the last line
-                myDataDict = mCurrentDatabase.GetData();
-
-                
-
                 //1- Get Dictionary Data from DB Class
                 //Move/merge this to DBClass
                 //Get Real data:
@@ -592,6 +595,16 @@ namespace WpfApp2
 
                 }*/
 
+                //-----------------------------
+
+                mCurrentDatabase = new MyDBEntity(mSettingTab);
+
+                // New Dictionary for new values
+                myDataDict = new Dictionary<string, string>();
+
+                // Get Dictionary From DB Class with all Columnnames and the last line
+                myDataDict = mCurrentDatabase.GetData();
+
                 Console.WriteLine("Finished Getting");
 
 
@@ -631,7 +644,7 @@ namespace WpfApp2
                     //Move to DB Class
                     //Inset To DB
                     //Frame#
-                    
+
                     // Hoa's TestCode:
                     /*if (conn != null)
                         conn.Close();
