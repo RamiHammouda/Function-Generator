@@ -308,7 +308,7 @@ namespace WpfApp2
                 Debug.WriteLine(e.Message);
             }
         }
-        private GenerateSignalData mCurrentProfile, mRunningProfile;
+        private GenerateSignalData mCurrentProfile;
 
         /// <summary>
         /// This method will be called whenever any parameter changed, It create profile to simulate and call <see cref="VisualizateData"/> funtion to draw
@@ -353,59 +353,7 @@ namespace WpfApp2
                 }
                 ChangeColorHelper(sender);
 
-                //mCurrentDatabase = mSettingTab.getCheckedDatabase();
-                //mCurrentProfile.setMyDB(mCurrentDatabase);
                 mCurrentProfile.setTargetOnDB(mSelectedTargetOnDB);
-
-                //mRunningProfile = mCurrentProfile;
-
-                //mRunningProfile.StartWriteToDB();
-
-                //Move this to DBClass
-                /*myDataDict = null;
-                myDataDict = new Dictionary<string, string>();*/
-
-                //1- Get Dictionary Data from DB Class
-                //Move/merge this to DBClass
-                //Get Real data:
-                //Frame
-                /*if (conn != null)
-                    conn.Close();
-
-                string connStr = String.Format("server={0};user id={1}; password={2}; database={3}; pooling=true",
-                   mSettingTab.mServer, mSettingTab.mUserId, mSettingTab.mPassword, mSettingTab.mDatabaseName);
-                string cmdStr = $"select * from plc_data.plc_data order by id desc limit 1"; //Fix, do not change this (*) , no ID will not get the lastest record
-
-                conn = new MySqlConnection(connStr);
-
-                string result = "";
-                using (MySqlCommand cmd = new MySqlCommand(cmdStr, conn))
-                {
-                    try
-                    {
-                        conn.Open();
-                        MySqlDataReader reader = cmd.ExecuteReader();
-
-                        while (reader.Read())
-                        {
-                            foreach (string col in mMyTargetOnDB)
-                            {
-                                result += $"{reader[col]} :";
-                                myDataDict.Add(col, reader[col].ToString());
-                            }
-
-                        }
-
-                        Console.WriteLine(result);
-
-                        conn.Close();
-                    }
-                    catch (MySqlException ex)
-                    {
-                        MessageBox.Show(ex.Message);
-                    }
-
-                }*/
 
                 //-----------------------------------
                 mCurrentDatabase = new MyDBEntity(mSettingTab);
@@ -416,10 +364,6 @@ namespace WpfApp2
                 // Get Dictionary From DB Class with all Columnnames and the last line
                 myDataDict = mCurrentDatabase.GetData();
 
-
-                Console.WriteLine("Finished Getting");
-
-
                 //To check result
                 Console.WriteLine("Before:::::::::::::::");
                 foreach (KeyValuePair<string, string> kvp in myDataDict)
@@ -428,9 +372,7 @@ namespace WpfApp2
                 }
 
                 Console.WriteLine("Starting");
-
                 //2- Start create data and insert to Dictionary then send to DB this dictionnay
-
                 long now;
 
                 while (!_Stop)
@@ -446,37 +388,6 @@ namespace WpfApp2
                         Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
                     }
 
-
-                    //3 - DB Class send dictionary to DB
-                    //Move to DB Class
-                    //Inset To DB
-                    //Frame
-                    /*if (conn != null)
-                        conn.Close();
-
-                    string TimeStamp = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
-                    string commandstr = $"INSERT INTO plc_data.plc_data (TimeStamp, {string.Join(",", myDataDict.Keys.ToArray())}) VALUES ('{TimeStamp}',{string.Join(",", myDataDict.Values.ToArray())})";
-                    conn = new MySqlConnection(connStr);
-
-                    await Task.Run(() =>
-                    {
-                        using (MySqlCommand cmd = new MySqlCommand(commandstr, conn))
-                        {
-                            try
-                            {
-                                conn.Open();
-
-                                cmd.ExecuteNonQuery();
-                                conn.Close();
-
-                            }
-                            catch (MySqlException ex)
-                            {
-                                MessageBox.Show(ex.Message);
-                            }
-
-                        }
-                    });*/
                     await Task.Run(() =>
                     {
                         mCurrentDatabase.InsertRow(myDataDict);
@@ -485,7 +396,6 @@ namespace WpfApp2
 
                 _Stop = false;
                 Console.WriteLine("Finish Writing");
-
             }
             else
             {
@@ -550,53 +460,7 @@ namespace WpfApp2
                     return;
                 }
                 ChangeColorHelper(sender);
-
-                //1- Get Dictionary Data from DB Class
-                //Move/merge this to DBClass
-                //Get Real data:
-                //Frame
-
-                //Hoa's TestCode:
-                /*if (conn != null)
-                    conn.Close();
-
-                string connStr = String.Format("server={0};user id={1}; password={2}; database={3}; pooling=true",
-                   mSettingTab.mServer, mSettingTab.mUserId, mSettingTab.mPassword, mSettingTab.mDatabaseName);
-                string cmdStr = $"select * from plc_data.plc_data order by id desc limit 1"; //Fix, do not change this (*) , no ID will not get the lastest record
-
-                conn = new MySqlConnection(connStr);
-
-                string result = "";
-                using (MySqlCommand cmd = new MySqlCommand(cmdStr, conn))
-                {
-                    try
-                    {
-                        conn.Open();
-                        MySqlDataReader reader = cmd.ExecuteReader();
-
-                        while (reader.Read())
-                        {
-                            foreach (string col in mMyTargetOnDB)
-                            {
-                                result += $"{reader[col]} :";
-                                myDataDict.Add(col, reader[col].ToString());
-                            }
-
-                        }
-
-                        Console.WriteLine(result);
-
-                        conn.Close();
-                    }
-                    catch (MySqlException ex)
-                    {
-                        MessageBox.Show(ex.Message);
-                    }
-
-                }*/
-
                 //-----------------------------
-
                 mCurrentDatabase = new MyDBEntity(mSettingTab);
 
                 // New Dictionary for new values
@@ -604,9 +468,7 @@ namespace WpfApp2
 
                 // Get Dictionary From DB Class with all Columnnames and the last line
                 myDataDict = mCurrentDatabase.GetData();
-
                 Console.WriteLine("Finished Getting");
-
 
                 //To check result
                 Console.WriteLine("Before:::::::::::::::");
@@ -633,50 +495,20 @@ namespace WpfApp2
                     }
 
                     Thread.Sleep((int)(1000 / mRate));
-
+                    //Showing only
                     Console.WriteLine("After:::::::::::::::");
                     foreach (KeyValuePair<string, string> kvp in myDataDict)
                     {
                         Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
                     }
 
-                    //3 - DB Class send dictionary to DB
-                    //Move to DB Class
-                    //Inset To DB
-                    //Frame#
-
-                    // Hoa's TestCode:
-                    /*if (conn != null)
-                        conn.Close();
-
-                    string TimeStamp = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
-                    string commandstr = $"INSERT INTO plc_data.plc_data (TimeStamp, {string.Join(",", myDataDict.Keys.ToArray())}) VALUES ('{TimeStamp}',{string.Join(",", myDataDict.Values.ToArray())})";
-                    conn = new MySqlConnection(connStr);*/
-
                     await Task.Run(() =>
                     {
                         mCurrentDatabase.InsertRow(myDataDict);
-
-                        // Hoa's TestCode:
-                        /*using (MySqlCommand cmd = new MySqlCommand(commandstr, conn))
-                        {
-                            try
-                            {
-                                conn.Open();
-
-                                cmd.ExecuteNonQuery();
-                                conn.Close();
-
-                            }
-                            catch (MySqlException ex)
-                            {
-                                MessageBox.Show(ex.Message);
-                            }
-
-                        }*/
                     });
                 }
 
+                Console.WriteLine("Finished Writing");
                 _Stop = false;
             }
             else
