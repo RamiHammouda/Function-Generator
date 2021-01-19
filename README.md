@@ -76,6 +76,6 @@ Built on **Microsoft .Net Framework** 4.7.2 , **Language C#**
 - [x] Import setting data from JSON file at Starting program
 
 - [x] Provide a reset button to set all values to default
-- [ ] Broadcast signal to the Universe (release soon)
+- [ ] Broadcast signal to the Universe (release soon:) )
 # License
-**MIT** ©***Team 8:*** **Viet Anh Hoang, Khac Hoa Le, Patrick Schmidt, Rami Hammouda.**
+**MIT** © **HTW Berlin - IngenieurInformatik WS20/21** - ***Team 8:*** **Viet Anh Hoang, Khac Hoa Le, Patrick Schmidt, Rami Hammouda.**
