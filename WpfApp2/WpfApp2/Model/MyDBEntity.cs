@@ -52,7 +52,7 @@ namespace WpfApp2.Model
         }
 
         /// <summary>
-        /// Constructor with SettingTab-Object will set up the server and user login data for the ConnectionString
+        /// Constructor with SettingTab-Object will set up the server informations and user login data to build the ConnectionString
         /// </summary>
         /// <param name="setting">SettingTab Object</param>
         public MyDBEntity(ViewModel.SettingInfor setting)
@@ -68,10 +68,10 @@ namespace WpfApp2.Model
 
         #region Methods
         /// <summary>
-        /// Build the Connection supported by ConnectionString and queryString Vars.
+        /// Build the Connection supported by ConnectionString and queryString values.
         /// </summary>
-        /// <param name="ConnectionString">Collection of Informations, including FQDN, User/PW, Portnumber, TargetDatabase</param>
-        /// <param name="queryString"></param>
+        /// <param name="ConnectionString">Collection of Informations, including FQDN, Username, Password, Portnumber, TargetDatabase</param>
+        /// <param name="queryString">QueryString delivered by GetData()</param>
         public void Connect(string ConnectionString, string queryString)
         {
             using (MySqlConnection cn = new MySqlConnection(ConnectionString))
@@ -92,10 +92,10 @@ namespace WpfApp2.Model
         }
 
         /// <summary>
-        /// Reading in the DB
+        /// Reading the DB
         /// </summary>
-        /// <param name="ConnectionString">ConnectionString delivered by ConnectionString Var</param>
-        /// <param name="queryString">QueryString delivered by function Callin Reader</param>
+        /// <param name="ConnectionString">ConnectionString delivered by ConnectionString Property</param>
+        /// <param name="queryString">QueryString delivered by GetData()</param>
         public List<string> Reader(string ConnectionString, string queryString)
         {
             List<string> row = new List<string>();
@@ -105,9 +105,6 @@ namespace WpfApp2.Model
                 MySqlCommand command = new MySqlCommand(queryString, cn);
                 command.Connection.Open();
 
-                int l = queryString.Length;
-
-                // TODO: Attention!: string.Length dependancy!!! maybe i'll find another way
                 if (queryString.Contains("DESC LIMIT 1"))
                 {
                     using (MySqlDataReader reader = command.ExecuteReader())
@@ -144,7 +141,7 @@ namespace WpfApp2.Model
         }
 
         /// <summary>
-        /// Get all Coloumn names
+        /// Get all Coloumn-names
         /// </summary>
         /// <returns>String List with the names of Coloumns</returns>
         public List<string> GetColumns()
@@ -159,9 +156,9 @@ namespace WpfApp2.Model
         }
 
         /// <summary>
-        /// Get all the Columns from DB
+        /// Get all the Column-names and the last row, with the highest id
         /// </summary>
-        /// <returns>List<string> Object with all column-names in the DB.</returns>
+        /// <returns>Dictionary-Object with all column-names and the last row values.</returns>
         public Dictionary<string, string> GetData()
         {
             // Query Strings:
@@ -182,23 +179,14 @@ namespace WpfApp2.Model
             Dictionary<string, string> newData = new Dictionary<string, string>();
 
             // Merging Data from columns-List and newData-List into the dictionary
-            /*foreach(string item in columns)
-            {
-                foreach(string elem in oldData)
-                {
-                    newData[item] = elem;
-                }
-            }*/
-
             newData = keys.Zip(values, (k, v) => new { k, v }).ToDictionary(x => x.k, x => x.v);
 
             // Returns the prepared dictionary
             return newData;
         }
 
-        // Add Whole Row:
         /// <summary>
-        /// Adding the new data from given Dictionary<string, string>.
+        /// Adding the new data from given Dictionary<string, string> to the DB.
         /// </summary>
         /// <param name="newData">New Data as Dictionary<string, string></param>
         public void InsertRow(Dictionary<string, string> newData)
@@ -212,6 +200,7 @@ namespace WpfApp2.Model
             // Connect to DB and submit the Connectionstring with all the juicy values.
             Connect(ConnectionString, insertString);
         }
+
 
         // Single Input Actions:
         /// <summary>
