@@ -21,15 +21,15 @@ namespace WpfApp2.DBTesting
         /// This Test will verify if it is possible to start writing in the DB.
         /// </WriteToDBTest>
         //[TestMethod]
-        public void CanStartWriteToDB_ConnectionIsTrue_FinishedWriting() //brauche ein connectionstring and query stgring bs
-        {
-            //Arrange
-            GenerateSignalData SignalClassExemple = new GenerateSignalData();
-            //Act
-            SignalClassExemple.StartWriteToDB();
-            //Assert
-            //Assert.AreEqual(true, SignalClassExemple.writingIsFinished);
-        }
+        //public void CanStartWriteToDB_ConnectionIsTrue_FinishedWriting() //brauche ein connectionstring and query stgring bs
+        //{
+        //    //Arrange
+        //    GenerateSignalData SignalClassExemple = new GenerateSignalData();
+        //    //Act
+        //    SignalClassExemple.StartWriteToDB();
+        //    //Assert
+        //    //Assert.AreEqual(true, SignalClassExemple.writingIsFinished);
+        //}
 
         // Under Testing
         [TestMethod]
