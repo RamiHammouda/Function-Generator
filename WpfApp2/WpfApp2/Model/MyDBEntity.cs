@@ -1,8 +1,8 @@
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Globalization;
-
 
 namespace WpfApp2.Model
 {
@@ -37,7 +37,7 @@ namespace WpfApp2.Model
         /// <summary>
         /// Return TimeStamp in MySQL Format
         /// </summary>
-        public string TimeStamp => DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+        public string TimeStamp => DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
 
         #endregion
 
@@ -108,26 +108,21 @@ namespace WpfApp2.Model
                 int l = queryString.Length;
 
                 // TODO: Attention!: string.Length dependancy!!! maybe i'll find another way
-                if (l < 75)
+                if (queryString.Contains("DESC LIMIT 1"))
                 {
-                    //string result = "";
-                    List<string> columns = new List<string>();
-
                     using (MySqlDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
                             for(int col = 0; col < reader.FieldCount; col++)
-                            //foreach(string col in columns)
                             {
-                                if(reader[col].ToString() == string.Empty || reader[col].ToString() == "False")
+                                if(reader[col].ToString() == string.Empty)
                                 {
                                     row.Add("0");
                                 }
                                 else
                                 {
-                                    //result += $"{reader[col]} :";
-                                    row.Add(reader[col].ToString());
+                                    row.Add(reader[col].ToString().Replace(',', '.'));
                                 }
                             }
                         }
@@ -164,24 +159,6 @@ namespace WpfApp2.Model
         }
 
         /// <summary>
-        /// Replacing NULL-Values in any given Dictionary<string, string>. For exsample when reading empty DB's with Null Values.
-        /// </summary>
-        /// <param name="keyValuePairs">Dictionary<string, string> required!</param>
-        /*private void Replacer(ref Dictionary<string, string> keyValuePairs)
-        {
-            // TODO: Check "NULL" replacing
-            Dictionary<string, string>.ValueCollection valueColl = keyValuePairs.Values;
-
-            foreach (var item in valueColl)
-            {
-                if (item == null)
-                {
-                    keyValuePairs[item] = "0";
-                }
-            }
-        }*/
-
-        /// <summary>
         /// Get all the Columns from DB
         /// </summary>
         /// <returns>List<string> Object with all column-names in the DB.</returns>
@@ -192,28 +169,28 @@ namespace WpfApp2.Model
             string valueString = $"SELECT * FROM {database}.{tableName} ORDER BY id DESC LIMIT 1;";
 
             // List Column and last Row
-            List<string> columns = new List<string>();
-            columns = Reader(ConnectionString, queryString);
-            List<string> oldData = new List<string>();
-            oldData = Reader(ConnectionString, valueString);
+            List<string> keys = new List<string>();
+            keys = Reader(ConnectionString, queryString);
+            List<string> values = new List<string>();
+            values = Reader(ConnectionString, valueString);
 
             // Removing ID from lists
-            /*columns.RemoveAt(0);
-            oldData.RemoveAt(0);*/
-            columns.RemoveAt(0);
-            oldData.RemoveAt(0);
+            keys.RemoveAt(0);
+            values.RemoveAt(0);
 
             // Dictionary to merge Lists
             Dictionary<string, string> newData = new Dictionary<string, string>();
 
             // Merging Data from columns-List and newData-List into the dictionary
-            foreach(string item in columns)
+            /*foreach(string item in columns)
             {
                 foreach(string elem in oldData)
                 {
                     newData[item] = elem;
                 }
-            }
+            }*/
+
+            newData = keys.Zip(values, (k, v) => new { k, v }).ToDictionary(x => x.k, x => x.v);
 
             // Returns the prepared dictionary
             return newData;
