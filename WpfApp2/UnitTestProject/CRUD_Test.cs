@@ -1,10 +1,10 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading;
 using System.Windows;
 using System.IO;
 using WpfApp2;
@@ -12,81 +12,84 @@ using WpfApp2.Model;
 
 namespace WpfApp2.CRUDTesting
 {
-    [TestFixture]
-    [Apartment(ApartmentState.STA)]
-    class CRUD_Test
+    [TestClass]
+    public class CRUD_Test
     {
         //TestName_Scenario_ExpectedBehavior
         /// <ConnectionTest>
         /// A new class will be created. This test will verify if the connection is possible.
         /// </ConnectionTest>
-        //[Test]
-        public static void CanConnect_Connected_ConnectionBuilt() //brauche ein connectionstring and query stgring bs
+        [TestMethod]
+        public void CanConnect_Connected_ConnectionBuilt() //brauche ein connectionstring and query stgring bs
         {
             //Arrange
             MyDBEntity DBClassExemple = new MyDBEntity();
             //Act
-            string connectionString = "a";
-            string queryString = "b";
+            string server = "fgdb-f2-htw.selfhost.co";
+            string dataBase = "plc_data";
+            string username = "test username";
+            string password = "test password";
+            string connectionString = "SERVER=" + server + "; PORT =" + 3306 + "; DATABASE=" + dataBase + ";" + "UID=" + username + ";" + "PASSWORD=" + password + ";";
+            string queryString = $"SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS`  WHERE `TABLE_SCHEMA`= '{dataBase}' AND `TABLE_NAME`= '{DBClassExemple.tableName}' ORDER BY table_name, ordinal_position;";
             DBClassExemple.Connect(connectionString, queryString);
             //Assert
-            Assert.AreEqual(true, DBClassExemple.CanConnectToDB);
+            Assert.AreEqual(true, DBClassExemple.canConnectToDB);
         }
 
         //TestName_Scenario_ExpectedBehavior
         /// <ReadingTest>
         /// A new class will be created. This test will verify if the user can read from the DB.
         /// </ReadingTest>
-        //[Test]
-        public static void CanRead_ReaderIsTrue_ReadingInTheDB() //brauche ein connectionstring and query stgring bs
+        //[TestMethod]
+        public void CanRead_ReaderIsTrue_ReadingInTheDB() //brauche ein connectionstring and query stgring bs
         {
             //Arrange
             MyDBEntity DBClassExemple = new MyDBEntity();
             //Act
-            string connectionString = "a";
-            string queryString = "b";
+            string connectionString = "SERVER=" + DBClassExemple.serverIP + "; PORT =" + DBClassExemple.portNumber + "; DATABASE=" + DBClassExemple.database + ";" + "UID=" + DBClassExemple.username + ";" + "PASSWORD=" + DBClassExemple.password + ";";
+            string queryString = $"SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS`  WHERE `TABLE_SCHEMA`= '{DBClassExemple.database}' AND `TABLE_NAME`= '{DBClassExemple.tableName}' ORDER BY table_name, ordinal_position;";
             DBClassExemple.Reader(connectionString, queryString);
             //Assert
-            Assert.AreEqual(true, DBClassExemple.CanReadInDB);
+            Assert.AreEqual(true, DBClassExemple.canReadInDB);
         }
 
         //TestName_Scenario_ExpectedBehavior
         /// <GetColumnsTest>
         /// A new class will be created. This test will verify if get the shown columns.
         /// </GetColumnsTest>
-        //[Test]
-        public static void CanGetColumnsFromDB_ConnectionIsTrue_ColumnsObtained() //brauche ein connectionstring and query stgring bs
+        //[TestMethod]
+        public void CanGetColumnsFromDB_ConnectionIsTrue_ColumnsObtained() //brauche ein connectionstring and query stgring bs
         {
             //Arrange
             MyDBEntity DBClassExemple = new MyDBEntity();
             //Act
-            DBClassExemple.GetColumns();           
+            DBClassExemple.GetColumns();
             //Assert
-            Assert.AreEqual(true, DBClassExemple.CanReadInDB);
+            Assert.AreEqual(true, DBClassExemple.canGetColumnsFromDB);
         }
 
         //TestName_Scenario_ExpectedBehavior
         /// <IntInsertionTest>
         /// A new class will be created. This test will verify if get a new Input of the type int is possible.
         /// </IntInsertionTest>
-        //[Test]
-        public static void CanInsertIntInDB_InsertIsPossibleInput_InsertingInTheDB() //brauche ein connectionstring and query stgring bs
+        [TestMethod]
+        public void CanInsertIntInDB_InsertIsPossibleInput_InsertingInTheDB() //brauche ein connectionstring and query stgring bs
         {
             //Arrange
             MyDBEntity DBClassExemple = new MyDBEntity();
             //Act
             int x = 6;
-            DBClassExemple.Insert(x);           
+            DBClassExemple.Insert(x);
             //Assert
-            Assert.AreEqual(true, DBClassExemple.NewIntIsInserted);
+            Assert.AreEqual(true, DBClassExemple.newIntIsInserted);
         }
 
         //TestName_Scenario_ExpectedBehavior
         /// <DoubleInsertionTest>
         /// A new class will be created. This test will verify if get a new Input of the type double is possible.
         /// </DoubleInsertionTest>
-        //[Test]
-        public static void CanInsertDoubleInDB_DoubleIsPossibleInput_InsertingInTheDB() //brauche ein connectionstring and query stgring bs
+        [TestMethod]
+        public void CanInsertDoubleInDB_DoubleIsPossibleInput_InsertingInTheDB() //brauche ein connectionstring and query stgring bs
         {
             //Arrange
             MyDBEntity DBClassExemple = new MyDBEntity();
@@ -94,31 +97,31 @@ namespace WpfApp2.CRUDTesting
             double x = 6.0;
             DBClassExemple.Insert(x);
             //Assert
-            Assert.AreEqual(true, DBClassExemple.NewDoubleIsInserted);
+            Assert.AreEqual(true, DBClassExemple.newDoubleIsInserted);
         }
 
         //TestName_Scenario_ExpectedBehavior
         /// <LongInsertionTest>
         /// A new class will be created. This test will verify if get a new Input of the type long is possible.
         /// </LongInsertionTest>
-        //[Test]
-        public static void CanInsertLongInDB_LongIsPossibleInput_InsertingInTheDB() //brauche ein connectionstring and query stgring bs
+        [TestMethod]
+        public void CanInsertLongInDB_LongIsPossibleInput_InsertingInTheDB() //brauche ein connectionstring and query stgring bs
         {
             //Arrange
             MyDBEntity DBClassExemple = new MyDBEntity();
             //Act
-            long x = 2^500 ;
+            long x = 2 ^ 500;
             DBClassExemple.Insert(x);
             //Assert
-            Assert.AreEqual(true, DBClassExemple.NewLongIsInserted);
+            Assert.AreEqual(true, DBClassExemple.newLongIsInserted);
         }
 
         //TestName_Scenario_ExpectedBehavior
         /// <uShortInsertionTest>
         /// A new class will be created. This test will verify if get a new Input of the type uShort is possible.
         /// </uShortInsertionTest>
-        //[Test]
-        public static void CanuShortLongInDB_uShortIsPossibleInput_InsertingInTheDB() //brauche ein connectionstring and query stgring bs
+        [TestMethod]
+        public void CanuShortLongInDB_uShortIsPossibleInput_InsertingInTheDB() //brauche ein connectionstring and query stgring bs
         {
             //Arrange
             MyDBEntity DBClassExemple = new MyDBEntity();
@@ -126,15 +129,15 @@ namespace WpfApp2.CRUDTesting
             ushort x = 32765;
             DBClassExemple.Insert(x);
             //Assert
-            Assert.AreEqual(true, DBClassExemple.NewuShortIsInserted);
+            Assert.AreEqual(true, DBClassExemple.newUShortIsInserted);
         }
 
         //TestName_Scenario_ExpectedBehavior
         /// <sByteInsertionTest>
         /// A new class will be created. This test will verify if get a new Input of the type sByte is possible.
         /// </sByteInsertionTest>
-        //[Test]
-        public static void CanInsertsByteInDB_sByteIsPossibleInput_InsertingInTheDB() //brauche ein connectionstring and query stgring bs
+        [TestMethod]
+        public void CanInsertsByteInDB_sByteIsPossibleInput_InsertingInTheDB() //brauche ein connectionstring and query stgring bs
         {
             //Arrange
             MyDBEntity DBClassExemple = new MyDBEntity();
@@ -142,7 +145,7 @@ namespace WpfApp2.CRUDTesting
             sbyte x = 127;
             DBClassExemple.Insert(x);
             //Assert
-            Assert.AreEqual(true, DBClassExemple.NewsByteIsInserted);
+            Assert.AreEqual(true, DBClassExemple.newsByteIsInserted);
         }
     }
 }

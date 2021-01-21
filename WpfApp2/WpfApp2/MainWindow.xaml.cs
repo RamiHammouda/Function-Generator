@@ -44,19 +44,19 @@ namespace WpfApp2
         public bool offsetFreqValueDecreased = false;
         public bool offsetAmpValueIncreased = false;
         public bool offsetAmpValueDecreased = false;
-        public bool ItemAdded = false;
-        public bool ItemDeleted = false;
-        public bool ValidInput = false;
-        public bool CannotInsertEmptyProfile = false;
-        public bool AddedToMultipleShotList = false;
-        public bool NotEnouhItems = false;
-        public bool ItemsAreSaved = false;
-        public bool ConnectionToDBError = false;
-        public bool ItemsAreSavedToDB = false;
-        public bool DataBaseWindowOpened = false;
-        public bool EditIsEnabled = false;
-        public bool ConnectionTested = false;
-        public bool InfosSaved = false;
+        public bool itemAdded = false;
+        public bool itemDeleted = false;
+        public bool validInput = false;
+        public bool cannotInsertEmptyProfile = false;
+        public bool addedToMultipleShotList = false;
+        public bool notEnouhItems = false;
+        public bool itemsAreSaved = false;
+        public bool connectionToDBError = false;
+        public bool itemsAreSavedToDB = false;
+        public bool dataBaseWindowOpened = false;
+        public bool editIsEnabled = false;
+        public bool connectionTested = false;
+        public bool infosSaved = false;
         public int n;
         public bool mValidInput { get; set; }
         #endregion
@@ -529,7 +529,7 @@ namespace WpfApp2
                 return;
             if (mMultipleShotList.Count < 1)
             {
-                NotEnouhItems = true;
+                notEnouhItems = true;
             }
             mErrorMessage = String.Empty;
 
@@ -552,7 +552,7 @@ namespace WpfApp2
             else
                 serializer = new JsonSerializer { TypeNameHandling = TypeNameHandling.Auto };
             using (StreamWriter writer = File.CreateText(filePath)) { serializer.Serialize(writer, sendList); }
-            ItemsAreSaved = true;
+            itemsAreSaved = true;
 
         }
         /// <summary>
@@ -566,7 +566,7 @@ namespace WpfApp2
             try
             {
                 mMultipleShotList.Remove((GenerateSignalData)MultiShot.SelectedItem);
-                ItemDeleted = true;
+                itemDeleted = true;
             }
             catch (Exception ex)
             {
@@ -583,7 +583,7 @@ namespace WpfApp2
         public void MenuItemAdd_Click(object sender, RoutedEventArgs e)
         {
             mMultipleShotList.Add(new GenerateSignalData());
-            ItemAdded = true;
+            itemAdded = true;
         }
 
         private Uri _uriImage;
@@ -598,7 +598,7 @@ namespace WpfApp2
         /// <param name="e"></param>
         public async void btnTestConn_Click(object sender, RoutedEventArgs e)
         {
-            ConnectionTested = true;
+            connectionTested = true;
             bool result = await Task.Run(() => mSettingTab.CheckConnection());
             if (result)
             {
@@ -620,7 +620,7 @@ namespace WpfApp2
             if (!mSettingTab.ReverseEditMode())
                 btnEnableEdit.Content = "Enable Edit";
             else btnEnableEdit.Content = "Disable Edit";
-            EditIsEnabled = true;
+            editIsEnabled = true;
         }
 
         /// <summary>
@@ -641,7 +641,7 @@ namespace WpfApp2
         {
             mSettingTab.PrintInfo();
             mSettingTab.SaveInfoToFile();
-            InfosSaved = true;
+            infosSaved = true;
         }
         /// <summary>
         /// Move current profile with chosen parameter to Datagrid in Multiple Shot Tab (2.Tab)
@@ -653,12 +653,12 @@ namespace WpfApp2
             if (mSelectedTargetOnDB == null)
             {
                 mErrorMessage = "Pls select Target first";
-                CannotInsertEmptyProfile = true;
+                cannotInsertEmptyProfile = true;
                 return;
             }
             mErrorMessage = String.Empty;
             mMultipleShotList.Add(new GenerateSignalData(mWave, mFreq, mAmpl, mRate, mDuration, targetOnDb: mSelectedTargetOnDB));
-            AddedToMultipleShotList = true;
+            addedToMultipleShotList = true;
         }
         private DBViewWindows mMyDBView;
         private GenerateSignalData _selectedRowOnDataGrid;
@@ -716,7 +716,7 @@ namespace WpfApp2
                 }
 
             }
-            DataBaseWindowOpened = true;
+            dataBaseWindowOpened = true;
 
             mSelectedRowOnDataGrid = null;
         }

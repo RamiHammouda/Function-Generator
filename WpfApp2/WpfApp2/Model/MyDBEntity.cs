@@ -12,20 +12,21 @@ namespace WpfApp2.Model
     public class MyDBEntity
     {
         #region Fields
-        private string serverIP;
-        private string portNumber;
-        private string username;
-        private string password;
-        private string database;
-        private string tableName;
+        public string serverIP;
+        public string portNumber;
+        public string username;
+        public string password;
+        public string database;
+        public string tableName;
         private string tar;
-        public bool CanConnectToDB = false;
-        public bool CanReadInDB = false;
-        public bool NewIntIsInserted = false;
-        public bool NewDoubleIsInserted = false;
-        public bool NewuShortIsInserted = false;
-        public bool NewsByteIsInserted = false;
-        public bool NewLongIsInserted = true;
+        public bool canConnectToDB = false;
+        public bool canReadInDB = false;
+        public bool newIntIsInserted = false;
+        public bool newDoubleIsInserted = false;
+        public bool newUShortIsInserted = false;
+        public bool newsByteIsInserted = false;
+        public bool newLongIsInserted = true;
+        public bool canGetColumnsFromDB = false;
         #endregion
 
         #region Properties
@@ -82,12 +83,13 @@ namespace WpfApp2.Model
                 {
                     command.Connection.Open();
                     command.ExecuteNonQuery();
-                    CanConnectToDB = true;
+                    canConnectToDB = true;
                 }
                 catch (MySqlException e)
                 {
                     Console.WriteLine(e.Message);
                 }
+                canConnectToDB = true;
             }
         }
 
@@ -135,7 +137,7 @@ namespace WpfApp2.Model
                         }
                     }
                 }
-                CanReadInDB = true;
+                canReadInDB = true;
             }
             return row;
         }
@@ -151,7 +153,7 @@ namespace WpfApp2.Model
             string queryString = $"SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS`  WHERE `TABLE_SCHEMA`= '{database}' AND `TABLE_NAME`= '{tableName}' ORDER BY table_name, ordinal_position;";
 
             columns = Reader(ConnectionString, queryString);
-
+            canGetColumnsFromDB = true;
             return columns;
         }
 
@@ -221,7 +223,7 @@ namespace WpfApp2.Model
             string queryString = $"INSERT INTO {database}.{tableName}(TimeStamp, {tar}) VALUES ('{TimeStamp}', '{value}')  ";
 
             Connect(ConnectionString, queryString);
-            NewIntIsInserted = true;
+            newIntIsInserted = true;
         }
 
         /// <summary>
@@ -233,7 +235,7 @@ namespace WpfApp2.Model
             string queryString = $"INSERT INTO {database}.{tableName}(TimeStamp, {tar}) VALUES ('{TimeStamp}', '{value}')  ";
 
             Connect(ConnectionString, queryString);
-            NewDoubleIsInserted = true;
+            newDoubleIsInserted = true;
         }
 
         /// <summary>
@@ -245,7 +247,7 @@ namespace WpfApp2.Model
             string queryString = $"INSERT INTO {database}.{tableName}(TimeStamp, {tar}) VALUES ('{TimeStamp}', '{value}')  ";
 
             Connect(ConnectionString, queryString);
-            NewLongIsInserted = true;
+            newLongIsInserted = true;
         }
 
         /// <summary>
@@ -257,7 +259,7 @@ namespace WpfApp2.Model
             string queryString = $"INSERT INTO {database}.{tableName}(TimeStamp, {tar}) VALUES ('{TimeStamp}', '{value}')  ";
 
             Connect(ConnectionString, queryString);
-            NewuShortIsInserted = true;
+            newUShortIsInserted = true;
         }
 
         /// <summary>
@@ -269,7 +271,7 @@ namespace WpfApp2.Model
             string queryString = $"INSERT INTO {database}.{tableName}(TimeStamp, {tar}) VALUES ('{TimeStamp}', '{value}')  ";
 
             Connect(ConnectionString, queryString);
-            NewsByteIsInserted = true;
+            newsByteIsInserted = true;
         }
         #endregion
     }

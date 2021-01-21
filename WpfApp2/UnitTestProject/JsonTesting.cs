@@ -46,7 +46,7 @@ namespace WpfApp2.SingleShot
             testingWindow.mSelectedTargetOnDB = null;
             testingWindow.btnInsertProfile_Click(sender, e);
             //Assert
-            Assert.AreEqual(true, testingWindow.CannotInsertEmptyProfile);
+            Assert.AreEqual(true, testingWindow.cannotInsertEmptyProfile);
         }
 
         //TestName_Scenario_ExpectedBehavior
@@ -64,7 +64,7 @@ namespace WpfApp2.SingleShot
             //Act
             testingWindow.btnInsertProfile_Click(sender, e);
             //Assert
-            Assert.AreEqual(true, testingWindow.AddedToMultipleShotList);
+            Assert.AreEqual(true, testingWindow.addedToMultipleShotList);
         }
     }
 }

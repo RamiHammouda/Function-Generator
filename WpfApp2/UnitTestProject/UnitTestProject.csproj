@@ -57,6 +57,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AmplitudeTesting.cs" />
     <Compile Include="JsonTesting.cs" />
+    <Compile Include="CRUD_Test.cs" />
+    <Compile Include="DB_Test.cs" />
     <Compile Include="ResetButton.cs" />
     <Compile Include="SeetingsTab.cs" />
   </ItemGroup>

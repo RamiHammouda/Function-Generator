@@ -53,7 +53,6 @@ namespace WpfApp2.ViewModel
 
 
         [JsonIgnore]
-        public bool WritingIsFinished = false;
 
         //For quick access and control;
         private long aTimeStep;
@@ -315,7 +314,7 @@ namespace WpfApp2.ViewModel
                         Thread.Sleep(waitingTime);
                     }
                 });
-
+                
             }
             else
             {
@@ -336,7 +335,7 @@ namespace WpfApp2.ViewModel
                     };
                 });
             }
-            Console.WriteLine("Finished Writing");
+            Console.WriteLine("Finished Writing");            
             //_canceller.Dispose();
 
         }

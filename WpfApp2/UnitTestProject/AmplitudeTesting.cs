@@ -26,7 +26,7 @@ namespace WpfApp2.SingleShot
             //Act
             testingWindow.mAmpl = 50;            
             //Assert
-            Assert.AreEqual(false, testingWindow.ValidInput);
+            Assert.AreEqual(false, testingWindow.validInput);
         }
 
         /// <AmplitudeInputTest>

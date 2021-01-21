@@ -30,7 +30,7 @@ namespace WpfApp2.MultipleShot
             //Act
             testingWindow.MenuItemAdd_Click(sender, e);
             //Assert
-            Assert.AreEqual(true, testingWindow.ItemAdded);
+            Assert.AreEqual(true, testingWindow.itemAdded);
         }
 
         /// <DeleteItemTest>
@@ -47,7 +47,7 @@ namespace WpfApp2.MultipleShot
             //Act
             testingWindow.MenuItemDel_Click(sender, e);
             //Assert
-            Assert.AreEqual(false, testingWindow.ItemDeleted);
+            Assert.AreEqual(false, testingWindow.itemDeleted);
         }
 
         /// <ViewingDataBase>
@@ -63,7 +63,7 @@ namespace WpfApp2.MultipleShot
             //Act
             testingWindow.btnViewDatabase_Click(sender, e);
             //Assert
-            Assert.AreEqual(true, testingWindow.DataBaseWindowOpened);
+            Assert.AreEqual(true, testingWindow.dataBaseWindowOpened);
         }
 
         //Disabled
@@ -80,7 +80,7 @@ namespace WpfApp2.MultipleShot
             //Act
             testingWindow.btnMSimulateToJson_Click(sender, e);
             //Assert
-            Assert.AreEqual(false, testingWindow.ItemsAreSaved);
+            Assert.AreEqual(false, testingWindow.itemsAreSaved);
         }
 
         /// <ConnectionToDBFailed>
@@ -97,7 +97,7 @@ namespace WpfApp2.MultipleShot
             testingWindow.mSettingTab.CheckConnection();
             testingWindow.btnMSimuToDB_Click(sender, e);
             //Assert
-            Assert.AreEqual(false, testingWindow.ConnectionToDBError);
+            Assert.AreEqual(false, testingWindow.connectionToDBError);
         }
     }
 }

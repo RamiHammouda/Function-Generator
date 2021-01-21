@@ -28,7 +28,7 @@ namespace WpfApp2.SettingsTab
             //Act
             testingWindow.btnEnableEdit_Click(sender, e);
             //Assert
-            Assert.AreEqual(true, testingWindow.EditIsEnabled);
+            Assert.AreEqual(true, testingWindow.editIsEnabled);
         }
 
         //TestName_Scenario_ExpectedBehavior
@@ -45,7 +45,7 @@ namespace WpfApp2.SettingsTab
             //Act
             testingWindow.btnTestConn_Click(sender, e);
             //Assert
-            Assert.AreEqual(true, testingWindow.ConnectionTested);
+            Assert.AreEqual(true, testingWindow.connectionTested);
 
         }
     }
