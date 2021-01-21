@@ -128,16 +128,10 @@
       <DependentUpon>DBViewWindows.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\MyDBEntity.cs" />
-    <Compile Include="NUnitTesting\AmplitudeTesting.cs" />
     <Compile Include="Model\SignalProfile.cs" />
     <Compile Include="Model\SimulationProfile.cs" />
     <Compile Include="NUnitTesting\CRUD_Test.cs" />
     <Compile Include="NUnitTesting\DB_Test.cs" />
-    <Compile Include="NUnitTesting\FrequencyTesting.cs" />
-    <Compile Include="NUnitTesting\JsonTesting.cs" />
-    <Compile Include="NUnitTesting\MultipeShot.cs" />
-    <Compile Include="NUnitTesting\ResetButton.cs" />
-    <Compile Include="NUnitTesting\SettingsTab.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
