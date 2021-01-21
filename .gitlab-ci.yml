@@ -19,15 +19,13 @@ build_App:
    - nuget.exe restore "WpfApp2.sln"
    - MSBuild.exe "WpfApp2.sln" -t:Build -p:Configuration=Release /p:Platform="Any CPU" /clp:ErrorsOnly
   artifacts:
-    expire_in: 10 days
+    expire_in: 7 days
     paths:
       - .\WpfApp2\WpfApp2\bin\Release
+      - .\WpfApp2\UnitTestProject\bin\Release
 
 
 test_App:
-  #interruptible: true
-  #allow_failure: true
-
   stage: test
   tags:
    - Docker 
@@ -35,14 +33,11 @@ test_App:
    - Windows 
    - Runner 
   script:
-   - Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-   - choco install nunit-console-runner
-   - cd .\WpfApp2\bin\Release
-   - nunit3-console "WpfApp2.exe"
+   - cd .\UnitTestProject\bin\Release
+   - vstest.console UnitTestProject.dll /logger:trx
+
   artifacts:
     when: always
     paths:
-      - .\WpfApp2\WpfApp2\bin\Release\TestResult.xml
-    #reports:
-      #junit:
-        #- .\WpfApp2\WpfApp2\bin\Release\TestResult.xml
+      - .\WpfApp2\UnitTestProject\bin\Release\TestResults
+
