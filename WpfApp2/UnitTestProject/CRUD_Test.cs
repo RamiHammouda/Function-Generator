@@ -19,7 +19,7 @@ namespace WpfApp2.CRUDTesting
         /// <ConnectionTest>
         /// A new class will be created. This test will verify if the connection is possible.
         /// </ConnectionTest>
-        [TestMethod]
+        //[TestMethod]
         public void CanConnect_Connected_ConnectionBuilt() //brauche ein connectionstring and query stgring bs
         {
             //Arrange
