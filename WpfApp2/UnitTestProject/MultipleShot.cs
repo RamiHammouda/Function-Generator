@@ -36,7 +36,6 @@ namespace WpfApp2.MultipleShot
         /// <DeleteItemTest>
         /// A new application window will be created. The "Delete Item" Button will be clicked and then it will be verified if the item was deleted.
         /// </DeleteItemTest>
-        //Disabled
         [TestMethod]
         public void CanDeleteAnItem_DeleteItemClicked_DeletesItem()
         {
@@ -66,7 +65,6 @@ namespace WpfApp2.MultipleShot
             Assert.AreEqual(true, testingWindow.dataBaseWindowOpened);
         }
 
-        //Disabled
         /// <SaveAllItems>
         /// A new application window will be created.The "Save To File" Button will be clicked and then it will be verified if the items can be saved.
         /// </SaveAllItems>

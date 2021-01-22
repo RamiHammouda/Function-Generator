@@ -76,7 +76,6 @@ namespace WpfApp2.SingleShot
         /// <OffsetTest>
         /// A new application window will be created.The "ArrowDown" Button responsible for the amplitude offset will be clicked and then it will be verified if the value of amplitude will decrease.
         /// </OffsetTest>
-
        [TestMethod]
         public void CanDecreaseFrequencyWithOffset_MinusButtonPressed_ReturnsLowerValue()
         {

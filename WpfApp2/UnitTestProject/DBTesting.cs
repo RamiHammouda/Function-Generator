@@ -31,7 +31,6 @@ namespace WpfApp2.DBTesting
             //Assert.AreEqual(true, SignalClassExemple.writingIsFinished);
         }
 
-        // Under Testing
         [TestMethod]
         public void CanChooseDBTarget_ChooseBetweenTargets_TargetChosen() //brauche ein connectionstring and query stgring bs
         {
@@ -46,7 +45,6 @@ namespace WpfApp2.DBTesting
             Assert.AreEqual(true, testingWindow.addedToMultipleShotList);
         }
 
-        //// Under Testing
         [TestMethod]
         public void CanGetNoTargetChoseError_ChooseBetweenTargets_NoTargetChosen() //brauche ein connectionstring and query stgring bs
         {

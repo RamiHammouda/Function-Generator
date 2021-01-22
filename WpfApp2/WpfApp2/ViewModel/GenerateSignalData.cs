@@ -278,8 +278,6 @@ namespace WpfApp2.ViewModel
             };
         }
 
-
-        //private CancellationTokenSource _canceller;
         private bool _cancel;
         //for reference only, insert data to db without filling emty columns
         public async void StartWriteToDB()
@@ -290,7 +288,6 @@ namespace WpfApp2.ViewModel
 
             if (!mSmProfile.checkedSmProfValidation() && mDuration > 0)
                 return;
-            //_canceller = new CancellationTokenSource();
             _cancel = false;
             int waitingTime = (int)(1000 / mRate);
             mMyDB.InsertInTargetColumn(mTargetOnDB);
@@ -302,7 +299,6 @@ namespace WpfApp2.ViewModel
                 {
                     int i = 0;
                     while (!_cancel)
-                    //while (!_canceller.Token.IsCancellationRequested)
                     {
                         now = DateTime.Now.Ticks;
                         mNo.Add(i);
@@ -322,7 +318,6 @@ namespace WpfApp2.ViewModel
                 {
                     for (int i = 0; i < mENumber; i++)
                     {
-                        //if (_canceller.Token.IsCancellationRequested)
                         if (_cancel)
                             return;
                         now = DateTime.Now.Ticks;
@@ -336,22 +331,9 @@ namespace WpfApp2.ViewModel
                 });
             }
             Console.WriteLine("Finished Writing");            
-            //_canceller.Dispose();
 
         }
 
-        public void Stop()
-        {
-            //try
-            //{
-            //    _canceller.Cancel();
-            //}
-            //catch (ObjectDisposedException ex)
-            //{
-            //    Console.WriteLine(ex.Message);
-            //}
-            _cancel = true;
-        }
         /// <summary>
         /// initiate some data/parameter for later using
         /// </summary>
