@@ -31,6 +31,10 @@ namespace WpfApp2.DBTesting
             //Assert.AreEqual(true, SignalClassExemple.writingIsFinished);
         }
 
+        //TestName_Scenario_ExpectedBehavior
+        /// <ChooseBetweenDBTargets>
+        /// This Test will verify if it is possible to choose between DB targets.
+        /// </ChooseBetweenDBTargets>
         [TestMethod]
         public void CanChooseDBTarget_ChooseBetweenTargets_TargetChosen() //brauche ein connectionstring and query stgring bs
         {
@@ -45,6 +49,10 @@ namespace WpfApp2.DBTesting
             Assert.AreEqual(true, testingWindow.addedToMultipleShotList);
         }
 
+        //TestName_Scenario_ExpectedBehavior
+        /// <NoTargetChosenError>
+        /// This Test will verify if it the user will get an error message if no DB target is chosen.
+        /// </NoTargetChosenError>
         [TestMethod]
         public void CanGetNoTargetChoseError_ChooseBetweenTargets_NoTargetChosen() //brauche ein connectionstring and query stgring bs
         {

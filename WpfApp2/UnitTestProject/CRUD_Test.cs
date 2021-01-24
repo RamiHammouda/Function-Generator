@@ -34,39 +34,7 @@ namespace WpfApp2.CRUDTesting
             DBClassExemple.Connect(connectionString, queryString);
             //Assert
             Assert.AreEqual(true, DBClassExemple.canConnectToDB);
-        }
-
-        //TestName_Scenario_ExpectedBehavior
-        /// <ReadingTest>
-        /// A new class will be created. This test will verify if the user can read from the DB.
-        /// </ReadingTest>
-        //[TestMethod]
-        public void CanRead_ReaderIsTrue_ReadingInTheDB() //brauche ein connectionstring and query stgring bs
-        {
-            //Arrange
-            MyDBEntity DBClassExemple = new MyDBEntity();
-            //Act
-            string connectionString = "SERVER=" + DBClassExemple.serverIP + "; PORT =" + DBClassExemple.portNumber + "; DATABASE=" + DBClassExemple.database + ";" + "UID=" + DBClassExemple.username + ";" + "PASSWORD=" + DBClassExemple.password + ";";
-            string queryString = $"SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS`  WHERE `TABLE_SCHEMA`= '{DBClassExemple.database}' AND `TABLE_NAME`= '{DBClassExemple.tableName}' ORDER BY table_name, ordinal_position;";
-            DBClassExemple.Reader(connectionString, queryString);
-            //Assert
-            Assert.AreEqual(true, DBClassExemple.canReadInDB);
-        }
-
-        //TestName_Scenario_ExpectedBehavior
-        /// <GetColumnsTest>
-        /// A new class will be created. This test will verify if get the shown columns.
-        /// </GetColumnsTest>
-        //[TestMethod]
-        public void CanGetColumnsFromDB_ConnectionIsTrue_ColumnsObtained() //brauche ein connectionstring and query stgring bs
-        {
-            //Arrange
-            MyDBEntity DBClassExemple = new MyDBEntity();
-            //Act
-            DBClassExemple.GetColumns();
-            //Assert
-            Assert.AreEqual(true, DBClassExemple.canGetColumnsFromDB);
-        }
+        }        
 
         //TestName_Scenario_ExpectedBehavior
         /// <IntInsertionTest>
