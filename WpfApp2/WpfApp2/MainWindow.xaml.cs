@@ -276,7 +276,7 @@ namespace WpfApp2
             resultImg.DataContext = this;
 
 
-            mTriggerTypeList = new List<string> { "Default", "TimeTriger", "Random" };
+            mTriggerTypeList = new List<string> { "Default", "TimeTrigger", "Random" };
             mSelectedTrigger = mTriggerTypeList[0];
             TriggerChangeHandler();
             mChoosenTime = DateTime.Now;
@@ -786,7 +786,6 @@ namespace WpfApp2
                 cmdStr = String.Format("select id, TimeStamp, {0} from {1}.{2} where {0} is not null order by id desc limit 100;", mSelectedRowOnDataGrid.mTargetOnDB, mSettingTab.mDatabaseName, mSettingTab.mTabName);
                 windowsWidth = 450;
                 showText = "Lastest 100 value without Null on database";
-
             }
 
             conn = new MySqlConnection(connStr);
