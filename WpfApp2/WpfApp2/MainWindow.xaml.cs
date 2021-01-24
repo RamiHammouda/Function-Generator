@@ -20,6 +20,7 @@ using System.Data;
 using System.Threading;
 using System.Globalization;
 
+
 namespace WpfApp2
 {
     /// <summary>
@@ -180,6 +181,14 @@ namespace WpfApp2
             offsetAmpValueDecreased = true;
         }
 
+
+        public List<string> mTriggerTypeList { get; set; }
+        private string _mSelectedTrigger;
+        public string mSelectedTrigger { get { return _mSelectedTrigger; } set { if (_mSelectedTrigger != value) { _mSelectedTrigger = value; OnPropertyChanged("mSelectedTrigger"); TriggerChangeHandler(); } } }
+
+        private DateTime _mChoosenTime;
+        public DateTime mChoosenTime { get { return _mChoosenTime; } set { if (_mChoosenTime != value && DateTime.Now <= value ) { _mChoosenTime = value; OnPropertyChanged("mChoosenTime"); Console.WriteLine(mChoosenTime); SetUpTimer(mChoosenTime); } } }
+
         #endregion
 
         #region Functions and Buttons
@@ -265,6 +274,13 @@ namespace WpfApp2
 
             //only for Image Connection Result
             resultImg.DataContext = this;
+
+
+            mTriggerTypeList = new List<string> { "Default", "TimeTriger", "Random" };
+            mSelectedTrigger = mTriggerTypeList[0];
+            TriggerChangeHandler();
+            mChoosenTime = DateTime.Now;
+
         }
         private List<ColumnDBSelectableHelper> _offLineTargetList { get { List<ColumnDBSelectableHelper> aList = new List<ColumnDBSelectableHelper>() { new ColumnDBSelectableHelper(true, "Offline"), new ColumnDBSelectableHelper(true, "Just Kidding") }; return aList; } }
         private List<string> _offLineList { get { List<string> aList = new List<string>() { "Offline", "Offline only" }; return aList; } }
@@ -431,6 +447,88 @@ namespace WpfApp2
 
         private Dictionary<string, string> myDataDict;
         private bool _Stop = false;
+
+        private Timer timer;
+        /// <summary>
+        /// Receive a DateTime to set Timer and trigger sending data to database at this specific time.
+        /// If randomTrigger = true, then it will be recursive Method:
+        /// It calls itself to trigger again at random time at day, so that it will fully automatically start / stop sending data.
+        /// If nexttime trigger smaller than 10 Minutes then this recursive will stop as well as the sending data button;
+        /// If TriggerType CommboBox is changed during running Timer, then current timer will be detroyed;
+        /// </summary>
+        /// <param name="alertTime"></param>
+        private void SetUpTimer(DateTime alertTime,bool randomTrigger=false)
+        {
+            TimeSpan timeToGo = alertTime - DateTime.Now;
+
+            if (randomTrigger)
+            {
+                if (timeToGo < TimeSpan.FromMinutes(10)) { _Stop = true; return; }
+
+            }
+            if (timeToGo < TimeSpan.Zero) return;
+            mErrorMessage = $"Sending data will be triggered at {alertTime}";
+
+            timer = null;
+            this.timer = new Timer(x =>
+            {
+                if(timer!=null) TriggerButton();
+                if (randomTrigger) SetUpTimer(PickARandomTimeAtDay(),true);
+            }, null, timeToGo, Timeout.InfiniteTimeSpan);
+
+        }
+        /// <summary>
+        /// Just pick a random time at day
+        /// </summary>
+        /// <returns>DateTime value</returns>
+        private DateTime PickARandomTimeAtDay()
+        {
+            DateTime endToday, current = DateTime.Now;
+            Random random = new Random();
+            endToday = new DateTime(current.Year, current.Month, current.Day, 23, 59, 59);
+            return current + TimeSpan.FromMinutes(random.Next(0, (int)(endToday - current).TotalMinutes));
+        }
+        /// <summary>
+        /// Handler the change in TriggerType List to corresponding action
+        /// </summary>
+        private void TriggerChangeHandler()
+        {
+            Console.WriteLine(mMultipleShotList);
+            mErrorMessage = String.Empty;
+            timer = null;
+            if (mSelectedTrigger == mTriggerTypeList[1]) //TimeTrigger
+            {
+                if (mMultipleShotList.Count<1) { mErrorMessage = "Pls create simulation profiles first"; return; }
+                lblTimeTrigger.Visibility = Visibility.Visible;
+                timePicker.Visibility = Visibility.Visible;
+                mChoosenTime = DateTime.Now;
+                return;
+            }
+
+            if (mSelectedTrigger == mTriggerTypeList[2]) //Random
+            {
+                if (mMultipleShotList.Count < 1) { mErrorMessage = "Pls create simulation profiles first"; return; }
+                lblTimeTrigger.Visibility = Visibility.Hidden;
+                timePicker.Visibility = Visibility.Hidden;
+                DateTime rdTime = PickARandomTimeAtDay();
+                Console.WriteLine(rdTime);
+                SetUpTimer(rdTime,true);
+                return;
+            }
+
+            lblTimeTrigger.Visibility = Visibility.Hidden;
+            timePicker.Visibility = Visibility.Hidden;
+        }
+        /// <summary>
+        /// Trigger a button in UI Thread
+        /// </summary>
+        private void TriggerButton()
+        {
+            this.Dispatcher.Invoke((Action)(()=>
+            {//this refer to form in WPF application
+                btnMSimuToDB.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            }));
+        }
 
         /// <summary>
         /// Add multiple values to database
@@ -776,9 +874,8 @@ namespace WpfApp2
             }
         }
 
+        #endregion
+
     }
-
-    #endregion
-
 
 }

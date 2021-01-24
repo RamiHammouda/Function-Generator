@@ -8,6 +8,7 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         xmlns:w="clr-namespace:WpfApp2.ViewModel"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         x:Class="WpfApp2.MainWindow"
 
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
@@ -225,8 +226,17 @@
                     <Label x:Name ="lblErrorOnMTab" Grid.Column="2" Grid.Row="1" Foreground="Red" FontStyle="Italic" Margin="0,0,0,0"  HorizontalAlignment="Center">
                         <AccessText TextWrapping="Wrap" Text="{Binding mErrorMessage, UpdateSourceTrigger=PropertyChanged}"/>
                     </Label>
-                    <StackPanel Orientation="Vertical" Grid.Column ="4" Grid.Row="2" VerticalAlignment="Bottom" Height="99" >
 
+                    <StackPanel Orientation="Vertical" Grid.Column="4" Grid.Row="2" VerticalAlignment="Top">
+                        <TextBlock Text="Pls choose trigger if need"/>
+                        <ComboBox x:Name="cbbTriggerType" VerticalAlignment="Top" ItemsSource="{Binding mTriggerTypeList}" 
+                                  SelectedItem="{Binding Path = mSelectedTrigger,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Margin="0,0,0,10"
+                                  ToolTip="Default : Press button to trigger sending data, TimeTrigger: trigger data at specific time, Random: random at day "/>
+                        <TextBlock x:Name="lblTimeTrigger" Text="Pls choose time to trigger"/>
+                        <xctk:TimePicker x:Name="timePicker" Value="{Binding mChoosenTime,UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical" Grid.Column ="4" Grid.Row="2" VerticalAlignment="Bottom" Height="99" >
                         <Button x:Name="btnViewDatabase" ToolTip="View the current profiles on database" Content="View Database"  Margin="0,0,0,10" Click="btnViewDatabase_Click" Background="#fae0df"
                                 BorderThickness="0" Height="22" FontWeight="Bold" VerticalAlignment="Top" Style="{StaticResource myButtonStyle}" />
 
