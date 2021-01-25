@@ -1,4 +1,4 @@
-﻿# Function Generator
+# Function Generator
 [![pipeline status](https://gitlab.rz.htw-berlin.de/softwareentwicklungsprojekt/wise2020-21/team8/badges/master/pipeline.svg)](https://gitlab.rz.htw-berlin.de/softwareentwicklungsprojekt/wise2020-21/team8/-/commits/master)
 
 <p align="center">
@@ -6,12 +6,12 @@
 </p>
 
 
-**Function Generator** is Windows desktop application, which aims to help the lovely engineers in **GFai e.V** to ***simulate*** the ***sensor signal*** for main software using in water jet cutting factory. 
+**Function Generator** is Windows desktop application, which aims to help the lovely engineers in **GFaI e.V** to ***simulate*** the ***sensor signal*** for main software using in water jet cutting factory. 
 
 
 # Motivation
 
-In the process of developing a main software for water jet cutting factory (ES Leistand 4.0), database plays an important role. It stores the communicating signal of all sensors in the factory, so that the main control system can analyze the sensor signal, knows state of devices… and issues proper actions. Therefore, we need to build a software to simulate all sensor signal. And **Function Generator** comes up with the answer :). This software helps to generate data for database, simulate the operation states of sensor from operating parts of factory.
+In the process of developing a main software for water jet cutting factory (EAS Leistand 4.0), database plays an important role. It stores the communicating signal of all sensors in the factory, so that the main control system can analyze the sensor signal, knows state of devices… and issues proper actions. Therefore, we need to build a software to simulate all sensor signal. And **Function Generator** comes up with the answer :). This software helps to generate data for database, simulate the operation states of sensor from operating parts of factory.
 
 # Screenshot
 | ![](https://i.ibb.co/SPQT9xx/Image-002.png) |<img src="https://i.ibb.co/nsx8y4C/Image00.png" width="600" title = "Multiple Profile tab">|
